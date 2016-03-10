@@ -20,10 +20,7 @@ struct GAFMovieClipHash
     uint32_t  texture;
     BlendFunc blend;
     Vec4    a;
-    Vec4    b;
-    float   c;
-    Mat4    d;
-    Vec4    e;        
+    Vec4    b;    
 };
     
 
@@ -166,8 +163,11 @@ uint32_t GAFMovieClip::setUniforms()
     if (!ctx)
     {
         Color4F color(m_colorTransformMult.x, m_colorTransformMult.y, m_colorTransformMult.z, m_colorTransformMult.w);
-        Node::setColor(Color3B(color));
-        Node::setOpacity(static_cast<GLubyte>(color.a * 255.0f));
+        if (color.r < 1.f || color.g < 1.f || color.b < 1.f)
+        {
+            Node::setColor(Color3B(color));
+            Node::setOpacity(static_cast<GLubyte>(color.a * 255.0f));
+        }
     }
     else
     {
@@ -180,29 +180,6 @@ uint32_t GAFMovieClip::setUniforms()
             state->setUniformVec4(
                 getUniformId(GAFShaderManager::EUniforms::ColorTransformOffset),
                 m_colorTransformOffsets);
-        }
-
-        if (!m_colorMatrixFilterData)
-        {
-            hash.d = cocos2d::Mat4::IDENTITY;
-            hash.e = cocos2d::Vec4::ZERO;
-            state->setUniformMat4(
-                getUniformId(GAFShaderManager::EUniforms::ColorMatrixBody),
-                cocos2d::Mat4::IDENTITY);
-            state->setUniformVec4(
-                getUniformId(GAFShaderManager::EUniforms::ColorMatrixAppendix),
-                cocos2d::Vec4::ZERO);
-        }
-        else
-        {
-            hash.d = Mat4(m_colorMatrixFilterData->matrix);
-            hash.e = Vec4(m_colorMatrixFilterData->matrix2);
-            state->setUniformMat4(
-                getUniformId(GAFShaderManager::EUniforms::ColorMatrixBody),
-                Mat4(m_colorMatrixFilterData->matrix));
-            state->setUniformVec4(
-                getUniformId(GAFShaderManager::EUniforms::ColorMatrixAppendix),
-                Vec4(m_colorMatrixFilterData->matrix2));
         }
     }
     return XXH32((void*)&hash, sizeof(GAFMovieClipHash), 0);

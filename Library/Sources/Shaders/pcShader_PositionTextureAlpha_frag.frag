@@ -15,8 +15,6 @@ varying vec4 v_fragmentColor;
 
 uniform vec4 colorTransformMult;
 uniform vec4 colorTransformOffsets;
-uniform mat4 colorMatrix;
-uniform vec4 colorMatrix2;
 
 void main()
 {
@@ -28,10 +26,9 @@ void main()
     texColor = vec4(texColor.rgb / texColor.a, texColor.a);
 
     vec4 ctxColor = texColor * colorTransformMult + colorTransformOffsets;
-    vec4 adjustColor = colorMatrix * ctxColor + colorMatrix2;
-    adjustColor *= v_fragmentColor;
+    ctxColor *= v_fragmentColor;
 
-    texColor = vec4(adjustColor.rgb * adjustColor.a, adjustColor.a);
+    texColor = vec4(ctxColor.rgb * ctxColor.a, ctxColor.a);
     
     gl_FragColor = texColor;
 }

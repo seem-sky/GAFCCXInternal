@@ -38,8 +38,6 @@ NS_GAF_BEGIN
     {
         "colorTransformMult",       // ColorTransformMult
         "colorTransformOffsets",    // ColorTransformOffset
-        "colorMatrix",              // ColorMatrixBody
-        "colorMatrix2",             // ColorMatrixAppendix
 
         "u_step",                   // BlurTexelOffset
 
@@ -115,8 +113,6 @@ NS_GAF_BEGIN
                 program->bindAttribLocation(cocos2d::GLProgram::ATTRIBUTE_NAME_TEX_COORD, cocos2d::GLProgram::VERTEX_ATTRIB_TEX_COORDS);
                 s_uniformLocations[EUniforms::ColorTransformMult] =     glGetUniformLocation(program->getProgram(), s_uniformNames[EUniforms::ColorTransformMult]);
                 s_uniformLocations[EUniforms::ColorTransformOffset] =   glGetUniformLocation(program->getProgram(), s_uniformNames[EUniforms::ColorTransformOffset]);
-                s_uniformLocations[EUniforms::ColorMatrixBody] =        glGetUniformLocation(program->getProgram(), s_uniformNames[EUniforms::ColorMatrixBody]);
-                s_uniformLocations[EUniforms::ColorMatrixAppendix] =    glGetUniformLocation(program->getProgram(), s_uniformNames[EUniforms::ColorMatrixAppendix]);
                 CHECK_GL_ERROR_DEBUG();
             }
             

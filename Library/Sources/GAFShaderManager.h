@@ -31,8 +31,6 @@ public:
         enum Name {
             ColorTransformMult = 0,
             ColorTransformOffset,
-            ColorMatrixBody,
-            ColorMatrixAppendix,
 
             BlurTexelOffset,
 
