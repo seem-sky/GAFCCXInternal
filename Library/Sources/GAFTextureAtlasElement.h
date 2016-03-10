@@ -7,7 +7,9 @@ NS_GAF_BEGIN
 class GAFTextureAtlasElement
 {
 public:
-    std::string name;
+    std::string        linkageName;
+    std::string        baseClass;
+    std::string        originClass;
     cocos2d::Vec2      pivotPoint;
     cocos2d::Rect      bounds;
     
@@ -16,7 +18,9 @@ public:
 
     GAFRotation        rotation;
 
-    GAFTextureAtlasElement();  
+    cocos2d::Rect      scale9GridRect;
+
+    GAFTextureAtlasElement();
 
     void setScale(float s);
     const float getScale() const { return scale; }

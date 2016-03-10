@@ -132,6 +132,12 @@
     <ClCompile Include="Sources\GAFSoundInfo.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\TagDefineAtlas4.cpp">
+      <Filter>Sources\GAFLoader\Tags</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\TagDefineTimeline2.cpp">
+      <Filter>Sources\GAFLoader\Tags</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\GAFAnimationFrame.h">
@@ -274,6 +280,12 @@
     </ClInclude>
     <ClInclude Include="Sources\GAFSoundInfo.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TagDefineAtlas4.h">
+      <Filter>Sources\GAFLoader\Tags</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TagDefineTimeline2.h">
+      <Filter>Sources\GAFLoader\Tags</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

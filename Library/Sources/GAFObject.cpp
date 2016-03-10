@@ -177,7 +177,7 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
                 result = new GAFMovieClip();
             else
                 result = new GAFMask();
-            result->initWithSpriteFrame(spriteFrame, txElemet->rotation);
+            result->initWithSpriteFrame(spriteFrame, txElemet->rotation, txElemet->scale9GridRect);
             result->objectIdRef = id;
             cocos2d::Vec2 pt = cocos2d::Vec2(0 - (0 - (txElemet->pivotPoint.x / result->getContentSize().width)),
                 0 + (1 - (txElemet->pivotPoint.y / result->getContentSize().height)));
@@ -719,22 +719,32 @@ static cocos2d::Rect GAFCCRectUnion(const cocos2d::Rect& src1, const cocos2d::Re
     return cocos2d::Rect(combinedLeftX, combinedBottomY, combinedRightX - combinedLeftX, combinedTopY - combinedBottomY);
 }
 
-cocos2d::Rect GAFObject::getBoundingBoxForCurrentFrame()
+cocos2d::Rect GAFObject::getInternalBoundingBoxForCurrentFrame()
 {
     cocos2d::Rect result = cocos2d::Rect::ZERO;
 
-    bool isFirstObj = true;
-    for (DisplayList_t::iterator i = m_displayList.begin(), e = m_displayList.end(); i != e; ++i)
-    {
-        if (*i == nullptr)
-        {
-            continue;
-        }
+    const AnimationFrames_t& animationFrames = m_timeline->getAnimationFrames();
 
-        GAFSprite* anim = *i;
-        if (anim->isVisible())
+    if (animationFrames.size() <= m_currentFrame)
+    {
+        return result;
+    }
+
+    GAFAnimationFrame* currentFrame = animationFrames[m_currentFrame];
+
+    const GAFAnimationFrame::SubobjectStates_t& states = currentFrame->getObjectStates();
+
+    bool isFirstObj = true;
+    for (const GAFSubobjectState* state : states)
+    {
+        GAFObject* subObject = m_displayList[state->objectIdRef];
+
+        if (!subObject)
+            continue;
+
+        if (state->isVisible())
         {
-            cocos2d::Rect bb = anim->getBoundingBox();
+            cocos2d::Rect bb = subObject->getBoundingBox();
             if (isFirstObj)
                 result = bb;
             else
@@ -744,7 +754,12 @@ cocos2d::Rect GAFObject::getBoundingBoxForCurrentFrame()
         isFirstObj = false;
     }
 
-    return cocos2d::RectApplyTransform(result, getNodeToParentTransform());
+    return result;
+}
+
+cocos2d::Rect GAFObject::getBoundingBoxForCurrentFrame()
+{
+    return cocos2d::RectApplyTransform(getInternalBoundingBoxForCurrentFrame(), getNodeToParentTransform());
 }
 
 cocos2d::Mat4 const& GAFObject::getNodeToParentTransform() const

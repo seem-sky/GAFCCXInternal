@@ -3,6 +3,8 @@
 #include "GAFQuadCommand.h"
 #include "GAFCollections.h"
 
+#include <array>
+
 NS_GAF_BEGIN
 
 typedef struct _gafBlendFuncSeparate
@@ -26,11 +28,14 @@ class GAFSprite : public cocos2d::Sprite
 {
 public:
     GAFSprite();
+    virtual ~GAFSprite();
 
-    bool initWithSpriteFrame(cocos2d::SpriteFrame *spriteFrame, GAFRotation rotation);
+    virtual bool initWithSpriteFrame(cocos2d::SpriteFrame *spriteFrame, GAFRotation rotation);
+    virtual bool initWithSpriteFrame(cocos2d::SpriteFrame *spriteFrame, GAFRotation rotation, const cocos2d::Rect& capInsets);
     virtual bool initWithSpriteFrame(cocos2d::SpriteFrame *spriteFrame) override;
     virtual bool initWithTexture(cocos2d::Texture2D *pTexture, const cocos2d::Rect& rect, bool rotated) override;
-    void setTexture(cocos2d::Texture2D *texture) override;
+    virtual bool initWithTexture(cocos2d::Texture2D *pTexture, const cocos2d::Rect& rect, bool rotated, const cocos2d::Rect& capInsets);
+    virtual void setTexture(cocos2d::Texture2D *texture) override;
 
     virtual void setVertexRect(const cocos2d::Rect& rect) override;
     virtual void setTextureRect(const cocos2d::Rect& rect, bool rotated, const cocos2d::Size& untrimmedSize) override;
@@ -62,9 +67,9 @@ protected:
     * Sets Uniforms for shader.
     *
     * Will be called before task with current program state is pushed to
-    * the render queue. Must return hash of the currend shader program 
+    * the render queue. Must return hash of the current shader program 
     * state including uniforms, textures, program using. If 0 is returned
-    * renderrer will not attempt to batch this call.
+    * renderer will not attempt to batch this call.
     *
     * @return  hash value of the shader program state.
     */
@@ -81,31 +86,47 @@ protected:
     */
     virtual void customDraw(cocos2d::Mat4& transform);
 
+    void updateSlicedQuads(const cocos2d::Mat4 &transform);
 
+private:
+    typedef std::array<cocos2d::V3F_C4B_T2F_Quad, 9> Scale9Slices_t;
+
+    void updateScale9GridQuads();
     /* Members */
 public:
-    uint32_t objectIdRef;
+    uint32_t                  objectIdRef;
 protected:
-    cocos2d::AffineTransform    m_externalTransform;
-    cocos2d::CustomCommand      m_customCommand;
-    GAFQuadCommand              m_quadCommand;
-private:
+    cocos2d::AffineTransform  m_externalTransform;
+    cocos2d::CustomCommand    m_customCommand;
+    GAFQuadCommand            m_quadCommand;
 
+private:
     /**
     * Quad is equal to _quad but transformed to view space
     */
-    cocos2d::
-        V3F_C4B_T2F_Quad    m_quad;
+    cocos2d::V3F_C4B_T2F_Quad m_quad;
 
-    float                   m_atlasScale;
-    bool                    m_isLocator;
+    // Scale9Grid -------------------------------------------------------------------------------------
+    Scale9Slices_t            m_scale9Slices; // holds the 9 quads (tl, tc, tr, cl, c, cr, bl, bc, br);
+
+    bool                      m_scale9Enabled;
+    cocos2d::Rect             m_capInsets;
+
+    cocos2d::Size             m_topLeftSize;
+    cocos2d::Size             m_centerSize;
+    cocos2d::Size             m_bottomRightSize;
+
+    //-------------------------------------------------------------------------------------------------
+
+    float                     m_atlasScale;
+    bool                      m_isLocator;
 
     /* Never used */
-    gafBlendFuncSeparate    m_blendFuncSeparate;
-    bool                    m_useSeparateBlendFunc;
-    GLint                   m_blendEquation;
+    gafBlendFuncSeparate      m_blendFuncSeparate;
+    bool                      m_useSeparateBlendFunc;
+    GLint                     m_blendEquation;
 
-    GAFRotation             m_rotation;
+    GAFRotation               m_rotation;
 };
 
 NS_GAF_END

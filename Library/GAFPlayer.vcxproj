@@ -66,12 +66,14 @@
     <ClCompile Include="Sources\TagDefineAnimationObjects.cpp" />
     <ClCompile Include="Sources\TagDefineAtlas.cpp" />
     <ClCompile Include="Sources\TagDefineAtlas3.cpp" />
+    <ClCompile Include="Sources\TagDefineAtlas4.cpp" />
     <ClCompile Include="Sources\TagDefineNamedParts.cpp" />
     <ClCompile Include="Sources\TagDefineSequences.cpp" />
     <ClCompile Include="Sources\TagDefineSounds.cpp" />
     <ClCompile Include="Sources\TagDefineStage.cpp" />
     <ClCompile Include="Sources\TagDefineTextField.cpp" />
     <ClCompile Include="Sources\TagDefineTimeline.cpp" />
+    <ClCompile Include="Sources\TagDefineTimeline2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\DefinitionTagBase.h" />
@@ -114,6 +116,7 @@
     <ClInclude Include="Sources\TagDefineAnimationObjects.h" />
     <ClInclude Include="Sources\TagDefineAtlas.h" />
     <ClInclude Include="Sources\TagDefineAtlas3.h" />
+    <ClInclude Include="Sources\TagDefineAtlas4.h" />
     <ClInclude Include="Sources\TagDefineNamedParts.h" />
     <ClInclude Include="Sources\TagDefines.h" />
     <ClInclude Include="Sources\TagDefineSequences.h" />
@@ -121,6 +124,7 @@
     <ClInclude Include="Sources\TagDefineStage.h" />
     <ClInclude Include="Sources\TagDefineTextField.h" />
     <ClInclude Include="Sources\TagDefineTimeline.h" />
+    <ClInclude Include="Sources\TagDefineTimeline2.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4E240210-2D26-4D4C-9329-E912FDAC94CC}</ProjectGuid>
