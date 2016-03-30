@@ -37,4 +37,14 @@ for (__type::iterator i = __instance.begin(), e = __instance.end(); i != e; ++i)
 #define GAF_ENABLE_NEW_UNIFORM_SETTER COCOS2D_VERSION >= 0x00030200
 #endif
 
+// Disable this option and call GAFShaderManager::Initialize by you own
+// anywhere you want. These could be useful when you pass GAF loading into background thread
+// whereas GAFShaderManager::Initialize is allowed to be called only on OpenGL's thread
+
+#define GAF_ENABLE_SHADER_MANAGER_AUTOMATIC_INITIALIZATION 0
+
+#ifndef GAF_ENABLE_SHADER_MANAGER_AUTOMATIC_INITIALIZATION
+#define     GAF_ENABLE_SHADER_MANAGER_AUTOMATIC_INITIALIZATION 1
+#endif
+
 #define CHECK_CTX_IDENTITY 1

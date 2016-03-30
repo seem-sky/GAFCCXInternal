@@ -20,9 +20,9 @@ public:
 		PI_EVENT_DATA
 	};
 
-    void setAction(GAFActionType type, ActionParams_t params, const std::string& scope);
+    void setAction(GAFActionType type, const ActionParams_t& params, const std::string& scope);
     GAFActionType getType();
-	const std::string getParam(ParameterIndex idx);
+	const std::string& getParam(ParameterIndex idx);
 
 private:
     GAFActionType m_type;

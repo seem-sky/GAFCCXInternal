@@ -9,7 +9,7 @@ GAFTimelineAction::GAFTimelineAction()
 
 }
 
-void GAFTimelineAction::setAction(GAFActionType type, ActionParams_t params, const std::string& scope)
+void GAFTimelineAction::setAction(GAFActionType type, const ActionParams_t& params, const std::string& scope)
 {
     m_type = type;
     m_scope = scope;
@@ -40,7 +40,7 @@ GAFActionType GAFTimelineAction::getType()
     return m_type;
 }
 
-const std::string GAFTimelineAction::getParam(ParameterIndex idx)
+const std::string& GAFTimelineAction::getParam(ParameterIndex idx)
 {
 	if (m_params.size() <= idx)
 		return "";

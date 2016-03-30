@@ -62,3 +62,5 @@ Library/Sources/latex
 /tests/proj.android/libs
 /tests/proj.android/obj
 GAFPlayer.VC.db
+Library/x64/Debug/GAFPlayer.log
+Library/x64/

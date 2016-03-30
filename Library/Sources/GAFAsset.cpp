@@ -5,7 +5,6 @@
 #include "GAFTextData.h"
 #include "GAFObject.h"
 #include "GAFAssetTextureManager.h"
-#include "GAFShaderManager.h"
 #include "GAFTimelineAction.h"
 
 #include "GAFLoader.h"
@@ -177,7 +176,7 @@ bool GAFAsset::initWithGAFBundle(const std::string& zipFilePath, const std::stri
     if (isLoaded && m_state == State::Normal)
     {
         m_textureManager = new GAFAssetTextureManager();
-        GAFShaderManager::Initialize();
+        //GAFShaderManager::Initialize();
         loadTextures(entryFile, delegate, &bundle);
     }
 
@@ -205,10 +204,10 @@ bool GAFAsset::initWithGAFFile(const std::string& filePath, GAFTextureLoadDelega
     {
         return false;
     }
+
     if (isLoaded && m_state == State::Normal)
     {
         m_textureManager = new GAFAssetTextureManager();
-        GAFShaderManager::Initialize();
         loadTextures(fullfilePath, delegate);
     }
 
@@ -299,6 +298,7 @@ void GAFAsset::loadTextures(const std::string& filePath, GAFTextureLoadDelegate_
     }
 
     loadImages(m_desiredAtlasScale);
+
     if (getTextureAtlas())
     {
         m_textureManager->appendInfoFromTextureAtlas(getTextureAtlas());

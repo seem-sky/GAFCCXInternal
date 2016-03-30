@@ -12,6 +12,7 @@
 #include "GAFFilterData.h"
 #include "GAFTextField.h"
 
+#include "GAFShaderManager.h"
 #include <math/TransformUtils.h>
 
 #define ENABLE_RUNTIME_FILTERS 1
@@ -54,6 +55,10 @@ GAFObject::GAFObject()
     , m_customFilter(nullptr)
     , m_isManualColor(false)
 {
+#if GAF_ENABLE_SHADER_MANAGER_AUTOMATIC_INITIALIZATION
+    GAFShaderManager::Initialize();
+#endif
+
     m_charType = GAFCharacterType::Timeline;
     m_parentColorTransforms[0] = cocos2d::Vec4::ONE;
     m_parentColorTransforms[1] = cocos2d::Vec4::ZERO;
