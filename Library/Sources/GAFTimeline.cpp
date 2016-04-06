@@ -195,27 +195,27 @@ uint32_t GAFTimeline::getFramesCount() const
     return m_framesCount;
 }
 
-const cocos2d::Rect GAFTimeline::getRect() const
+const cocos2d::Rect& GAFTimeline::getRect() const
 {
     return m_aabb;
 }
 
-const cocos2d::Point GAFTimeline::getPivot() const
+const cocos2d::Point& GAFTimeline::getPivot() const
 {
     return m_pivot;
 }
 
-const std::string GAFTimeline::getLinkageName() const
+const std::string& GAFTimeline::getLinkageName() const
 {
     return m_linkageName;
 }
 
-const std::string GAFTimeline::getBaseClass() const
+const std::string& GAFTimeline::getBaseClass() const
 {
     return m_baseClass;
 }
 
-const std::string GAFTimeline::getOriginClass() const
+const std::string& GAFTimeline::getOriginClass() const
 {
     return m_originClass;
 }

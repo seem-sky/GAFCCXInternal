@@ -74,12 +74,12 @@ public:
     const TextureAtlases_t&     getTextureAtlases() const;
     uint32_t                    getFramesCount() const;
 
-    const cocos2d::Rect         getRect() const;
-    const cocos2d::Point        getPivot() const;
+    const cocos2d::Rect&        getRect() const;
+    const cocos2d::Point&       getPivot() const;
 
-    const std::string           getLinkageName() const;
-    const std::string           getBaseClass() const;
-    const std::string           getOriginClass() const;
+    const std::string&          getLinkageName() const;
+    const std::string&          getBaseClass() const;
+    const std::string&          getOriginClass() const;
 
     /// get GAFAnimationSequence by name specified in editor
     const GAFAnimationSequence* getSequence(const std::string& name) const;
