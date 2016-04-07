@@ -166,6 +166,9 @@ uint32_t GAFMovieClip::setUniforms()
         if (color.r < 1.f || color.g < 1.f || color.b < 1.f)
         {
             Node::setColor(Color3B(color));
+        }
+        if (color.a < 1.f)
+        {
             Node::setOpacity(static_cast<GLubyte>(color.a * 255.0f));
         }
     }
