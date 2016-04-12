@@ -67,6 +67,7 @@
     <ClCompile Include="Sources\TagDefineAtlas.cpp" />
     <ClCompile Include="Sources\TagDefineAtlas3.cpp" />
     <ClCompile Include="Sources\TagDefineAtlas4.cpp" />
+    <ClCompile Include="Sources\TagDefineExternalObjects.cpp" />
     <ClCompile Include="Sources\TagDefineNamedParts.cpp" />
     <ClCompile Include="Sources\TagDefineSequences.cpp" />
     <ClCompile Include="Sources\TagDefineSounds.cpp" />
@@ -117,6 +118,7 @@
     <ClInclude Include="Sources\TagDefineAtlas.h" />
     <ClInclude Include="Sources\TagDefineAtlas3.h" />
     <ClInclude Include="Sources\TagDefineAtlas4.h" />
+    <ClInclude Include="Sources\TagDefineExternalObjects.h" />
     <ClInclude Include="Sources\TagDefineNamedParts.h" />
     <ClInclude Include="Sources\TagDefines.h" />
     <ClInclude Include="Sources\TagDefineSequences.h" />

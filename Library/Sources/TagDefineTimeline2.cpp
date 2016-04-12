@@ -26,19 +26,12 @@ void TagDefineTimeline2::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timel
 
     //////////////////////////////////////////////////////////////////////////
 
-    char hasLinkage = in->readUByte();
-    if (hasLinkage)
-    {
-        std::string temp;
-        in->readString(&temp);
-        tl->setLinkageName(temp);
+    std::string temp;
+    in->readString(&temp);
+    tl->setLinkageName(temp);
 
-        in->readString(&temp);
-        tl->setBaseClass(temp);
-
-        in->readString(&temp);
-        tl->setOriginClass(temp);
-    }
+    in->readString(&temp);
+    tl->setBaseClass(temp);
 
     m_loader->loadTags(in, asset, tl);
 

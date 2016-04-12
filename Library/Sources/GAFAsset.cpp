@@ -69,6 +69,7 @@ GAFAsset::GAFAsset()
 , m_desiredAtlasScale(1.0f)
 , m_gafFileName("")
 , m_state(State::Normal)
+, m_libraryAsset(nullptr)
 {
 }
 
@@ -78,6 +79,7 @@ GAFAsset::~GAFAsset()
     GAF_RELEASE_MAP(SoundInfos_t, m_soundInfos);
     GAF_RELEASE_ARRAY(TextureAtlases_t, m_textureAtlases);
     //CC_SAFE_RELEASE(m_rootTimeline);
+    CC_SAFE_RELEASE(m_libraryAsset);
     if (m_state == State::Normal)
     {
         m_textureManager->release();
@@ -399,6 +401,18 @@ void GAFAsset::useExternalTextureAtlas(std::vector<cocos2d::Texture2D *> &textur
             i->second->getTextureAtlas()->swapElement(element.first, element.second);
         }
     }
+}
+
+void GAFAsset::linkLibraryAsset(GAFAsset * library)
+{
+    CC_SAFE_RELEASE(m_libraryAsset);
+    m_libraryAsset = library;
+    CC_SAFE_RETAIN(m_libraryAsset);
+}
+
+GAFAsset * GAFAsset::getLibraryAsset()
+{
+    return m_libraryAsset;
 }
 
 void GAFAsset::setRootTimeline(GAFTimeline *tl)

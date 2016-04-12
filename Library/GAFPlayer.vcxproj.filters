@@ -138,6 +138,9 @@
     <ClCompile Include="Sources\TagDefineTimeline2.cpp">
       <Filter>Sources\GAFLoader\Tags</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\TagDefineExternalObjects.cpp">
+      <Filter>Sources\GAFLoader\Tags</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\GAFAnimationFrame.h">
@@ -285,6 +288,9 @@
       <Filter>Sources\GAFLoader\Tags</Filter>
     </ClInclude>
     <ClInclude Include="Sources\TagDefineTimeline2.h">
+      <Filter>Sources\GAFLoader\Tags</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TagDefineExternalObjects.h">
       <Filter>Sources\GAFLoader\Tags</Filter>
     </ClInclude>
   </ItemGroup>

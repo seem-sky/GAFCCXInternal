@@ -19,6 +19,7 @@ private:
     AnimationSequences_t    m_animationSequences;
     NamedParts_t            m_namedParts;
     TextsData_t             m_textsData;
+    ExternalObjects_t       m_externalObjects;
 
     uint32_t                m_id;
     cocos2d::Rect           m_aabb;
@@ -55,6 +56,7 @@ public:
     void                        pushAnimationSequence(const std::string& nameId, int start, int end);
     void                        pushNamedPart(uint32_t objectIdRef, const std::string& name);
     void                        pushTextData(uint32_t objectIdRef, GAFTextData* textField);
+    void                        pushExternalObject(uint32_t objectIdRef, const std::string& name);
 
     void                        setSceneFps(unsigned int);
     void                        setSceneWidth(unsigned int);
@@ -72,6 +74,7 @@ public:
     const NamedParts_t&         getNamedParts() const;
     const TextsData_t&          getTextsData() const;
     const TextureAtlases_t&     getTextureAtlases() const;
+    const ExternalObjects_t&    getExternalObjects() const;
     uint32_t                    getFramesCount() const;
 
     const cocos2d::Rect&        getRect() const;

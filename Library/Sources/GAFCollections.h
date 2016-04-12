@@ -26,7 +26,8 @@ enum class GAFCharacterType : uint32_t
 {
     Texture = 0,
     TextField,
-    Timeline
+    Timeline,
+    External
 };
 
 enum class GAFObjectType : uint32_t
@@ -86,6 +87,7 @@ typedef std::unordered_map<uint32_t, int>                   CaptureObjects_t;   
 
 typedef std::unordered_map<std::string, GAFAnimationSequence>         AnimationSequences_t;
 typedef std::unordered_map<std::string, uint32_t>                     NamedParts_t;
+typedef std::unordered_map<uint32_t, std::string>                     ExternalObjects_t;
 
 typedef std::unordered_map<uint32_t, GAFSoundInfo*>         SoundInfos_t;
 

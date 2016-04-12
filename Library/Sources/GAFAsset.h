@@ -27,6 +27,7 @@ private:
     SoundInfos_t            m_soundInfos;
     TextureAtlases_t        m_textureAtlases; // custom regions
     GAFTextureAtlas*        m_currentTextureAtlas;
+    GAFAsset*               m_libraryAsset;
 
     void setRootTimeline(GAFTimeline* tl);
 
@@ -90,6 +91,8 @@ public:
     static void                 getResourceReferencesFromBundle(const std::string& zipfilePath, const std::string& entryFile, std::vector<GAFResourcesInfo*> &dest);
     
     void                        useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements);
+    void                        linkLibraryAsset(GAFAsset* library);
+    GAFAsset*                   getLibraryAsset();
 
     GAFTextureAtlas*            getTextureAtlas();
     void                        loadImages(float desiredAtlasScale);

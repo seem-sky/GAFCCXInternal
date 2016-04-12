@@ -67,6 +67,11 @@ void GAFTimeline::pushTextData(uint32_t objectIdRef, GAFTextData* textField)
     m_textsData[objectIdRef] = textField;
 }
 
+void GAFTimeline::pushExternalObject(uint32_t objectIdRef, const std::string& name)
+{
+    m_externalObjects[objectIdRef] = name;
+}
+
 void GAFTimeline::setSceneFps(unsigned int v)
 {
     m_sceneFps = v;
@@ -120,6 +125,11 @@ TextsData_t const& GAFTimeline::getTextsData() const
 const TextureAtlases_t& GAFTimeline::getTextureAtlases() const
 {
     return m_textureAtlases;
+}
+
+const ExternalObjects_t& GAFTimeline::getExternalObjects() const
+{
+    return m_externalObjects;
 }
 
 const GAFAnimationSequence* GAFTimeline::getSequence(const std::string& name) const

@@ -23,6 +23,7 @@
 #include "TagDefineTimeline2.h"
 #include "TagDefineTextField.h"
 #include "TagDefineSounds.h"
+#include "TagDefineExternalObjects.h"
 
 NS_GAF_BEGIN
 
@@ -74,6 +75,7 @@ void GAFLoader::_registerTagLoadersV4()
     m_tagLoaders[Tags::TagDefineTimeline] = new TagDefineTimeline(this);
     m_tagLoaders[Tags::TagDefineTimeline2] = new TagDefineTimeline2(this);
     m_tagLoaders[Tags::TagDefineSounds] = new TagDefineSounds();
+    m_tagLoaders[Tags::TagDefineExternalObjects] = new TagDefineExternalObjects();
 }
 
 void GAFLoader::_registerTagLoadersCommon()

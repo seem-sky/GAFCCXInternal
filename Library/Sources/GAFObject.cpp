@@ -141,7 +141,16 @@ void GAFObject::constructObject()
 GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uint32_t reference, bool isMask)
 {
     GAFObject* result = nullptr;
-    if (type == GAFCharacterType::Timeline)
+    if (type == GAFCharacterType::External)
+    {                                                                 
+        assert(m_asset->getLibraryAsset());
+        ExternalObjects_t::const_iterator externalTl = m_timeline->getExternalObjects().find(reference);
+        assert(externalTl != m_timeline->getExternalObjects().end());
+        m_asset->getLibraryAsset()->setRootTimeline(externalTl->second);
+        result = m_asset->getLibraryAsset()->createObject();
+        result->retain(); // TODO: release
+    }
+    else if (type == GAFCharacterType::Timeline)
     {
         result = encloseNewTimeline(reference);
     }
