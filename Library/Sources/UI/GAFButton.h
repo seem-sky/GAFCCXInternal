@@ -19,27 +19,31 @@ public:
         STATE_SELECTED = 4,
         STATE_SELECTED_OVER = 5,
         STATE_SELECTED_DOWN = 6,
-        STATE_SELECTED_DISABLED = 7
+        STATE_SELECTED_DISABLED = 7,
+        STATE_UNDEFINED
     };
 
 protected:
-    static const char STATE_NONE_STR[];
-    static const char STATE_OVER_STR[];
-    static const char STATE_DOWN_STR[];
-    static const char STATE_DISABLED_STR[];
-    static const char STATE_SELECTED_STR[];
-    static const char STATE_SELECTED_OVER_STR[];
-    static const char STATE_SELECTED_DOWN_STR[];
-    static const char STATE_SELECTED_DISABLED_STR[];
+    static const std::string STATE_NONE_STR;
+    static const std::string STATE_OVER_STR;
+    static const std::string STATE_DOWN_STR;
+    static const std::string STATE_DISABLED_STR;
+    static const std::string STATE_SELECTED_STR;
+    static const std::string STATE_SELECTED_OVER_STR;
+    static const std::string STATE_SELECTED_DOWN_STR;
+    static const std::string STATE_SELECTED_DISABLED_STR;
+    static const std::string STATE_UNDEFINED_STR;
 
-    static const char HIT_OBJECT_NAME[];
+    static const std::string HIT_OBJECT_NAME;
 
     bool m_selected;
     bool m_checkBoxMode;
 
     cocos2d::Rect m_hitZone;
 
-    std::map<State, uint32_t> m_frames;
+    State m_currentState;
+    State m_nextState;
+    bool m_inTransition;
 
     GAF_CREATE_COMPONENT_CTORS(GAFButton)
 
@@ -57,14 +61,13 @@ public:
     virtual void setEnabled(bool value) override;
 
 protected:
-    /**
-    * This function helps artists and removes necessity to make frame labels. <br>
-    * 1-3 frame IDs are the same as in SimpleButton, that allows you to convert <br>
-    * SimpleButtons to MovieClips in IDE without necessity to make frame labels.
-    */
-    void checkFrameLabels();
+    typedef std::tuple<bool, std::string, bool> TransitionInfo_t;
+
+    static const std::string& stateToString(State state);
+
     uint32_t getFrameByLabel(const std::string& name);
-    void changeFrame(State state);
+    TransitionInfo_t getTransitionInfo();
+    void changeState(State state);
 
     //call back function called widget's state changed to normal.
     virtual void onPressStateChangedToNormal() override;
@@ -74,6 +77,9 @@ protected:
     virtual void onPressStateChangedToDisabled() override;
 
     virtual bool hitTest(const cocos2d::Vec2 &pt, const cocos2d::Camera* camera, cocos2d::Vec3 *p) const override;
+
+private:
+    void setState();
 };
 
 NS_GAF_UI_END
