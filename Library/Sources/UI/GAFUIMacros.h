@@ -9,10 +9,9 @@ public: \
     static TypeName* create(gaf::GAFObject* view) \
     { \
         TypeName* ret = new (std::nothrow) TypeName(view); \
-        if (ret) \
+        if (ret && ret->init()) \
         { \
             ret->autorelease(); \
-            ret->init(); \
         } \
         else \
         { \
@@ -21,6 +20,6 @@ public: \
         return ret; \
     } \
 protected: \
-    TypeName(gaf::GAFObject* view); \
+    explicit TypeName(gaf::GAFObject* view); \
     TypeName(const TypeName &) = delete; \
     TypeName &operator=(const TypeName &) = delete;

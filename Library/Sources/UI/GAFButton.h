@@ -43,10 +43,10 @@ protected:
 
     GAF_CREATE_COMPONENT_CTORS(GAFButton)
 
+    virtual bool init() override;
+
 public:
     virtual ~GAFButton() override;
-
-    virtual void init() override;
 
     bool isSelected() const { return m_selected; }
     virtual void setSelected(bool value);
@@ -66,12 +66,14 @@ protected:
     uint32_t getFrameByLabel(const std::string& name);
     void changeFrame(State state);
 
-    virtual void pushDownEvent() override;
-    virtual void moveEvent() override;
-    virtual void releaseUpEvent() override;
-    virtual void cancelUpEvent() override;
+    //call back function called widget's state changed to normal.
+    virtual void onPressStateChangedToNormal() override;
+    //call back function called widget's state changed to selected.
+    virtual void onPressStateChangedToPressed() override;
+    //call back function called widget's state changed to dark.
+    virtual void onPressStateChangedToDisabled() override;
 
-    virtual bool hitTest(cocos2d::Touch *touch) const override;
+    virtual bool hitTest(const cocos2d::Vec2 &pt, const cocos2d::Camera* camera, cocos2d::Vec3 *p) const override;
 };
 
 NS_GAF_UI_END

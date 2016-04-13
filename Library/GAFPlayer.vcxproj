@@ -75,6 +75,8 @@
     <ClCompile Include="Sources\TagDefineTextField.cpp" />
     <ClCompile Include="Sources\TagDefineTimeline.cpp" />
     <ClCompile Include="Sources\TagDefineTimeline2.cpp" />
+    <ClCompile Include="Sources\UI\GAFButton.cpp" />
+    <ClCompile Include="Sources\UI\GAFComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\DefinitionTagBase.h" />
@@ -127,6 +129,9 @@
     <ClInclude Include="Sources\TagDefineTextField.h" />
     <ClInclude Include="Sources\TagDefineTimeline.h" />
     <ClInclude Include="Sources\TagDefineTimeline2.h" />
+    <ClInclude Include="Sources\UI\GAFButton.h" />
+    <ClInclude Include="Sources\UI\GAFComponent.h" />
+    <ClInclude Include="Sources\UI\GAFUIMacros.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4E240210-2D26-4D4C-9329-E912FDAC94CC}</ProjectGuid>

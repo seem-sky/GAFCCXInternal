@@ -29,20 +29,27 @@ GAFButton::~GAFButton()
 {
 }
 
-void GAFButton::init()
+bool GAFButton::init()
 {
-    setTouchEnabled(true);
-    checkFrameLabels();
-    changeFrame(State::STATE_NONE);
-    auto hitObject = m_view->getObjectByName(HIT_OBJECT_NAME);
-    if (hitObject)
+    bool result = GAFComponent::init();
+
+    if (result)
     {
-        m_hitZone = hitObject->getBoundingBox();
+        setTouchEnabled(true);
+        checkFrameLabels();
+        changeFrame(State::STATE_NONE);
+        auto hitObject = m_view->getObjectByName(HIT_OBJECT_NAME);
+        if (hitObject)
+        {
+            m_hitZone = hitObject->getBoundingBox();
+        }
+        else
+        {
+            m_hitZone = m_view->getInternalBoundingBoxForCurrentFrame();
+        }
     }
-    else
-    {
-        m_hitZone = m_view->getInternalBoundingBoxForCurrentFrame();
-    }
+
+    return result;
 }
 
 void GAFButton::checkFrameLabels()
@@ -96,11 +103,11 @@ void GAFButton::setSelected(bool value)
 
     if (m_selected)
     {
-        changeFrame(!m_enabled ? State::STATE_SELECTED_DISABLED : State::STATE_SELECTED);
+        changeFrame(!_touchEnabled ? State::STATE_SELECTED_DISABLED : State::STATE_SELECTED);
     }
     else
     {
-        changeFrame(!m_enabled ? State::STATE_DISABLED : State::STATE_NONE);
+        changeFrame(!_touchEnabled ? State::STATE_DISABLED : State::STATE_NONE);
     }
 }
 
@@ -108,7 +115,7 @@ void GAFButton::setEnabled(bool value)
 {
     GAFComponent::setEnabled(value);
 
-    if (!m_enabled)
+    if (!_touchEnabled)
     {
         changeFrame(m_selected ? State::STATE_SELECTED_DISABLED : State::STATE_DISABLED);
         setTouchEnabled(false);
@@ -125,36 +132,7 @@ void GAFButton::setCheckBoxMode(bool value)
     m_checkBoxMode = value;
 }
 
-void GAFButton::pushDownEvent()
-{
-    if (!m_selected)
-    {
-        changeFrame(State::STATE_DOWN);
-    }
-    else if (m_checkBoxMode)
-    {
-        changeFrame(State::STATE_SELECTED_DOWN);
-    }
-
-    GAFComponent::pushDownEvent();
-}
-
-void GAFButton::moveEvent()
-{
-    GAFComponent::moveEvent();
-}
-
-void GAFButton::releaseUpEvent()
-{
-    if (m_checkBoxMode)
-    {
-        setSelected(!m_selected);
-    }
-
-    GAFComponent::releaseUpEvent();
-}
-
-void GAFButton::cancelUpEvent()
+void GAFButton::onPressStateChangedToNormal()
 {
     if (!m_selected)
     {
@@ -164,13 +142,23 @@ void GAFButton::cancelUpEvent()
     {
         changeFrame(State::STATE_SELECTED);
     }
-
-    GAFComponent::cancelUpEvent();
 }
 
-bool GAFButton::hitTest(cocos2d::Touch *touch) const
+void GAFButton::onPressStateChangedToPressed()
 {
-    auto localTouchBeganPosition = m_view->convertTouchToNodeSpace(touch);
+    changeFrame(m_selected ? State::STATE_SELECTED_DOWN : State::STATE_DOWN);
+
+    if (m_checkBoxMode) m_selected = !m_selected;
+}
+
+void GAFButton::onPressStateChangedToDisabled()
+{
+    changeFrame(m_selected ? State::STATE_SELECTED_DISABLED : State::STATE_DISABLED);
+}
+
+bool GAFButton::hitTest(const cocos2d::Vec2 &pt, const cocos2d::Camera* camera, cocos2d::Vec3 *p) const
+{
+    auto localTouchBeganPosition = m_view->convertToNodeSpace(pt);
 
     return m_hitZone.containsPoint(localTouchBeganPosition);
 }
