@@ -148,7 +148,7 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         assert(externalTl != m_timeline->getExternalObjects().end());
         m_asset->getLibraryAsset()->setRootTimeline(externalTl->second);
         result = m_asset->getLibraryAsset()->createObject();
-        result->retain(); // TODO: release
+        result->retain(); // Will be released in m_displayList
     }
     else if (type == GAFCharacterType::Timeline)
     {
@@ -231,7 +231,7 @@ void GAFObject::instantiateObject(const AnimationObjects_t& objs, const Animatio
         uint32_t reference = std::get<0>(i->second);
         uint32_t objectId = i->first;
 
-        CCASSERT(m_displayList[objectId] == nullptr, "Obeject is already created. Memory will be leaked.");
+        CCASSERT(m_displayList[objectId] == nullptr, "Object is already created. Memory will be leaked.");
         m_displayList[objectId] = _instantiateObject(objectId, charType, reference, false);
     }
     for (AnimationMasks_t::const_iterator i = masks.begin(), e = masks.end(); i != e; ++i)
@@ -240,7 +240,7 @@ void GAFObject::instantiateObject(const AnimationObjects_t& objs, const Animatio
         uint32_t reference = std::get<0>(i->second);
         uint32_t objectId = i->first;
 
-        CCASSERT(m_displayList[objectId] == nullptr, "Obeject is already created. Memory will be leaked.");
+        CCASSERT(m_displayList[objectId] == nullptr, "Object is already created. Memory will be leaked.");
         GAFObject* stencil = _instantiateObject(objectId, charType, reference, true);
         m_displayList[objectId] = stencil;
         cocos2d::ClippingNode* mask = cocos2d::ClippingNode::create(stencil);
