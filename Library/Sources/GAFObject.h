@@ -44,6 +44,8 @@ private:
 
     bool                                    m_isInResetState;
 
+    std::string                             m_objectName;
+
 private:
     void constructObject();
     GAFObject* _instantiateObject(uint32_t id, GAFCharacterType type, uint32_t reference, bool isMask);
@@ -215,6 +217,8 @@ public:
     // @returns instance of GAFObject or null. Warning: the instance could be invalidated when the system catches EVENT_COME_TO_FOREGROUND event
     GAFObject* getObjectByName(const std::string& name);
     const GAFObject* getObjectByName(const std::string& name) const;
+
+    const std::string& getObjectName() const { return m_objectName; }
 
     uint32_t getFps() const;
 

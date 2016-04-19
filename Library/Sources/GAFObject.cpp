@@ -54,6 +54,7 @@ GAFObject::GAFObject()
     , m_isInResetState(false)
     , m_customFilter(nullptr)
     , m_isManualColor(false)
+    , m_objectName("")
 {
 #if GAF_ENABLE_SHADER_MANAGER_AUTOMATIC_INITIALIZATION
     GAFShaderManager::Initialize();
@@ -247,6 +248,17 @@ void GAFObject::instantiateObject(const AnimationObjects_t& objs, const Animatio
         mask->retain();
         mask->setAlphaThreshold(0.1);
         m_masks[objectId] = mask;
+    }
+
+    // Set names
+    const NamedParts_t& np = m_timeline->getNamedParts();
+    for (NamedParts_t::const_iterator i = np.begin(), e = np.end(); i != e; ++i)
+    {
+        uint32_t id = i->second;
+        if (m_displayList[id] != nullptr)
+        {
+            m_displayList[id]->m_objectName = i->first;
+        }
     }
 }
 
