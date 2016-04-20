@@ -73,6 +73,7 @@ protected:
     GAFFilterData*                          m_customFilter;
 
     bool                                    m_isManualColor;
+    bool                                    m_isManualPosition;
 
     void    setTimelineParentObject(GAFObject* obj) { m_timelineParentObject = obj; }
     
@@ -197,6 +198,9 @@ public:
 
     virtual void setColor(const cocos2d::Color3B& color) override;
     virtual void setOpacity(GLubyte opacity) override;
+
+    virtual void setPosition(const cocos2d::Vec2& position) override;
+    virtual void setPosition(float x, float y) override;
 
     template <typename FilterSubtype>
     void setCustomFilter(const FilterSubtype* filter)

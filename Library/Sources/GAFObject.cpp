@@ -54,6 +54,7 @@ GAFObject::GAFObject()
     , m_isInResetState(false)
     , m_customFilter(nullptr)
     , m_isManualColor(false)
+    , m_isManualPosition(false)
     , m_objectName("")
 {
 #if GAF_ENABLE_SHADER_MANAGER_AUTOMATIC_INITIALIZATION
@@ -816,6 +817,17 @@ void GAFObject::setOpacity(GLubyte opacity)
     Node::setOpacity(opacity);
 }
 
+void GAFObject::setPosition(const cocos2d::Vec2& position)
+{
+    setPosition(position.x, position.y);
+}
+
+void GAFObject::setPosition(float x, float y)
+{
+    m_isManualPosition = true;
+    Node::setPosition(x, y);
+}
+
 void GAFObject::rearrangeSubobject(cocos2d::Node* out, cocos2d::Node* child, int zIndex)
 {
     cocos2d::Node* parent = child->getParent();
@@ -866,6 +878,15 @@ void GAFObject::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
             if (!subObject->m_isInResetState)
             {
                 cocos2d::AffineTransform stateTransform = state->affineTransform;
+
+                if (subObject->m_isManualPosition)
+                {
+                    stateTransform.tx = subObject->getPosition().x - getTimeLine()->getPivot().x;
+                    stateTransform.ty = getContentSize().height
+                        - subObject->getPosition().y
+                        - getTimeLine()->getPivot().y;
+                }
+
                 float csf = m_timeline->usedAtlasScale();
                 stateTransform.tx *= csf;
                 stateTransform.ty *= csf;
