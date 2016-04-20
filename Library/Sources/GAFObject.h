@@ -192,6 +192,7 @@ public:
     GAFTimeline* getTimeLine() { return m_timeline; }
     DisplayList_t& getDisplayList() { return m_displayList; }
     const DisplayList_t& getDisplayList() const { return m_displayList; }
+    GAFAsset* getAsset() { return m_asset; }
 
     virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
     virtual cocos2d::AffineTransform getNodeToParentAffineTransform() const override;
