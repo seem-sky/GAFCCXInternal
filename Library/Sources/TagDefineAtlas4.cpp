@@ -85,7 +85,7 @@ void TagDefineAtlas4::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline
         element->rotation = static_cast<GAFRotation>(rotation);
         in->readString(&element->linkageName);
         in->readString(&element->baseClass);
-        in->readString(&element->originClass);
+        //in->readString(&element->originClass); TEMPORARY DISABLED
     }
 
     if (timeline)
