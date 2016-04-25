@@ -78,6 +78,7 @@
 		29F1CA631C91D22C0087FCFA /* TagDefineTimeline2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29F1CA5D1C91D2050087FCFA /* TagDefineTimeline2.cpp */; };
 		39869DB219532453004628D9 /* TagDefineAnimationFrames2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39869DAE19532453004628D9 /* TagDefineAnimationFrames2.cpp */; };
 		39869DB319532453004628D9 /* TagDefineTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39869DB019532453004628D9 /* TagDefineTimeline.cpp */; };
+		B60920631CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */; };
 		B63C5A741B4A83E2001C8112 /* TagDefineAtlas3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A701B4A83E2001C8112 /* TagDefineAtlas3.cpp */; };
 		B63C5A751B4A83E2001C8112 /* TagDefineAtlas3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A701B4A83E2001C8112 /* TagDefineAtlas3.cpp */; };
 		B63C5A761B4A83E2001C8112 /* TagDefineSounds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A721B4A83E2001C8112 /* TagDefineSounds.cpp */; };
@@ -194,6 +195,8 @@
 		39869DAF19532453004628D9 /* TagDefineAnimationFrames2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineAnimationFrames2.h; sourceTree = "<group>"; };
 		39869DB019532453004628D9 /* TagDefineTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineTimeline.cpp; sourceTree = "<group>"; };
 		39869DB119532453004628D9 /* TagDefineTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineTimeline.h; sourceTree = "<group>"; };
+		B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineExternalObjects.cpp; sourceTree = "<group>"; };
+		B60920621CCE7AC1000C25C9 /* TagDefineExternalObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineExternalObjects.h; sourceTree = "<group>"; };
 		B63C5A701B4A83E2001C8112 /* TagDefineAtlas3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineAtlas3.cpp; sourceTree = "<group>"; };
 		B63C5A711B4A83E2001C8112 /* TagDefineAtlas3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineAtlas3.h; sourceTree = "<group>"; };
 		B63C5A721B4A83E2001C8112 /* TagDefineSounds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineSounds.cpp; sourceTree = "<group>"; };
@@ -342,6 +345,8 @@
 		1A2FBF67192E00FB00631FE9 /* Tags */ = {
 			isa = PBXGroup;
 			children = (
+				B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */,
+				B60920621CCE7AC1000C25C9 /* TagDefineExternalObjects.h */,
 				29F1CA5C1C91D2050087FCFA /* TagDefineAtlas4.cpp */,
 				29F1CA5D1C91D2050087FCFA /* TagDefineTimeline2.cpp */,
 				29F1CA5E1C91D2050087FCFA /* TagDefineAtlas4.h */,
@@ -475,6 +480,7 @@
 				1A2FBF53192E00C800631FE9 /* GAFLoader.cpp in Sources */,
 				1A2FBF59192E00C800631FE9 /* GAFStream.cpp in Sources */,
 				1A2FBF4E192E00C800631FE9 /* GAFAnimationFrame.cpp in Sources */,
+				B60920631CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp in Sources */,
 				1A2FBF61192E00C800631FE9 /* TagDefineAnimationObjects.cpp in Sources */,
 				B63C5A741B4A83E2001C8112 /* TagDefineAtlas3.cpp in Sources */,
 				B63C5A7A1B4A83F1001C8112 /* GAFSoundInfo.cpp in Sources */,
