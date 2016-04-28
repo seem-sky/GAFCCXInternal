@@ -163,11 +163,14 @@ uint32_t GAFMovieClip::setUniforms()
     if (!ctx)
     {
         Color4F color(m_colorTransformMult.x, m_colorTransformMult.y, m_colorTransformMult.z, m_colorTransformMult.w);
-        if (color.r < 1.f || color.g < 1.f || color.b < 1.f)
+
+        // N.B. such kind of checks is good for performance,
+        // still it provide bugs when playback is not linear (gotoAndPlay random frame)
+        //if (color.r < 1.f || color.g < 1.f || color.b < 1.f)
         {
             Node::setColor(Color3B(color));
         }
-        if (color.a < 1.f)
+        //if (color.a < 1.f)
         {
             Node::setOpacity(static_cast<GLubyte>(color.a * 255.0f));
         }
