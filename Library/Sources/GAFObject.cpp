@@ -771,7 +771,12 @@ cocos2d::Rect GAFObject::getInternalBoundingBoxForCurrentFrame()
 
         if (state->isVisible())
         {
-            cocos2d::Rect bb = subObject->getBoundingBox();
+            cocos2d::Rect bb;
+            if (subObject->m_charType == GAFCharacterType::Timeline)
+                bb = subObject->getBoundingBoxForCurrentFrame();
+            else
+                bb = subObject->getBoundingBox();
+
             if (isFirstObj)
                 result = bb;
             else
