@@ -16,7 +16,7 @@ public:
 
     void initWithTextData(const GAFTextData *data);
 
-    void setText(std::string text);
+    void setText(const std::string& text);
 
     virtual cocos2d::Rect getBoundingBox() const override;
 };

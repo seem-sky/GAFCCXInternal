@@ -28,7 +28,7 @@ void GAFTextField::initWithTextData(GAFTextData const* data)
     addChild(m_label);
 }
 
-void GAFTextField::setText(std::string text)
+void GAFTextField::setText(const std::string& text)
 {
     m_label->setString(text);
 }
