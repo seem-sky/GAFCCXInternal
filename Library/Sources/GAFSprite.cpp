@@ -90,7 +90,7 @@ GAFSprite::GAFSprite()
     : objectIdRef(IDNONE)
     , m_externalTransform(AffineTransform::IDENTITY)
     , m_scale9Enabled(false)
-    , m_capInsets(CCRect::ZERO)
+    , m_capInsets(Rect::ZERO)
     , m_isLocator(false)
     , m_useSeparateBlendFunc(false)
     , m_blendEquation(-1)
@@ -141,7 +141,7 @@ bool GAFSprite::initWithSpriteFrame(cocos2d::SpriteFrame *spriteFrame, GAFRotati
 {
     m_capInsets = capInsets;
 
-    m_scale9Enabled = !m_capInsets.equals(CCRect::ZERO);
+    m_scale9Enabled = !m_capInsets.equals(Rect::ZERO);
 
     bool bRet = initWithSpriteFrame(spriteFrame, rotation);
 
@@ -178,7 +178,7 @@ bool GAFSprite::initWithTexture(cocos2d::Texture2D *pTexture, const cocos2d::Rec
 {
     m_capInsets = capInsets;
 
-    m_scale9Enabled = !m_capInsets.equals(CCRect::ZERO);
+    m_scale9Enabled = !m_capInsets.equals(Rect::ZERO);
 
     bool bRet = initWithTexture(pTexture, rect, rotated);
 

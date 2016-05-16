@@ -42,9 +42,7 @@ GAFActionType GAFTimelineAction::getType()
 
 const std::string& GAFTimelineAction::getParam(ParameterIndex idx)
 {
-	if (m_params.size() <= idx)
-		return "";
-
+    CC_ASSERT(idx < m_params.size());
     return m_params[idx];
 }
 

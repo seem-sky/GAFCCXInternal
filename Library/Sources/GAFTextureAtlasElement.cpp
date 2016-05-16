@@ -8,7 +8,7 @@ GAFTextureAtlasElement::GAFTextureAtlasElement()
 , baseClass("")
 , originClass("")
 , rotation(GAFRotation::NONE)
-, scale9GridRect(cocos2d::CCRect::ZERO)
+, scale9GridRect(cocos2d::Rect::ZERO)
 {
     setScale(1.0f);
 }
