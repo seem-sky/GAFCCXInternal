@@ -877,9 +877,19 @@ void GAFObject::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
 
         if (!state->isVisible())
             continue;
-
+        
         if (subObject->m_charType == GAFCharacterType::Timeline)
         {
+            const GAFTimeline::CustomProperties_t& timelineProperties = subObject->m_timeline->getCustomProperties();
+            for (uint32_t propIdx = 0; propIdx < timelineProperties.size(); ++propIdx)
+            {
+                std::string currentProperty = timelineProperties[propIdx].name;
+                uint32_t valueIdx = state->getCustomPropertiesValueIdxs()[propIdx];
+                std::string currentValue = timelineProperties[propIdx].possibleValues[valueIdx];
+                
+                //CCLOG(currentProperty + ": " + currentValue);
+            }
+            
             if (!subObject->m_isInResetState)
             {
                 cocos2d::AffineTransform stateTransform = state->affineTransform;
