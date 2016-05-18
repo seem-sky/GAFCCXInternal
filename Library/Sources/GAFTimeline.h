@@ -98,8 +98,25 @@ public:
 
     float                       usedAtlasScale() const;
 
+    
+    // Custom flash properties;
+public:
+    struct CustomProperty
+    {
+        std::string name;
+        std::vector<std::string> possibleValues;
+    };
+    
+    typedef std::vector<CustomProperty> CustomProperties_t;
+    
+    void pushCustomProperty(CustomProperty* property);
+    const CustomProperties_t& getCustomProperties() const;
+    
+private:
+    CustomProperties_t m_customProperties;
+    
 
-    // Custom fiels functionality
+    // Custom fields functionality
 public:
     void appendUserData(const std::string& K, GAFAnyInterface* V) { m_userData[K] = V; }
 

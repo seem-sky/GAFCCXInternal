@@ -20,6 +20,8 @@ private:
     float           _colorOffsets[4];
 
     unsigned long   m_refCount;
+    
+    std::vector<uint32_t> m_customPropertiesValueIdxs;
 
 public:
 
@@ -56,6 +58,11 @@ public:
     inline bool isVisible() const
     {
         return (_colorMults[GAFCTI_A] > std::numeric_limits<float>::epsilon()) || (_colorOffsets[GAFCTI_A] > std::numeric_limits<float>::epsilon());
+    }
+    
+    std::vector<uint32_t>& getCustomPropertiesValueIdxs()
+    {
+        return m_customPropertiesValueIdxs;
     }
 
     void                ctxMakeIdentity();
