@@ -3,6 +3,8 @@
 #include <audio/include/SimpleAudioEngine.h>
 #include "audio/include/AudioEngine.h"
 
+#include "GAFShaderManager.h"
+
 #include <iostream>
 
 #if defined(__APPLE__) && defined(SEARCH_ALL_GAF_FILES)
@@ -273,6 +275,8 @@ bool GafFeatures::init()
 {
     setupMenuItems();
     gray(nullptr);
+    
+    GAFShaderManager::Initialize();
     
     generateGafFilesList();
     
