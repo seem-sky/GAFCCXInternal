@@ -74,7 +74,7 @@ void TagDefineTimeline2::parseCustomProperties(GAFTimeline* tl, const std::strin
         assert(firstMemberValue.IsArray());
         for (rapidjson::SizeType j = 0; j < firstMemberValue.Size(); ++j)
         {
-            if (firstMemberValue[i].IsString())
+            if (firstMemberValue[j].IsString())
             {
                 std::string value = firstMemberValue[j].GetString();
                 custom_prop.possibleValues.push_back(value);
