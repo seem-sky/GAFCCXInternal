@@ -7,6 +7,8 @@
 #include "GAFTimeline.h"
 
 #include "json/document.h"
+#include "json/stringbuffer.h"
+#include "json/prettywriter.h"
 
 NS_GAF_BEGIN
 
@@ -72,8 +74,18 @@ void TagDefineTimeline2::parseCustomProperties(GAFTimeline* tl, const std::strin
         assert(firstMemberValue.IsArray());
         for (rapidjson::SizeType j = 0; j < firstMemberValue.Size(); ++j)
         {
-            std::string value = firstMemberValue[j].GetString();
-            custom_prop.possibleValues.push_back(value);
+            if (firstMemberValue[i].IsString())
+            {
+                std::string value = firstMemberValue[j].GetString();
+                custom_prop.possibleValues.push_back(value);
+            }
+            else
+            {
+                rapidjson::StringBuffer valueBuffer;
+                rapidjson::PrettyWriter<rapidjson::StringBuffer> wr(valueBuffer);
+                firstMemberValue[j].Accept(wr);
+                custom_prop.possibleValues.push_back(valueBuffer.GetString());
+            }
         }
         
         tl->pushCustomProperty(&custom_prop);
