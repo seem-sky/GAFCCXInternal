@@ -7,6 +7,15 @@
 
 NS_GAF_BEGIN
 GAFBoxLayoutView::GAFBoxLayoutView()
+    : m_direction(Direction::horizontal)
+    , m_gap(0.f)
+    , m_marginTop(0.f)
+    , m_marginRight(0.f)
+    , m_marginBottom(0.f)
+    , m_marginLeft(0.f)
+    , m_horizontalAlign(HorizontalAlign::center)
+    , m_verticalAlign(VerticalAlign::center)
+    , m_usePercents(false)
 {
 }
 

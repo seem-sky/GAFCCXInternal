@@ -28,7 +28,7 @@ const cocos2d::AffineTransform GAFObject::AffineTransformFlashToCocos(const coco
     cocos2d::AffineTransform transform = aTransform;
     transform.b = -transform.b;
     transform.c = -transform.c;
-    float flipMul = isFlippedY() ? -2 : 2;
+    float flipMul = isFlippedY() ? -2.f : 2.f;
     transform.ty = getAnchorPointInPoints().y * flipMul - transform.ty;
     return transform;
 }
@@ -182,7 +182,6 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
     {
         GAFTextureAtlas* atlas = m_timeline->getTextureAtlas();
         const GAFTextureAtlas::Elements_t& elementsMap = atlas->getElements();
-        cocos2d::SpriteFrame * spriteFrame = nullptr;
         GAFTextureAtlas::Elements_t::const_iterator elIt = elementsMap.find(reference); // Search for atlas element by its xref
         GAFTextureAtlasElement* txElemet = nullptr;
         if (elIt != elementsMap.end())
@@ -239,7 +238,7 @@ void GAFObject::instantiateObject(const AnimationObjects_t& objs, const Animatio
         m_displayList[objectId] = stencil;
         cocos2d::ClippingNode* mask = cocos2d::ClippingNode::create(stencil);
         mask->retain();
-        mask->setAlphaThreshold(0.1);
+        mask->setAlphaThreshold(0.1f);
         m_masks[objectId] = mask;
     }
 
@@ -851,6 +850,9 @@ void GAFObject::rearrangeSubobject(cocos2d::Node* out, cocos2d::Node* child, int
 
 void GAFObject::preProcessGAFObject(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
 {
+    (void)out;
+    (void)mtx;
+
     if (state->colorMults()[GAFColorTransformIndex::GAFCTI_A] >= 0.f && child->m_isInResetState)
     {
         child->m_currentFrame = child->m_currentSequenceStart;
@@ -1023,7 +1025,10 @@ void GAFObject::processGAFTextField(cocos2d::Node* out, GAFObject* child, const 
 
 void GAFObject::postProcessGAFObject(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
 {
-
+    (void)out;
+    (void)child;
+    (void)state;
+    (void)mtx;
 }
 
 cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
@@ -1071,13 +1076,15 @@ cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject*
 
 cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
 {
+    (void)state;
+
     affineTransformSetFrom(mtx, AffineTransformFlashToCocos(mtx));
 
     if (isFlippedX() || isFlippedY())
     {
-        float flipMulX = isFlippedX() ? -1 : 1;
+        float flipMulX = isFlippedX() ? -1.f : 1.f;
         float flipOffsetX = isFlippedX() ? getContentSize().width - m_asset->getHeader().frameSize.getMinX() : 0;
-        float flipMulY = isFlippedY() ? -1 : 1;
+        float flipMulY = isFlippedY() ? -1.f : 1.f;
         float flipOffsetY = isFlippedY() ? -getContentSize().height + m_asset->getHeader().frameSize.getMinY() : 0;
 
         cocos2d::AffineTransform flipCenterTransform = cocos2d::AffineTransformMake(flipMulX, 0, 0, flipMulY, flipOffsetX, flipOffsetY);
@@ -1096,13 +1103,16 @@ cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* ch
 
 cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
 {
+    (void)child;
+    (void)state;
+
     affineTransformSetFrom(mtx, AffineTransformFlashToCocos(mtx));
 
     if (isFlippedX() || isFlippedY())
     {
-        float flipMulX = isFlippedX() ? -1 : 1;
+        float flipMulX = isFlippedX() ? -1.f : 1.f;
         float flipOffsetX = isFlippedX() ? getContentSize().width - m_asset->getHeader().frameSize.getMinX() : 0;
-        float flipMulY = isFlippedY() ? -1 : 1;
+        float flipMulY = isFlippedY() ? -1.f : 1.f;
         float flipOffsetY = isFlippedY() ? -getContentSize().height + m_asset->getHeader().frameSize.getMinY() : 0;
 
         cocos2d::AffineTransform flipCenterTransform = cocos2d::AffineTransformMake(flipMulX, 0, 0, flipMulY, flipOffsetX, flipOffsetY);
@@ -1114,6 +1124,10 @@ cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject
 
 cocos2d::AffineTransform& GAFObject::changeTransformAccordingToCustomProperties(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
 {
+    (void)child;
+    (void)state;
+    (void)customProperties;
+
     return mtx;
 }
 
@@ -1124,10 +1138,13 @@ cocos2d::AffineTransform& GAFObject::addAdditionalTransformations(cocos2d::Affin
 
 void GAFObject::processOwnCustomProperties(const CustomPropertiesMap_t & customProperties)
 {
+    (void)customProperties;
 }
 
 bool GAFObject::allNecessaryFieldsExist(const CustomPropertiesMap_t & customProperties) const
 {
+    (void)customProperties;
+
     return false;
 }
 
@@ -1269,11 +1286,11 @@ GAFObject* GAFObject::getObjectByName(const std::string& name)
 
             while (begIt != elems.end())
             {
-                const NamedParts_t& np = retval->m_timeline->getNamedParts();
-                NamedParts_t::const_iterator it = np.find(*begIt);
-                if (it != np.end())
+                const NamedParts_t& np2 = retval->m_timeline->getNamedParts();
+                NamedParts_t::const_iterator it2 = np2.find(*begIt);
+                if (it2 != np2.end())
                 {
-                    retval = retval->m_displayList[it->second];
+                    retval = retval->m_displayList[it2->second];
                 }
                 else
                 {

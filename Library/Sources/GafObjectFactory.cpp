@@ -47,6 +47,9 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTextureAtla
 
 GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTextData* txtData, bool isMask)
 {
+    (void)asset;
+    (void)isMask;
+
     GAFTextField* result = new GAFTextField();
     result->initWithTextData(txtData);
     result->objectIdRef = id;
@@ -56,6 +59,8 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTextData* t
 
 GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTimeline* timeline, bool isMask)
 {
+    (void)isMask;
+
     GAFObject* result = nullptr;
     std::string linkageName = timeline->getLinkageName();
     std::string baseClass = timeline->getBaseClass();

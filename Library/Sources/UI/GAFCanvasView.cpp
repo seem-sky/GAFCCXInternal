@@ -27,6 +27,8 @@ GAFCanvasView * GAFCanvasView::create(GAFAsset * anAsset, GAFTimeline * timeline
 
 cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomProperties(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
 {
+    (void)state;
+
     auto unscaledInternalBounds = m_timeline->getRect();
     auto actualInternalBounds = getInternalBoundingBox();
     auto childActualBounds = RectApplyAffineTransform(child->getInternalBoundingBox(), mtx);
