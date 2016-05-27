@@ -39,6 +39,7 @@
     <ClCompile Include="Sources\GAFMask.cpp" />
     <ClCompile Include="Sources\GAFMovieClip.cpp" />
     <ClCompile Include="Sources\GAFObject.cpp" />
+    <ClCompile Include="Sources\GafObjectFactory.cpp" />
     <ClCompile Include="Sources\GAFPrecompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -75,6 +76,12 @@
     <ClCompile Include="Sources\TagDefineTextField.cpp" />
     <ClCompile Include="Sources\TagDefineTimeline.cpp" />
     <ClCompile Include="Sources\TagDefineTimeline2.cpp" />
+    <ClCompile Include="Sources\UI\GAFBoxLayoutView.cpp" />
+    <ClCompile Include="Sources\UI\GAFButton.cpp" />
+    <ClCompile Include="Sources\UI\GAFCanvasView.cpp" />
+    <ClCompile Include="Sources\UI\GAFComponent.cpp" />
+    <ClCompile Include="Sources\UI\GAFComponentView.cpp" />
+    <ClCompile Include="Sources\UI\GAFLayoutView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\DefinitionTagBase.h" />
@@ -94,6 +101,7 @@
     <ClInclude Include="Sources\GAFMacros.h" />
     <ClInclude Include="Sources\GAFMask.h" />
     <ClInclude Include="Sources\GAFObject.h" />
+    <ClInclude Include="Sources\GAFObjectFactory.h" />
     <ClInclude Include="Sources\GAFPrecompiled.h" />
     <ClInclude Include="Sources\GAFQuadCommand.h" />
     <ClInclude Include="Sources\GAFResourcesInfo.h" />
@@ -109,6 +117,7 @@
     <ClInclude Include="Sources\GAFTimeline.h" />
     <ClInclude Include="Sources\GAFMovieClip.h" />
     <ClInclude Include="Sources\GAFTimelineAction.h" />
+    <ClInclude Include="Sources\GAFUtils.h" />
     <ClInclude Include="Sources\PrimitiveDeserializer.h" />
     <ClInclude Include="Sources\ShadersPrecompiled\GAFPrecompiledShaders.h" />
     <ClInclude Include="Sources\TagDefineAnimationFrames.h" />
@@ -127,6 +136,12 @@
     <ClInclude Include="Sources\TagDefineTextField.h" />
     <ClInclude Include="Sources\TagDefineTimeline.h" />
     <ClInclude Include="Sources\TagDefineTimeline2.h" />
+    <ClInclude Include="Sources\UI\GAFBoxLayoutView.h" />
+    <ClInclude Include="Sources\UI\GAFButton.h" />
+    <ClInclude Include="Sources\UI\GAFCanvasView.h" />
+    <ClInclude Include="Sources\UI\GAFComponent.h" />
+    <ClInclude Include="Sources\UI\GAFComponentView.h" />
+    <ClInclude Include="Sources\UI\GAFLayoutView.h" />
     <ClInclude Include="Sources\UI\GAFUIMacros.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -207,7 +222,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINDOWS;NOMINMAX;_CRT_SECURE_NO_WARNINGS;COCOS2D_DEBUG=2;CC_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINDOWS;NOMINMAX;_CRT_SECURE_NO_WARNINGS;COCOS2D_DEBUG=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>GAFPrecompiled.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
