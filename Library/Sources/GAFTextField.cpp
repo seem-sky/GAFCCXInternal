@@ -39,4 +39,9 @@ cocos2d::Rect GAFTextField::getBoundingBox() const
     return RectApplyAffineTransform(rect, getNodeToParentAffineTransform());
 }
 
+void GAFTextField::setExternalTransform(const cocos2d::AffineTransform & transform)
+{
+    GAFSprite::setExternalTransform(transform);
+}
+
 NS_GAF_END
