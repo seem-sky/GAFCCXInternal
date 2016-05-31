@@ -108,6 +108,7 @@ public:
     GAFBoxLayoutView();
 
     static GAFBoxLayoutView* create(GAFAsset* anAsset, GAFTimeline* timeline);
+    virtual bool init(GAFAsset* anAnimationData, GAFTimeline* timeline) override;
 
 protected:
     Direction m_direction;
@@ -124,6 +125,8 @@ protected:
 
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
     virtual void processStates(cocos2d::Node* out, uint32_t frameIndex, const GAFAnimationFrame* frame) override;
+
+    virtual cocos2d::Point& layoutChild(const GAFObject* subObject, cocos2d::AffineTransform& stateMatrix, cocos2d::Point& currentTopLeft, const cocos2d::Rect& actualInternalBounds) const;
 };
 
 NS_GAF_END

@@ -81,8 +81,6 @@ private:
     GAFAnimationFinishedPlayDelegate_t      m_animationFinishedPlayDelegate;
     GAFAnimationStartedNextLoopDelegate_t   m_animationStartedNextLoopDelegate;
     GAFFramePlayedDelegate_t                m_framePlayedDelegate;
-    
-    cocos2d::Node*                          m_container;
 
     uint32_t                                m_totalFrameCount;
     uint32_t                                m_currentSequenceStart;
@@ -111,6 +109,7 @@ private:
     void enableTick(bool val);
 
 protected:
+    cocos2d::Node*                          m_container;
     GAFObject*                              m_timelineParentObject;
     GAFAsset*                               m_asset;
     GAFTimeline*                            m_timeline;
@@ -146,14 +145,16 @@ protected:
     virtual void processGAFTextField(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx);
     virtual void postProcessGAFObject(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx);
 
-    virtual cocos2d::AffineTransform& processGAFTimelineStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx);
-    virtual cocos2d::AffineTransform& processGAFImageStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx);
-    virtual cocos2d::AffineTransform& processGAFTextFieldStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx);
+    virtual cocos2d::AffineTransform& processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties);
+    virtual cocos2d::AffineTransform& processGAFImageStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx);
+    virtual cocos2d::AffineTransform& processGAFTextFieldStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx);
 
-    virtual cocos2d::AffineTransform& changeTransformAccordingToCustomProperties(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const;
+    virtual cocos2d::AffineTransform& changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const;
     virtual cocos2d::AffineTransform& addAdditionalTransformations(cocos2d::AffineTransform& mtx) const;
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties);
     virtual bool allNecessaryFieldsExist(const CustomPropertiesMap_t& customProperties) const;
+
+    virtual CustomPropertiesMap_t& fillCustomPropertiesMap(CustomPropertiesMap_t& map, const GAFTimeline* timeline, const GAFSubobjectState* state);
 
     virtual GAFObject* encloseNewTimeline(uint32_t reference);
 
@@ -247,7 +248,9 @@ public:
     void        clearSequence();
 
     void        setAnimationRunning(bool value, bool recurcive);
+
 public:
+    typedef std::map<const std::string, const std::string> CustomPropertiesMap_t;
 
     virtual ~GAFObject();
 
@@ -281,6 +284,8 @@ public:
 
     virtual void setPosition(const cocos2d::Vec2& position) override;
     virtual void setPosition(float x, float y) override;
+
+    virtual void setExternalTransform(const cocos2d::AffineTransform& transform) override;
 
     template <typename FilterSubtype>
     void setCustomFilter(const FilterSubtype* filter)

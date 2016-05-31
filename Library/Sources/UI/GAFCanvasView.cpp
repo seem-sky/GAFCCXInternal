@@ -25,10 +25,8 @@ GAFCanvasView * GAFCanvasView::create(GAFAsset * anAsset, GAFTimeline * timeline
     return nullptr;
 }
 
-cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomProperties(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
+cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
 {
-    (void)state;
-
     auto unscaledInternalBounds = m_timeline->getRect();
     auto actualInternalBounds = getInternalBoundingBox();
     auto childActualBounds = RectApplyAffineTransform(child->getInternalBoundingBox(), mtx);
@@ -102,23 +100,23 @@ cocos2d::AffineTransform& GAFCanvasView::addAdditionalTransformations(cocos2d::A
     return mtx;
 }
 
-cocos2d::AffineTransform & GAFCanvasView::processGAFTimelineStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+cocos2d::AffineTransform & GAFCanvasView::processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties)
 {
-    GAFObject::processGAFTimelineStateTransform(child, state, mtx);
+    GAFObject::processGAFTimelineStateTransform(child, mtx, customProperties);
     return mtx;
 }
 
-cocos2d::AffineTransform& GAFCanvasView::processGAFImageStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+cocos2d::AffineTransform& GAFCanvasView::processGAFImageStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx)
 {
-    GAFObject::processGAFImageStateTransform(child, state, mtx);
+    GAFObject::processGAFImageStateTransform(child, mtx);
     addAdditionalTransformations(mtx);
 
     return mtx;
 }
 
-cocos2d::AffineTransform& GAFCanvasView::processGAFTextFieldStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+cocos2d::AffineTransform& GAFCanvasView::processGAFTextFieldStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx)
 {
-    GAFObject::processGAFImageStateTransform(child, state, mtx);
+    GAFObject::processGAFImageStateTransform(child, mtx);
     addAdditionalTransformations(mtx);
 
     return mtx;

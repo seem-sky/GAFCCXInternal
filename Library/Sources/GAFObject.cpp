@@ -832,6 +832,11 @@ void GAFObject::setPosition(float x, float y)
     Node::setPosition(x, y);
 }
 
+void GAFObject::setExternalTransform(const cocos2d::AffineTransform & transform)
+{
+    setAdditionalTransform(transform);
+}
+
 void GAFObject::rearrangeSubobject(cocos2d::Node* out, cocos2d::Node* child, int zIndex)
 {
     cocos2d::Node* parent = child->getParent();
@@ -864,8 +869,11 @@ void GAFObject::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const G
 {
     if (!child->m_isInResetState)
     {
-        processGAFTimelineStateTransform(child, state, mtx);
-        child->setAdditionalTransform(mtx);
+        CustomPropertiesMap_t props;
+        fillCustomPropertiesMap(props, child->getTimeLine(), state);
+
+        processGAFTimelineStateTransform(child, mtx, props);
+        child->setExternalTransform(mtx);
 
         child->m_parentFilters.clear();
         if (m_customFilter)
@@ -991,7 +999,7 @@ void GAFObject::processGAFImage(cocos2d::Node* out, GAFObject* child, const GAFS
         }
     }
 
-    processGAFImageStateTransform(child, state, mtx);
+    processGAFImageStateTransform(child, mtx);
     child->setExternalTransform(mtx);
 
     if (child->m_objectType == GAFObjectType::MovieClip)
@@ -1019,7 +1027,7 @@ void GAFObject::processGAFTextField(cocos2d::Node* out, GAFObject* child, const 
     //GAFTextField *tf = static_cast<GAFTextField*>(subObject);
     rearrangeSubobject(out, child, state->zIndex);
 
-    processGAFTextFieldStateTransform(child, state, mtx);
+    processGAFTextFieldStateTransform(child, mtx);
     child->setExternalTransform(mtx);
 }
 
@@ -1031,7 +1039,7 @@ void GAFObject::postProcessGAFObject(cocos2d::Node* out, GAFObject* child, const
     (void)mtx;
 }
 
-cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties)
 {
     if (child->m_isManualPosition)
     {
@@ -1042,23 +1050,10 @@ cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject*
     }
     else
     {
-        const GAFTimeline::CustomProperties_t& timelineProperties = child->getTimeLine()->getCustomProperties();
+        child->processOwnCustomProperties(customProperties);
 
-        std::map<const std::string, const std::string> props;
-        for (uint32_t propIdx = 0; propIdx < timelineProperties.size(); ++propIdx)
-        {
-            std::string currentProperty = timelineProperties[propIdx].name;
-            uint32_t valueIdx = state->getCustomPropertiesValueIdxs()[propIdx];
-            std::string currentValue = timelineProperties[propIdx].possibleValues[valueIdx];
-
-            props.emplace(std::make_pair(currentProperty, currentValue));
-            //CCLOG(currentProperty + ": " + currentValue);
-        }
-
-        child->processOwnCustomProperties(props);
-
-        if (allNecessaryFieldsExist(props))
-            changeTransformAccordingToCustomProperties(child, state, mtx, props);
+        if (allNecessaryFieldsExist(customProperties))
+            changeTransformAccordingToCustomProperties(child, mtx, customProperties);
         else
             addAdditionalTransformations(mtx);
     }
@@ -1074,10 +1069,8 @@ cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject*
     return mtx;
 }
 
-cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx)
 {
-    (void)state;
-
     affineTransformSetFrom(mtx, AffineTransformFlashToCocos(mtx));
 
     if (isFlippedX() || isFlippedY())
@@ -1101,10 +1094,9 @@ cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* ch
     return mtx;
 }
 
-cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx)
 {
     (void)child;
-    (void)state;
 
     affineTransformSetFrom(mtx, AffineTransformFlashToCocos(mtx));
 
@@ -1122,10 +1114,9 @@ cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject
     return mtx;
 }
 
-cocos2d::AffineTransform& GAFObject::changeTransformAccordingToCustomProperties(GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
+cocos2d::AffineTransform& GAFObject::changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
 {
     (void)child;
-    (void)state;
     (void)customProperties;
 
     return mtx;
@@ -1146,6 +1137,23 @@ bool GAFObject::allNecessaryFieldsExist(const CustomPropertiesMap_t & customProp
     (void)customProperties;
 
     return false;
+}
+
+GAFObject::CustomPropertiesMap_t& GAFObject::fillCustomPropertiesMap(CustomPropertiesMap_t & map, const GAFTimeline * timeline, const GAFSubobjectState * state)
+{
+    const GAFTimeline::CustomProperties_t& timelineProperties = timeline->getCustomProperties();
+
+    for (uint32_t propIdx = 0; propIdx < timelineProperties.size(); ++propIdx)
+    {
+        std::string currentProperty = timelineProperties[propIdx].name;
+        uint32_t valueIdx = state->getCustomPropertiesValueIdxs()[propIdx];
+        std::string currentValue = timelineProperties[propIdx].possibleValues[valueIdx];
+
+        map.emplace(std::make_pair(currentProperty, currentValue));
+        //CCLOG(currentProperty + ": " + currentValue);
+    }
+
+    return map;
 }
 
 void GAFObject::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
