@@ -8,6 +8,7 @@
 #include "GAFTextField.h"
 #include "UI/GAFCanvasView.h"
 #include "UI/GAFBoxLayoutView.h"
+#include "UI/GAFScrollView.h"
 
 NS_GAF_BEGIN
 
@@ -67,22 +68,25 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTimeline* t
 
     if (baseClass == GAFObjectClass::toString(GAFObjectClass::UI_BOX_LAYOUT))
     {
-        result = new GAFBoxLayoutView();
+        result = GAFBoxLayoutView::create(asset, timeline);
     }
     else if (baseClass == GAFObjectClass::toString(GAFObjectClass::UI_CANVAS))
     {
-        result = new GAFCanvasView();
+        result = GAFCanvasView::create(asset, timeline);
     }
     else if (baseClass == GAFObjectClass::toString(GAFObjectClass::UI_BUTTON))
     {
-        result = new GAFObject();
+        result = GAFObject::create(asset, timeline);
+    }
+    else if (baseClass == GAFObjectClass::toString(GAFObjectClass::UI_SCROLL_VIEW))
+    {
+        result = GAFScrollView::create(asset, timeline);
     }
     else
     {
-        result = new GAFObject();
+        result = GAFObject::create(asset, timeline);
     }
     
-    result->init(asset, timeline);
     result->objectIdRef = id;
 
     return result;

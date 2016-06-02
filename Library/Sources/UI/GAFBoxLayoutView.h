@@ -2,7 +2,6 @@
 #include "GAFLayoutView.h"
 
 NS_GAF_BEGIN
-
 class GAFBoxLayoutView : public GAFLayoutView
 {
     enum class Direction : uint8_t
@@ -89,6 +88,7 @@ class GAFBoxLayoutView : public GAFLayoutView
             return "unknown";
         }
     }
+
     static std::string toString(VerticalAlign align)
     {
         switch (align)
@@ -109,6 +109,12 @@ public:
 
     static GAFBoxLayoutView* create(GAFAsset* anAsset, GAFTimeline* timeline);
     virtual bool init(GAFAsset* anAnimationData, GAFTimeline* timeline) override;
+    virtual cocos2d::Rect getInternalBoundingBox() const override;
+
+    virtual void addChild(Node* child, int localZOrder, int tag) override;
+    virtual void addChild(Node* child, int localZOrder, const std::string &name) override;
+    virtual void removeChild(Node* child, bool cleanup = true) override;
+    virtual void removeAllChildrenWithCleanup(bool cleanup) override;
 
 protected:
     Direction m_direction;
@@ -123,10 +129,15 @@ protected:
 
     bool m_usePercents;
 
+    mutable cocos2d::Rect m_dynamicContentBounds;
+    mutable bool m_dynamicContentBoundsDirty;
+
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
     virtual void processStates(cocos2d::Node* out, uint32_t frameIndex, const GAFAnimationFrame* frame) override;
 
     virtual cocos2d::Point& layoutChild(const GAFObject* subObject, cocos2d::AffineTransform& stateMatrix, cocos2d::Point& currentTopLeft, const cocos2d::Rect& actualInternalBounds) const;
+
+    virtual cocos2d::Rect getDynamicContentBounds() const;
 };
 
 NS_GAF_END

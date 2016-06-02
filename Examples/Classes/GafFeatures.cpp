@@ -3,9 +3,9 @@
 #include <audio/include/SimpleAudioEngine.h>
 #include "audio/include/AudioEngine.h"
 
-#include "GAFShaderManager.h"
-
 #include <iostream>
+#include <ui/UIHBox.h>
+#include <ui/UIVBox.h>
 
 #if defined(__APPLE__) && defined(SEARCH_ALL_GAF_FILES)
 #include <dirent.h>
@@ -17,6 +17,8 @@
 #ifdef SEARCH_ALL_GAF_FILES
 #include <codecvt>
 #endif // SEARCH_ALL_GAF_FILES
+
+#include "GAFShaderManager.h"
 
 double PCFreq = 0.0;
 __int64 CounterStart = 0;
@@ -273,10 +275,10 @@ cocos2d::MenuItemImage* GafFeatures::addButton(const std::string &buttonName, co
 
 bool GafFeatures::init()
 {
+    GAFShaderManager::Initialize();
+
     setupMenuItems();
     gray(nullptr);
-    
-    GAFShaderManager::Initialize();
     
     generateGafFilesList();
     
@@ -300,18 +302,7 @@ void GafFeatures::generateGafFilesList()
 #endif // Platform
     searchGafFilesInDirectory(start_path);
 #else // SEARCH_ALL_GAF_FILES
-    m_files.push_back("SoundsExample_Tank/SoundsExample_Tank.gaf");
-    m_files.push_back("cut_the_hope/cut_the_hope.gaf");
-    m_files.push_back("biggreen/biggreen.gaf");
-    m_files.push_back("bird_bezneba/bird_bezneba.gaf");
-    m_files.push_back("christmas2013_julia2/christmas2013_julia2.gaf");
-    m_files.push_back("fireman_2014_sound/fireman_2014_sound.gaf");
-    m_files.push_back("fairy2/fairy2.gaf");
-    m_files.push_back("firemen/firemen.gaf");
-    m_files.push_back("impiretank_05_oneplace/impiretank_05_oneplace.gaf");
-    m_files.push_back("myshopsgame4/myshopsgame4.gaf");
-    m_files.push_back("peacock_feb3_natasha/peacock_feb3_natasha.gaf");
-    m_files.push_back("tiger/tiger.gaf");
+    m_files.push_back("Assets/Assets/Assets.gaf");
 #endif // SEARCH_ALL_GAF_FILES
 }
 
@@ -620,7 +611,7 @@ void GafFeatures::addObjectsToScene()
         
         ss.str("");
         
-		ss << "VRAM: ";
+        ss << "VRAM: ";
         ss << m_asset->getTextureManager()->getMemoryConsumptionStat();
         ss << " bytes";
         
@@ -639,18 +630,44 @@ void GafFeatures::addObjectsToScene()
 
     if (m_asset)
     {
+        GAFAsset *lib = GAFAsset::create("Assets/Assets/Assets.gaf", nullptr);
+        m_asset->linkLibraryAsset(lib);
+
         m_asset->setSoundDelegate(std::bind(&GafFeatures::onSoundEvent, this, _1, _2, _3));
-        GAFObject *object = m_asset->createObject();
-        
-        object->setLocalZOrder(0);
+
+        //GAFObject* object = GAFObject::create(m_asset, m_asset->getTimelineByName("UIPopup"));
+        GAFObject* object = GAFObject::create(m_asset, m_asset->getRootTimeline());
+        object->setLooped(true, true);
+        object->setPosition(300, 600);
+        object->start();
         addChild(object);
-        
-        float scaleFactor = cocos2d::Director::getInstance()->getContentScaleFactor();
-        object->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
-        object->setPosition(centerScreenPosition(size / scaleFactor));
-        object->setLocator(true);
-        
-        m_objects->addObject(object);
+
+        const uint8_t objectsNum = 5;
+        uint8_t count = 0;
+
+        object = object->getObjectByName("box");
+        object = object->getObjectByName("container");
+
+        while (count < objectsNum)
+        {
+            GAFObject* child = GAFObject::create(m_asset, m_asset->getTimelineByName("Circle"));
+            child->setLooped(true, true);
+            child->setName("Circle" + std::to_string(count));
+            //object->setPosition(0, 100);
+            child->start();
+            object->addChild(child);
+
+            /*::GAFButton* widget = ui::GAFButton::create(object);
+            widget->setCheckBoxMode(true);
+            //object->setLocalZOrder(0);
+            layout->addChild(widget, count, count*/
+
+            //object->setLocator(true);
+
+            m_objects->addObject(child);
+
+            ++count;
+        }
         
         m_objectSequencesNames.clear();
 #if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
@@ -663,7 +680,8 @@ void GafFeatures::addObjectsToScene()
 #endif
         m_musicEffects.clear();
         
-        const AnimationSequences_t& secDictionary = m_asset->getRootTimeline()->getAnimationSequences(); // TODO: only root timeline (temporary workaround)
+        //const AnimationSequences_t& secDictionary = m_asset->getTimelineByName("UIButton")->getAnimationSequences(); // TODO: only root timeline (temporary workaround)
+        const AnimationSequences_t& secDictionary = m_asset->getRootTimeline()->getAnimationSequences();
         if (!secDictionary.empty())
         {
             for (AnimationSequences_t::const_iterator i = secDictionary.begin(), e = secDictionary.end(); i != e; ++i)
@@ -688,12 +706,12 @@ void GafFeatures::addObjectsToScene()
         enableSequenceControllers(!m_objectSequencesNames.empty());
         
         // will work only if animation has a sequence
-        object->playSequence("walk", true);
-        object->setLooped(true, true);
-        object->start();
+        //object->playSequence("walk", true);
+        //object->setLooped(true, true);
+        //object->start();
         
-        object->setSequenceDelegate(std::bind(&GafFeatures::onFinishSequence, this, _1, _2));
-        object->setFramePlayedDelegate(std::bind(&GafFeatures::onFramePlayed, this, _1, _2));
+        //object->setSequenceDelegate(std::bind(&GafFeatures::onFinishSequence, this, _1, _2));
+        //object->setFramePlayedDelegate(std::bind(&GafFeatures::onFramePlayed, this, _1, _2));
         
     }
 }

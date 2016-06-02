@@ -197,7 +197,10 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
     }
 
     if (result)
+    {
+        result->retain();
         result->setTimelineParentObject(this);
+    }
 
     return result;
 }
@@ -737,7 +740,7 @@ static cocos2d::Rect GAFCCRectUnion(const cocos2d::Rect& src1, const cocos2d::Re
     return cocos2d::Rect(combinedLeftX, combinedBottomY, combinedRightX - combinedLeftX, combinedTopY - combinedBottomY);
 }
 
-cocos2d::Rect GAFObject::getInternalBoundingBoxForCurrentFrame()
+cocos2d::Rect GAFObject::getInternalBoundingBoxForCurrentFrame() const
 {
     cocos2d::Rect result = cocos2d::Rect::ZERO;
 
@@ -780,7 +783,7 @@ cocos2d::Rect GAFObject::getInternalBoundingBoxForCurrentFrame()
     return result;
 }
 
-cocos2d::Rect GAFObject::getBoundingBoxForCurrentFrame()
+cocos2d::Rect GAFObject::getBoundingBoxForCurrentFrame() const
 {
     return cocos2d::RectApplyTransform(getInternalBoundingBoxForCurrentFrame(), getNodeToParentTransform());
 }
