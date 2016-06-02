@@ -144,12 +144,6 @@
     <ClCompile Include="Sources\TagDefineExternalObjects.cpp">
       <Filter>Sources\GAFLoader\Tags</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\UI\GAFButton.cpp">
-      <Filter>Sources\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\UI\GAFComponent.cpp">
-      <Filter>Sources\UI</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\GafObjectFactory.cpp">
       <Filter>Sources\GAFObjects</Filter>
     </ClCompile>
@@ -163,6 +157,9 @@
       <Filter>Sources\UI</Filter>
     </ClCompile>
     <ClCompile Include="Sources\UI\GAFComponentView.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\UI\GAFScrollView.cpp">
       <Filter>Sources\UI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -317,12 +314,6 @@
     <ClInclude Include="Sources\TagDefineExternalObjects.h">
       <Filter>Sources\GAFLoader\Tags</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\UI\GAFButton.h">
-      <Filter>Sources\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\UI\GAFComponent.h">
-      <Filter>Sources\UI</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\UI\GAFUIMacros.h">
       <Filter>Sources\UI</Filter>
     </ClInclude>
@@ -342,6 +333,9 @@
       <Filter>Sources\UI</Filter>
     </ClInclude>
     <ClInclude Include="Sources\UI\GAFLayoutView.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\UI\GAFScrollView.h">
       <Filter>Sources\UI</Filter>
     </ClInclude>
   </ItemGroup>

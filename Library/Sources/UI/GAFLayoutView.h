@@ -7,7 +7,7 @@ class GAFLayoutView : public GAFComponentView
 {
 public:
     GAFLayoutView();
-    ~GAFLayoutView() = 0;
+    virtual ~GAFLayoutView() = 0;
 
     virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
     virtual cocos2d::Rect getInternalBoundingBox() const override;

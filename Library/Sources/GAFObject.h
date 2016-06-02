@@ -25,7 +25,8 @@ struct GAFObjectClass
         UI_LAYOUT = 6,
         UI_CANVAS = 7,
         UI_BOX_LAYOUT = 8,
-        UI_BUTTON = 9
+        UI_BUTTON = 9,
+        UI_SCROLL_VIEW = 10
     };
 
     static std::string toString(Enum e)
@@ -61,6 +62,9 @@ struct GAFObjectClass
 
         case GAFObjectClass::UI_BUTTON:
             return "sv.GAFUIButton";
+
+        case GAFObjectClass::UI_SCROLL_VIEW:
+            return "sv.GAFUIScrollView";
 
         case GAFObjectClass::UNKNOWN:
         default:
@@ -262,8 +266,8 @@ public:
 
     bool isVisibleInCurrentFrame() const;
 
-    cocos2d::Rect getInternalBoundingBoxForCurrentFrame();
-    cocos2d::Rect getBoundingBoxForCurrentFrame();
+    virtual cocos2d::Rect getInternalBoundingBoxForCurrentFrame() const;
+    virtual cocos2d::Rect getBoundingBoxForCurrentFrame() const;
 
     const AnimationSequences_t& getSequences() const;
     GAFTimeline* getTimeLine() { return m_timeline; }

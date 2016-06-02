@@ -4,6 +4,7 @@
 #include "GAFTimeline.h"
 #include "GAFSubobjectState.h"
 #include "GAFAnimationFrame.h"
+#include <GAFUtils.h>
 
 NS_GAF_BEGIN
 GAFBoxLayoutView::GAFBoxLayoutView()
@@ -16,6 +17,8 @@ GAFBoxLayoutView::GAFBoxLayoutView()
     , m_horizontalAlign(HorizontalAlign::center)
     , m_verticalAlign(VerticalAlign::center)
     , m_usePercents(false)
+    , m_dynamicContentBounds(cocos2d::CCRect::ZERO)
+    , m_dynamicContentBoundsDirty(false)
 {
 }
 
@@ -43,6 +46,42 @@ bool GAFBoxLayoutView::init(GAFAsset* anAnimationData, GAFTimeline* timeline)
     return ret;
 }
 
+cocos2d::Rect GAFBoxLayoutView::getInternalBoundingBox() const
+{
+    auto result = GAFLayoutView::getInternalBoundingBox();
+    result = result.unionWithRect(getDynamicContentBounds());
+
+    return result;
+}
+
+void GAFBoxLayoutView::addChild(Node* child, int localZOrder, int tag)
+{
+    GAFLayoutView::addChild(child, localZOrder, tag);
+
+    m_dynamicContentBoundsDirty = true;
+}
+
+void GAFBoxLayoutView::addChild(Node* child, int localZOrder, const std::string& name)
+{
+    GAFLayoutView::addChild(child, localZOrder, name);
+
+    m_dynamicContentBoundsDirty = true;
+}
+
+void GAFBoxLayoutView::removeChild(Node * child, bool cleanup)
+{
+    GAFLayoutView::removeChild(child, cleanup);
+
+    m_dynamicContentBoundsDirty = true;
+}
+
+void GAFBoxLayoutView::removeAllChildrenWithCleanup(bool cleanup)
+{
+    GAFLayoutView::removeAllChildrenWithCleanup(cleanup);
+
+    m_dynamicContentBoundsDirty = true;
+}
+
 void GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
 {
     m_direction = toEnumDirection(customProperties.at("direction"));
@@ -56,6 +95,8 @@ void GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& c
     m_marginRight = std::stof(customProperties.at("marginRight"));
     m_marginBottom = std::stof(customProperties.at("marginBottom"));
     m_marginLeft = std::stof(customProperties.at("marginLeft"));
+
+    m_dynamicContentBoundsDirty = true;
 }
 
 void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, const GAFAnimationFrame* frame)
@@ -195,6 +236,47 @@ cocos2d::Point& GAFBoxLayoutView::layoutChild(const GAFObject* subObject, cocos2
     }
 
     return currentTopLeft;
+}
+
+cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
+{
+    if (!m_dynamicContentBoundsDirty) return m_dynamicContentBounds;
+
+    float w = 0;
+    float h = 0;
+    for (int i = 0; i < _children.size(); ++i)
+    {
+        auto child = _children.at(i);
+        if (!child->isVisible() || child == m_container) continue;
+
+        auto childBB = child->getBoundingBox();
+
+        if (m_direction == Direction::horizontal)
+        {
+            if (i > 0)
+                w += m_gap;
+
+            w += childBB.size.width;
+            h = std::max(h, childBB.size.height);
+        }
+        else
+        {
+            if (i > 0)
+                h += m_gap;
+
+            w = std::max(w, childBB.size.width);
+            h += childBB.size.height;
+        }
+    }
+
+    w += m_marginLeft + m_marginRight;
+    h += m_marginTop + m_marginBottom;
+
+    m_dynamicContentBounds.setRect(0, 0, w, h);
+
+    m_dynamicContentBoundsDirty = false;
+
+    return m_dynamicContentBounds;
 }
 
 NS_GAF_END
