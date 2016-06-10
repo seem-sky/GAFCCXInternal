@@ -4,7 +4,6 @@
 NS_GAF_BEGIN
 
 GAFLayoutView::GAFLayoutView()
-    : m_internalScale(1.0f, 1.0f, 1.0f)
 {
 }
 
@@ -12,7 +11,7 @@ GAFLayoutView::~GAFLayoutView()
 {
 }
 
-const cocos2d::Mat4& GAFLayoutView::getNodeToParentTransform() const
+/*const cocos2d::Mat4& GAFLayoutView::getNodeToParentTransform() const
 {
     bool transformDirty = _transformDirty;
     if (transformDirty)
@@ -29,23 +28,23 @@ const cocos2d::Mat4& GAFLayoutView::getNodeToParentTransform() const
     }
 
     return _transform;
-}
+}*/
 
-cocos2d::Rect GAFLayoutView::getInternalBoundingBox() const
+/*cocos2d::Rect GAFLayoutView::getInternalBoundingBox() const
 {
     cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
     scaleMtx = cocos2d::AffineTransformScale(scaleMtx, getInternalScale().x, getInternalScale().y);
     auto unscaledInternalBounds = GAFObject::getInternalBoundingBox();
     return RectApplyAffineTransform(unscaledInternalBounds, scaleMtx);
-}
+}*/
 
-cocos2d::Vec3 GAFLayoutView::getInternalScale() const
+/*cocos2d::Vec3 GAFLayoutView::getInternalScale() const
 {
     if (_transformDirty)
         getNodeToParentTransform();
 
     return m_internalScale;
-}
+}*/
 
 bool GAFLayoutView::allNecessaryFieldsExist(const CustomPropertiesMap_t & customProperties) const
 {

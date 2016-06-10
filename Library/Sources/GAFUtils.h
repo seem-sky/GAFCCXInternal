@@ -27,3 +27,13 @@ inline cocos2d::AffineTransform& affineTransformSetFrom(cocos2d::AffineTransform
 
     return to;
 }
+
+inline static cocos2d::Vec2 affineTransformGetScale(const cocos2d::AffineTransform& mtx)
+{
+    cocos2d::Vec2 scale;
+
+    scale.x = cocos2d::Vec2(mtx.a, mtx.b).length();
+    scale.y = cocos2d::Vec2(mtx.c, mtx.d).length();
+
+    return scale;
+}

@@ -37,7 +37,7 @@ void GAFComponentView::setClippingEnabled(bool enabled)
                 m_clippingStencil->onEnter();
 
             m_clippingStencil->retain();
-            setStencilClippingRect(getInternalBoundingBox());
+            //setStencilClippingRect(getInternalBoundingBox());
         }
         else
         {
@@ -152,7 +152,6 @@ void GAFComponentView::stencilClippingVisit(cocos2d::Renderer* renderer, const c
     renderer->addCommand(&m_afterDrawStencilCmd);
 
     int i = 0;      // used by _children
-    int j = 0;      // used by _protectedChildren
 
     sortAllChildren();
 
@@ -174,6 +173,9 @@ void GAFComponentView::stencilClippingVisit(cocos2d::Renderer* renderer, const c
     //
     this->draw(renderer, _modelViewTransform, flags);
 
+    //
+    // draw children zOrder >= 0
+    //
     for (auto it = _children.cbegin() + i; it != _children.cend(); ++it)
         (*it)->visit(renderer, _modelViewTransform, flags);
 
@@ -210,8 +212,8 @@ void GAFComponentView::setStencilClippingRect(const cocos2d::Rect& rect)
         cocos2d::Vec2 clipRect[4];
         clipRect[0].set(rect.origin.x, -rect.origin.y);
         clipRect[1].set(rect.origin.x + rect.size.width, -rect.origin.y);
-        clipRect[2].set(rect.origin.x + _contentSize.width, -(rect.origin.y + _contentSize.height));
-        clipRect[3].set(rect.origin.x, -(rect.origin.y + _contentSize.height));
+        clipRect[2].set(rect.origin.x + rect.size.width, -(rect.origin.y + rect.size.height));
+        clipRect[3].set(rect.origin.x, -(rect.origin.y + rect.size.height));
         cocos2d::Color4F green(0.0f, 1.0f, 0.0f, 1.0f);
         m_clippingStencil->clear();
         m_clippingStencil->drawPolygon(clipRect, 4, green, 0, green);
@@ -236,6 +238,20 @@ const cocos2d::Rect& GAFComponentView::getClippingRect()
         m_clippingRectDirty = false;
     }
     return m_clippingRect;
+}
+
+void GAFComponentView::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
+{
+    GAFObject::realizeFrame(out, frameIndex);
+    if (m_clippingRectDirty)
+        setStencilClippingRect(getInternalBoundingBox());
+}
+
+const cocos2d::Mat4 & GAFComponentView::getNodeToParentTransform() const
+{
+    if (_transformDirty) m_clippingRectDirty = true;
+
+    return GAFObject::getNodeToParentTransform();
 }
 
 void GAFComponentView::onBeforeVisitScissor()

@@ -26,7 +26,10 @@ struct GAFObjectClass
         UI_CANVAS = 7,
         UI_BOX_LAYOUT = 8,
         UI_BUTTON = 9,
-        UI_SCROLL_VIEW = 10
+        UI_SCROLL_VIEW = 10,
+        UI_TEXT_AREA = 11,
+        UI_LABEL = 12,
+        UI_PROGRESS_BAR = 13
     };
 
     static std::string toString(Enum e)
@@ -66,6 +69,15 @@ struct GAFObjectClass
         case GAFObjectClass::UI_SCROLL_VIEW:
             return "sv.GAFUIScrollView";
 
+        case GAFObjectClass::UI_TEXT_AREA:
+            return "sv.GAFUITextArea";
+
+        case GAFObjectClass::UI_LABEL:
+            return "sv.GAFUILabel";
+
+        case GAFObjectClass::UI_PROGRESS_BAR:
+            return "sv.GAFUIProgressBar";
+
         case GAFObjectClass::UNKNOWN:
         default:
             return "unknown";
@@ -80,6 +92,9 @@ public:
     typedef std::vector<GAFObject*> DisplayList_t;
     typedef std::vector<cocos2d::ClippingNode*> MaskList_t;
     typedef std::map<const std::string, const std::string> CustomPropertiesMap_t;
+
+    typedef std::function<void(float dt)> GAFObjectUpdateCallback;
+
 private:
     GAFSequenceDelegate_t                   m_sequenceDelegate;
     GAFAnimationFinishedPlayDelegate_t      m_animationFinishedPlayDelegate;
@@ -131,6 +146,9 @@ protected:
 
     bool                                    m_isManualColor;
     bool                                    m_isManualPosition;
+    bool                                    m_isManualScale;
+
+    GAFObjectUpdateCallback                 m_updateEventListener;
 
     const cocos2d::AffineTransform AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const;
 
@@ -169,6 +187,8 @@ protected:
 public:
     GAFObject();
 
+    void addUpdateListener(const GAFObjectUpdateCallback& callback);
+
     /// @note do not forget to call setSequenceDelegate(nullptr) before deleting your subscriber
     void setSequenceDelegate(GAFSequenceDelegate_t delegate);
 
@@ -197,6 +217,8 @@ public:
         (void)renderer;
         (void)transform;
     }
+
+    virtual void update(float delta) override;
 
     void useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements);
 
@@ -281,6 +303,7 @@ public:
     virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
     virtual cocos2d::AffineTransform getNodeToParentAffineTransform() const override;
 
+    virtual cocos2d::Rect getBoundingBox() const override;
     virtual cocos2d::Rect getInternalBoundingBox() const;
 
     virtual void setColor(const cocos2d::Color3B& color) override;
@@ -288,6 +311,12 @@ public:
 
     virtual void setPosition(const cocos2d::Vec2& position) override;
     virtual void setPosition(float x, float y) override;
+
+    virtual void setScaleZ(float scaleZ) override;
+    virtual void setScaleX(float scaleX) override;
+    virtual void setScaleY(float scaleY) override;
+    virtual void setScale(float scaleX, float scaleY) override;
+    virtual void setScale(float scale) override;
 
     virtual void setExternalTransform(const cocos2d::AffineTransform& transform) override;
 

@@ -4,105 +4,115 @@
 NS_GAF_BEGIN
 class GAFBoxLayoutView : public GAFLayoutView
 {
-    enum class Direction : uint8_t
+    struct Direction
     {
-        horizontal,
-        vertical,
-        unknown
+        enum Enum
+        {
+            horizontal,
+            vertical,
+            unknown
+        };
+
+        static Enum toEnum(const std::string& direction)
+        {
+            if (direction == toString(horizontal))
+                return horizontal;
+            else if (direction == toString(vertical))
+                return vertical;
+            else
+                return unknown;
+        }
+
+        static std::string toString(Enum direction)
+        {
+            switch (direction)
+            {
+            case horizontal:
+                return "horizontal";
+            case vertical:
+                return "vertical";
+            default:
+                return "unknown";
+            }
+        }
     };
 
-    enum class HorizontalAlign : uint8_t
+    struct HorizontalAlign
     {
-        left,
-        center,
-        right,
-        unknown
+        enum Enum
+        {
+            left,
+            center,
+            right,
+            unknown
+        };
+
+        static Enum toEnum(const std::string& align)
+        {
+            if (align == toString(left))
+                return left;
+            else if (align == toString(center))
+                return center;
+            else if (align == toString(right))
+                return right;
+            else
+                return unknown;
+        }
+
+        static std::string toString(Enum align)
+        {
+            switch (align)
+            {
+            case left:
+                return "left";
+            case center:
+                return "center";
+            case right:
+                return "right";
+            default:
+                return "unknown";
+            }
+        }
     };
 
-    enum class VerticalAlign : uint8_t
+    struct VerticalAlign
     {
-        top,
-        center,
-        bottom,
-        unknown
+        enum Enum
+        {
+            top,
+            center,
+            bottom,
+            unknown
+        };
+
+        static Enum toEnum(const std::string& align)
+        {
+            if (align == toString(top))
+                return top;
+            else if (align == toString(center))
+                return center;
+            else if (align == toString(bottom))
+                return bottom;
+            else
+                return unknown;
+        }
+
+        static std::string toString(Enum align)
+        {
+            switch (align)
+            {
+            case top:
+                return "top";
+            case center:
+                return "center";
+            case bottom:
+                return "bottom";
+            default:
+                return "unknown";
+            }
+        }
     };
 
-    static Direction toEnumDirection(const std::string& direction)
-    {
-        if (direction == toString(Direction::horizontal))
-            return Direction::horizontal;
-        else if (direction == toString(Direction::vertical))
-            return Direction::vertical;
-        else
-            return Direction::unknown;
-    }
-
-    static HorizontalAlign toEnumHorizontalAlign(const std::string& align)
-    {
-        if (align == toString(HorizontalAlign::left))
-            return HorizontalAlign::left;
-        else if (align == toString(HorizontalAlign::center))
-            return HorizontalAlign::center;
-        else if (align == toString(HorizontalAlign::right))
-            return HorizontalAlign::right;
-        else
-            return HorizontalAlign::unknown;
-    }
-
-    static VerticalAlign toEnumVerticalAlign(const std::string& align)
-    {
-        if (align == toString(VerticalAlign::top))
-            return VerticalAlign::top;
-        else if (align == toString(VerticalAlign::center))
-            return VerticalAlign::center;
-        else if (align == toString(VerticalAlign::bottom))
-            return VerticalAlign::bottom;
-        else
-            return VerticalAlign::unknown;
-    }
-
-    static std::string toString(Direction direction)
-    {
-        switch (direction)
-        {
-        case Direction::horizontal:
-            return "horizontal";
-        case Direction::vertical:
-            return "horizontal";
-        default:
-            return "unknown";
-        }
-    }
-
-    static std::string toString(HorizontalAlign align)
-    {
-        switch (align)
-        {
-        case HorizontalAlign::left:
-            return "left";
-        case HorizontalAlign::center:
-            return "center";
-        case HorizontalAlign::right:
-            return "right";
-        default:
-            return "unknown";
-        }
-    }
-
-    static std::string toString(VerticalAlign align)
-    {
-        switch (align)
-        {
-        case VerticalAlign::top:
-            return "top";
-        case VerticalAlign::center:
-            return "center";
-        case VerticalAlign::bottom:
-            return "bottom";
-        default:
-            return "unknown";
-        }
-    }
 
 public:
     GAFBoxLayoutView();
@@ -116,16 +126,19 @@ public:
     virtual void removeChild(Node* child, bool cleanup = true) override;
     virtual void removeAllChildrenWithCleanup(bool cleanup) override;
 
+    virtual void setPosition(float x, float y) override;
+
+    virtual void visit(cocos2d::Renderer* renderer, const cocos2d::Mat4& parentTransform, uint32_t parentFlags) override;
 protected:
-    Direction m_direction;
+    Direction::Enum m_direction;
     float m_gap;
     float m_marginTop;
     float m_marginRight;
     float m_marginBottom;
     float m_marginLeft;
 
-    HorizontalAlign m_horizontalAlign;
-    VerticalAlign m_verticalAlign;
+    HorizontalAlign::Enum m_horizontalAlign;
+    VerticalAlign::Enum m_verticalAlign;
 
     bool m_usePercents;
 

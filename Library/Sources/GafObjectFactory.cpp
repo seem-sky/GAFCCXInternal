@@ -15,12 +15,11 @@ NS_GAF_BEGIN
 GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTextureAtlasElement* txElemet, bool isMask)
 {
     GAFObject* result = nullptr;
-    cocos2d::SpriteFrame * spriteFrame = nullptr;
     GAFAssetTextureManager* txMgr = asset->getTextureManager();
     cocos2d::Texture2D * texture = txMgr->getTextureById(txElemet->atlasIdx + 1);
     if (texture)
     {
-        spriteFrame = cocos2d::SpriteFrame::createWithTexture(texture, txElemet->bounds);
+        cocos2d::SpriteFrame * spriteFrame = cocos2d::SpriteFrame::createWithTexture(texture, txElemet->bounds);
 
         if (!isMask)
             result = new GAFMovieClip();
@@ -62,31 +61,33 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTimeline* t
 {
     (void)isMask;
 
-    GAFObject* result = nullptr;
+    static FactorySignatures_t signatures;
+
+    static std::once_flag once;
+    std::call_once(once, []()
+    {
+        signatures[GAFObjectClass::toString(GAFObjectClass::UI_BOX_LAYOUT)] = std::bind(&GAFBoxLayoutView::create, std::placeholders::_1, std::placeholders::_2);
+        signatures[GAFObjectClass::toString(GAFObjectClass::UI_CANVAS)] = std::bind(&GAFCanvasView::create, std::placeholders::_1, std::placeholders::_2);
+        signatures[GAFObjectClass::toString(GAFObjectClass::UI_BUTTON)] = std::bind(&GAFObject::create, std::placeholders::_1, std::placeholders::_2);
+        signatures[GAFObjectClass::toString(GAFObjectClass::UI_SCROLL_VIEW)] = std::bind(&GAFScrollView::create, std::placeholders::_1, std::placeholders::_2);
+        signatures[GAFObjectClass::toString(GAFObjectClass::UI_TEXT_AREA)] = std::bind(&GAFScrollView::create, std::placeholders::_1, std::placeholders::_2);
+    });
+
+    GAFObject* result;
     std::string linkageName = timeline->getLinkageName();
     std::string baseClass = timeline->getBaseClass();
 
-    if (baseClass == GAFObjectClass::toString(GAFObjectClass::UI_BOX_LAYOUT))
+    FactorySignatures_t::iterator it = signatures.find(baseClass);
+
+    if (it != signatures.end())
     {
-        result = GAFBoxLayoutView::create(asset, timeline);
-    }
-    else if (baseClass == GAFObjectClass::toString(GAFObjectClass::UI_CANVAS))
-    {
-        result = GAFCanvasView::create(asset, timeline);
-    }
-    else if (baseClass == GAFObjectClass::toString(GAFObjectClass::UI_BUTTON))
-    {
-        result = GAFObject::create(asset, timeline);
-    }
-    else if (baseClass == GAFObjectClass::toString(GAFObjectClass::UI_SCROLL_VIEW))
-    {
-        result = GAFScrollView::create(asset, timeline);
+        result = it->second(asset, timeline);
     }
     else
     {
         result = GAFObject::create(asset, timeline);
     }
-    
+
     result->objectIdRef = id;
 
     return result;

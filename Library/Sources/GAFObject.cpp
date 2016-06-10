@@ -28,7 +28,7 @@ const cocos2d::AffineTransform GAFObject::AffineTransformFlashToCocos(const coco
     cocos2d::AffineTransform transform = aTransform;
     transform.b = -transform.b;
     transform.c = -transform.c;
-    float flipMul = isFlippedY() ? -2.f : 2.f;
+    float flipMul = isFlippedY() ? -2.0f : 2.0f;
     transform.ty = getAnchorPointInPoints().y * flipMul - transform.ty;
     return transform;
 }
@@ -57,6 +57,7 @@ GAFObject::GAFObject()
     , m_customFilter(nullptr)
     , m_isManualColor(false)
     , m_isManualPosition(false)
+    , m_isManualScale(false)
     , m_objectName("")
 {
 #if GAF_ENABLE_SHADER_MANAGER_AUTOMATIC_INITIALIZATION
@@ -66,6 +67,11 @@ GAFObject::GAFObject()
     m_charType = GAFCharacterType::Timeline;
     m_parentColorTransforms[0] = cocos2d::Vec4::ONE;
     m_parentColorTransforms[1] = cocos2d::Vec4::ZERO;
+}
+
+void GAFObject::addUpdateListener(const GAFObjectUpdateCallback & callback)
+{
+    m_updateEventListener = callback;
 }
 
 GAFObject::~GAFObject()
@@ -270,6 +276,14 @@ GAFObject* GAFObject::encloseNewTimeline(uint32_t reference)
     GAFObject* newObject = new GAFObject();
     newObject->init(m_asset, tl->second);
     return newObject;
+}
+
+void GAFObject::update(float delta)
+{
+    GAFSprite::update(delta);
+
+    if (m_updateEventListener)
+        m_updateEventListener(delta);
 }
 
 void GAFObject::useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements)
@@ -804,6 +818,12 @@ cocos2d::AffineTransform GAFObject::getNodeToParentAffineTransform() const
         return GAFSprite::getNodeToParentAffineTransform();
 }
 
+cocos2d::Rect GAFObject::getBoundingBox() const
+{
+    cocos2d::Rect rect = getInternalBoundingBox();
+    return RectApplyAffineTransform(rect, getNodeToParentAffineTransform());
+}
+
 cocos2d::Rect GAFObject::getInternalBoundingBox() const
 {
     if (m_charType == GAFCharacterType::Timeline)
@@ -822,6 +842,13 @@ void GAFObject::setOpacity(GLubyte opacity)
 {
     m_isManualColor = true;
     Node::setOpacity(opacity);
+
+    if (m_container)
+    {
+        const auto& children = m_container->getChildren();
+        for (const auto &child : children)
+            child->setOpacity(opacity);
+    }
 }
 
 void GAFObject::setPosition(const cocos2d::Vec2& position)
@@ -833,6 +860,36 @@ void GAFObject::setPosition(float x, float y)
 {
     m_isManualPosition = true;
     Node::setPosition(x, y);
+}
+
+void GAFObject::setScaleZ(float scaleZ)
+{
+    m_isManualScale = true;
+    Node::setScaleZ(scaleZ);
+}
+
+void GAFObject::setScaleX(float scaleX)
+{
+    m_isManualScale = true;
+    Node::setScaleX(scaleX);
+}
+
+void GAFObject::setScaleY(float scaleY)
+{
+    m_isManualScale = true;
+    Node::setScaleY(scaleY);
+}
+
+void GAFObject::setScale(float scaleX, float scaleY)
+{
+    m_isManualScale = true;
+    Node::setScale(scaleX, scaleY);
+}
+
+void GAFObject::setScale(float scale)
+{
+    m_isManualScale = true;
+    Node::setScale(scale);
 }
 
 void GAFObject::setExternalTransform(const cocos2d::AffineTransform & transform)
@@ -1044,17 +1101,26 @@ void GAFObject::postProcessGAFObject(cocos2d::Node* out, GAFObject* child, const
 
 cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties)
 {
-    if (child->m_isManualPosition)
+    child->processOwnCustomProperties(customProperties);
+
+    if (child->m_isManualPosition || child->m_isManualScale)
     {
-        mtx.tx = child->getPosition().x - getTimeLine()->getPivot().x;
-        mtx.ty = getContentSize().height
-            - child->getPosition().y
-            - getTimeLine()->getPivot().y;
+        //affineTransformSetFrom(mtx, cocos2d::AffineTransform::IDENTITY);
+        if (child->m_isManualPosition)
+        {
+            mtx.tx = 0.f; // getTimeLine()->getPivot().x;
+            mtx.ty = 0.f; // getTimeLine()->getPivot().y;
+        }
+        
+        if (child->m_isManualScale)
+        {
+            cocos2d::Vec2 scale = affineTransformGetScale(mtx);
+            cocos2d::Vec2 inverseScale(1.0f / scale.x, 1.0f / scale.y);
+            affineTransformSetFrom(mtx, cocos2d::AffineTransformScale(mtx, inverseScale.x, inverseScale.y));
+        }
     }
     else
     {
-        child->processOwnCustomProperties(customProperties);
-
         if (allNecessaryFieldsExist(customProperties))
             changeTransformAccordingToCustomProperties(child, mtx, customProperties);
         else
@@ -1087,12 +1153,13 @@ cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* ch
         affineTransformSetFrom(mtx, AffineTransformConcat(mtx, flipCenterTransform));
     }
 
-    float curScale = child->getScale();
-    if (fabs(curScale - 1.0) > std::numeric_limits<float>::epsilon())
-    {
-        mtx.a *= curScale;
-        mtx.d *= curScale;
-    }
+    float curScaleX = child->getScaleX();
+    if (fabs(curScaleX - 1.0) > std::numeric_limits<float>::epsilon())
+        mtx.a *= curScaleX;
+
+    float curScaleY = child->getScaleY();
+    if (fabs(curScaleY - 1.0) > std::numeric_limits<float>::epsilon())
+        mtx.d *= curScaleY;
 
     return mtx;
 }
@@ -1100,6 +1167,28 @@ cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* ch
 cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx)
 {
     (void)child;
+
+    if (child->m_isManualPosition)
+    {
+        mtx.tx = child->getPositionX(); // getTimeLine()->getPivot().x;
+        mtx.ty = -child->getPositionY(); // getTimeLine()->getPivot().y;
+    }
+
+    if (child->m_isManualScale)
+    {
+        cocos2d::Vec2 ab(mtx.a, mtx.b);
+        ab.normalize();
+        ab.scale(_scaleX);
+
+        cocos2d::Vec2 cd(mtx.c, mtx.d);
+        cd.normalize();
+        cd.scale(_scaleY);
+
+        mtx.a = ab.x;
+        mtx.b = ab.y;
+        mtx.c = cd.x;
+        mtx.d = cd.y;
+    }
 
     affineTransformSetFrom(mtx, AffineTransformFlashToCocos(mtx));
 

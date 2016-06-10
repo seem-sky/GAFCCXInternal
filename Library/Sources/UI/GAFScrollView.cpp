@@ -1,6 +1,7 @@
 #include "GAFPrecompiled.h"
 #include "GAFScrollView.h"
 #include "GAFTimeline.h"
+#include <GAFUtils.h>
 
 NS_GAF_BEGIN
 
@@ -40,6 +41,39 @@ bool GAFScrollView::init(GAFAsset* anAnimationData, GAFTimeline* timeline)
     }
 
     return ret;
+}
+
+void GAFScrollView::onEnter()
+{
+    GAFLayoutView::onEnter();
+
+    scheduleUpdate();
+
+    if (m_scrollBarH) m_scrollBarH->scheduleUpdate();
+    if (m_scrollBarV) m_scrollBarV->scheduleUpdate();
+}
+
+void GAFScrollView::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+{
+    if (child == m_scrollBarH || child == m_scrollBarV)
+    {
+        cocos2d::Vec3 internalScale;
+        auto transform = GAFLayoutView::getNodeToParentTransform();
+        transform.getScale(&internalScale);
+        cocos2d::Vec3 inverseScale(1.0f / internalScale.x, 1.0f / internalScale.y, 1.0f / internalScale.z);
+        if (child == m_scrollBarH)
+        {
+            mtx.b *= inverseScale.y;
+            mtx.d *= inverseScale.y;
+        }
+        else
+        {
+            mtx.a *= inverseScale.x;
+            mtx.c *= inverseScale.x;
+        }
+    }
+
+    GAFLayoutView::processGAFTimeline(out, child, state, mtx);
 }
 
 NS_GAF_END

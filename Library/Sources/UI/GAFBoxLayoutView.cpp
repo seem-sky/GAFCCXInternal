@@ -82,11 +82,21 @@ void GAFBoxLayoutView::removeAllChildrenWithCleanup(bool cleanup)
     m_dynamicContentBoundsDirty = true;
 }
 
+void GAFBoxLayoutView::setPosition(float x, float y)
+{
+    GAFLayoutView::setPosition(x, y);
+}
+
+void GAFBoxLayoutView::visit(cocos2d::Renderer * renderer, const cocos2d::Mat4 & parentTransform, uint32_t parentFlags)
+{
+    GAFLayoutView::visit(renderer, parentTransform, parentFlags);
+}
+
 void GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
 {
-    m_direction = toEnumDirection(customProperties.at("direction"));
-    m_horizontalAlign = toEnumHorizontalAlign(customProperties.at("horizontalAlign"));
-    m_verticalAlign = toEnumVerticalAlign(customProperties.at("verticalAlign"));
+    m_direction = Direction::toEnum(customProperties.at("direction"));
+    m_horizontalAlign = HorizontalAlign::toEnum(customProperties.at("horizontalAlign"));
+    m_verticalAlign = VerticalAlign::toEnum(customProperties.at("verticalAlign"));
 
     m_usePercents = customProperties.at("units") == "percents";
 
@@ -244,6 +254,7 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
 
     float w = 0;
     float h = 0;
+    uint32_t childCounter = 0;
     for (int i = 0; i < _children.size(); ++i)
     {
         auto child = _children.at(i);
@@ -253,7 +264,7 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
 
         if (m_direction == Direction::horizontal)
         {
-            if (i > 0)
+            if (childCounter > 0)
                 w += m_gap;
 
             w += childBB.size.width;
@@ -261,12 +272,14 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
         }
         else
         {
-            if (i > 0)
+            if (childCounter > 0)
                 h += m_gap;
 
             w = std::max(w, childBB.size.width);
             h += childBB.size.height;
         }
+
+        ++childCounter;
     }
 
     w += m_marginLeft + m_marginRight;

@@ -9,13 +9,11 @@ public:
     GAFLayoutView();
     virtual ~GAFLayoutView() = 0;
 
-    virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
-    virtual cocos2d::Rect getInternalBoundingBox() const override;
-    virtual cocos2d::Vec3 getInternalScale() const;
+    //virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
+    //virtual cocos2d::Rect getInternalBoundingBox() const override;
+    //virtual cocos2d::Vec3 getInternalScale() const;
 
 protected:
-    mutable cocos2d::Vec3 m_internalScale;
-
     virtual bool allNecessaryFieldsExist(const CustomPropertiesMap_t& customProperties) const override;
 };
 

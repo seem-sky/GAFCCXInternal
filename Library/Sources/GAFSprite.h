@@ -88,6 +88,7 @@ protected:
 
     void updateSlicedQuads(const cocos2d::Mat4 &transform);
 
+    void updateColor() override;
 private:
     typedef std::array<cocos2d::V3F_C4B_T2F_Quad, 9> Scale9Slices_t;
 

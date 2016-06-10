@@ -32,16 +32,20 @@ public:
     virtual void setCameraMask(unsigned short mask, bool applyChildren = true) override;
 
 protected:
-    void stencilClippingVisit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &parentTransform, uint32_t parentFlags);
-    void scissorClippingVisit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &parentTransform, uint32_t parentFlags);
+    virtual void stencilClippingVisit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &parentTransform, uint32_t parentFlags);
+    virtual void scissorClippingVisit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &parentTransform, uint32_t parentFlags);
 
-    void setStencilClippingRect(const cocos2d::Rect& rect);
-    const cocos2d::Rect& getClippingRect();
+    virtual void setStencilClippingRect(const cocos2d::Rect& rect);
+    virtual const cocos2d::Rect& getClippingRect();
 
+    virtual void realizeFrame(cocos2d::Node* out, uint32_t frameIndex) override;
+
+public:
+    virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
+protected:
     //clipping
-
-    void onBeforeVisitScissor();
-    void onAfterVisitScissor();
+    virtual void onBeforeVisitScissor();
+    virtual void onAfterVisitScissor();
 
     //clipping
     bool m_clippingEnabled;
@@ -50,7 +54,7 @@ protected:
     bool m_scissorOldState;
     cocos2d::Rect m_clippingOldRect;
     cocos2d::Rect m_clippingRect;
-    bool m_clippingRectDirty;
+    mutable bool m_clippingRectDirty;
 
     //clipping
     cocos2d::StencilStateManager* m_stencileStateManager;

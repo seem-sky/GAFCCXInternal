@@ -8,6 +8,7 @@
 NS_GAF_BEGIN
 
 GAFCanvasView::GAFCanvasView()
+    : m_internalScale(1.0f, 1.0f, 1.0f)
 {
 }
 
@@ -51,7 +52,7 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
 
         if (alignRight)
         {
-            float rightDistance = (unscaledInternalBounds.origin.x + unscaledInternalBounds.size.width) - (childActualBounds.origin.x + childActualBounds.size.width);
+            float rightDistance = unscaledInternalBounds.origin.x + unscaledInternalBounds.size.width - (childActualBounds.origin.x + childActualBounds.size.width);
             if (usePercents)
                 rightDistance = rightDistance / unscaledInternalBounds.size.width * actualInternalBounds.size.width;
 
@@ -59,7 +60,7 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
                 childAdditionalScaleX = (actualInternalBounds.size.width - leftDistance - rightDistance) / childActualBounds.size.width;
         }
 
-        float finalTx = leftDistance + ((mtx.tx - childActualBounds.origin.x) * childAdditionalScaleX);
+        float finalTx = actualInternalBounds.origin.x + leftDistance + (mtx.tx - childActualBounds.origin.x) * childAdditionalScaleX;
 
         float topDistance = childActualBounds.origin.y - unscaledInternalBounds.origin.y;
         if (usePercents)
@@ -67,7 +68,7 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
 
         if (alignBottom)
         {
-            float bottomDistance = (unscaledInternalBounds.origin.y + unscaledInternalBounds.size.height) - (childActualBounds.origin.y + childActualBounds.size.height);
+            float bottomDistance = unscaledInternalBounds.origin.y + unscaledInternalBounds.size.height - (childActualBounds.origin.y + childActualBounds.size.height);
             if (usePercents)
                 bottomDistance = bottomDistance / unscaledInternalBounds.size.height * actualInternalBounds.size.height;
 
@@ -75,7 +76,7 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
                 childAdditionalScaleY = (actualInternalBounds.size.height - topDistance - bottomDistance) / childActualBounds.size.height;
         }
 
-        float finalTy = topDistance + ((mtx.ty - childActualBounds.origin.y) * childAdditionalScaleY);
+        float finalTy = actualInternalBounds.origin.y + topDistance + (mtx.ty - childActualBounds.origin.y) * childAdditionalScaleY;
 
         affineTransformSetFrom(mtx, cocos2d::AffineTransformScale(mtx, childAdditionalScaleX, childAdditionalScaleY));
         mtx.tx = finalTx;
@@ -90,6 +91,41 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
     
 
     return mtx;
+}
+
+const cocos2d::Mat4& GAFCanvasView::getNodeToParentTransform() const
+{
+    bool transformDirty = _transformDirty;
+    if (transformDirty)
+    {
+        _transform = GAFLayoutView::getNodeToParentTransform();
+        _transformDirty = transformDirty;
+
+        _transform.getScale(&m_internalScale);
+
+        cocos2d::Vec3 inverseScale(1.0f / m_internalScale.x, 1.0f / m_internalScale.y, 1.0f / m_internalScale.z);
+        _transform.scale(inverseScale);
+
+        _transformDirty = false;
+    }
+
+    return _transform;
+}
+
+cocos2d::Rect GAFCanvasView::getInternalBoundingBox() const
+{
+    cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
+    scaleMtx = cocos2d::AffineTransformScale(scaleMtx, getInternalScale().x, getInternalScale().y);
+    auto unscaledInternalBounds = GAFLayoutView::getInternalBoundingBox();
+    return RectApplyAffineTransform(unscaledInternalBounds, scaleMtx);
+}
+
+cocos2d::Vec3 GAFCanvasView::getInternalScale() const
+{
+    if (_transformDirty)
+        getNodeToParentTransform();
+
+    return m_internalScale;
 }
 
 cocos2d::AffineTransform& GAFCanvasView::addAdditionalTransformations(cocos2d::AffineTransform& mtx) const
