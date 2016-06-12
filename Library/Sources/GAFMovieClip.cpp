@@ -58,7 +58,7 @@ bool GAFMovieClip::initWithTexture(cocos2d::Texture2D *pTexture, const cocos2d::
         m_colorTransformOffsets = cocos2d::Vec4::ZERO;
         _setBlendingFunc();
 
-        m_programBase = GLProgramState::create(GAFShaderManager::getProgram(GAFShaderManager::EPrograms::Alpha));
+        m_programBase = GLProgramState::create(GAFShaderManager::getRef().getProgram(GAFShaderManager::EPrograms::Alpha));
         m_programBase->retain();
 #if CHECK_CTX_IDENTITY
         cocos2d::GLProgram* p = GLProgramCache::getInstance()->getGLProgram(cocos2d::GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP);
@@ -138,9 +138,9 @@ uint32_t GAFMovieClip::setUniforms()
     }
 
 #if GAF_ENABLE_NEW_UNIFORM_SETTER
-#define getUniformId(x) GAFShaderManager::getUniformLocation(x)
+#define getUniformId(x) GAFShaderManager::getRef().getUniformLocation(x)
 #else
-#define getUniformId(x) GAFShaderManager::getUniformName(x)
+#define getUniformId(x) GAFShaderManager::getRef().getUniformName(x)
 #endif
 
 #if CHECK_CTX_IDENTITY

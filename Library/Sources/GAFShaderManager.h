@@ -4,7 +4,26 @@ NS_GAF_BEGIN
 
 class GAFShaderManager
 {
+private:
+    static GAFShaderManager* m_instance;
+
 public:
+
+    GAFShaderManager();
+    ~GAFShaderManager();
+
+    static GAFShaderManager& getRef()
+    {
+        assert(m_instance);
+
+        return *m_instance;
+    }
+
+    static GAFShaderManager* getPtr()
+    {
+        return m_instance;
+    }
+
     static void renderRecreate(cocos2d::EventCustom*);
 
     struct EFragmentShader {
@@ -45,21 +64,21 @@ public:
     };
 
 
-    static inline const char* getShader(EFragmentShader::Name n) { return s_fragmentShaders[n]; }
+    inline const char* getShader(EFragmentShader::Name n) { return s_fragmentShaders[n]; }
 
-    static inline cocos2d::GLProgram* getProgram(EPrograms::Name n) { return s_programs[n]; }
-    static inline GLint getUniformLocation(EUniforms::Name n) { return s_uniformLocations[n]; }
-    static inline const char* getUniformName(EUniforms::Name n) { return s_uniformNames[n]; }
+    inline cocos2d::GLProgram* getProgram(EPrograms::Name n) { return s_programs[n]; }
+    inline GLint getUniformLocation(EUniforms::Name n) { return s_uniformLocations[n]; }
+    inline const char* getUniformName(EUniforms::Name n) { return s_uniformNames[n]; }
 
-    static void Initialize(bool force = false);
+    void Initialize(bool force = false);
 
 private:
-    static const char* const s_fragmentShaders[EFragmentShader::SIZE];
-    static cocos2d::GLProgram* s_programs[EPrograms::SIZE];
-    static const char* const s_uniformNames[EUniforms::SIZE];
-    static GLint s_uniformLocations[EUniforms::SIZE];
+    const char* s_fragmentShaders[EFragmentShader::SIZE];
+    cocos2d::GLProgram* s_programs[EPrograms::SIZE];
+    const char* s_uniformNames[EUniforms::SIZE];
+    GLint s_uniformLocations[EUniforms::SIZE];
 
-    static bool s_initialized;
+    bool s_initialized;
 }; // GAFShaderManager
 
 NS_GAF_END

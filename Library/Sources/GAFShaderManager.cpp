@@ -20,40 +20,53 @@ USING_NS_CC;
 
 NS_GAF_BEGIN
 
-    bool GAFShaderManager::s_initialized = false;
+    gaf::GAFShaderManager* gaf::GAFShaderManager::m_instance = nullptr;
 
-    const char * const GAFShaderManager::s_fragmentShaders[] =
+    gaf::GAFShaderManager::GAFShaderManager()
     {
-        GaussianBlurFragmentShader_fs,                  // GaussBlur
-        GlowFragmentShader_fs,                          // Glow
-        pcShader_PositionTextureAlpha_frag_fs,          // Alpha
-    };
-    
-    cocos2d::GLProgram* GAFShaderManager::s_programs[] =
-    {
-        nullptr
-    };
-    
-    const char* const GAFShaderManager::s_uniformNames[] = 
-    {
-        "colorTransformMult",       // ColorTransformMult
-        "colorTransformOffsets",    // ColorTransformOffset
+        m_instance = this;
 
-        "u_step",                   // BlurTexelOffset
+        s_initialized = false;
 
-        "u_step",                   // GlowTexelOffset
-        "u_glowColor",              // GlowColor
-        "u_strength",               // Strength
-    };
+        s_fragmentShaders[EFragmentShader::GaussBlur] = GaussianBlurFragmentShader_fs;
+        s_fragmentShaders[EFragmentShader::Glow] = GlowFragmentShader_fs;
+        s_fragmentShaders[EFragmentShader::Alpha] = pcShader_PositionTextureAlpha_frag_fs;
 
-    GLint GAFShaderManager::s_uniformLocations[] =
+        s_programs[EPrograms::Alpha] = nullptr;
+        s_programs[EPrograms::Blur] = nullptr;
+        s_programs[EPrograms::Glow] = nullptr;
+
+        
+        s_uniformNames[EUniforms::ColorTransformMult] = "colorTransformMult";
+        s_uniformNames[EUniforms::ColorTransformOffset] = "colorTransformOffsets";
+
+        s_uniformNames[EUniforms::BlurTexelOffset] = "u_step";
+
+        s_uniformNames[EUniforms::GlowTexelOffset] = "u_step";
+        s_uniformNames[EUniforms::GlowColor] = "u_glowColor";
+
+        s_uniformNames[EUniforms::Strength] = "u_strength";
+
+        s_uniformLocations[EUniforms::ColorTransformMult] = s_uniformLocations[EUniforms::ColorTransformOffset] = s_uniformLocations[EUniforms::BlurTexelOffset] =
+
+        s_uniformLocations[EUniforms::GlowTexelOffset] = s_uniformLocations[EUniforms::GlowColor] =
+        s_uniformLocations[EUniforms::Strength] = -1;
+        
+    }
+
+    gaf::GAFShaderManager::~GAFShaderManager()
     {
-        -1
-    };
+        m_instance = nullptr;
+
+        CC_SAFE_RELEASE(s_programs[EPrograms::Alpha]);
+        CC_SAFE_RELEASE(s_programs[EPrograms::Blur]);
+        CC_SAFE_RELEASE(s_programs[EPrograms::Glow]);
+
+    }
 
     void GAFShaderManager::renderRecreate(EventCustom*)
     {
-        Initialize(true);
+        GAFShaderManager::getRef().Initialize(true);
         CCLOG("RENDER recreated");
     }
 
@@ -101,6 +114,7 @@ NS_GAF_BEGIN
                 else
                 {
                     program = GLProgram::createWithByteArrays(cocos2d::ccPositionTextureColor_vert, fragmentShader);
+
                     CC_SAFE_RELEASE(s_programs[EPrograms::Alpha]);
                     s_programs[EPrograms::Alpha] = program;
                     CC_SAFE_RETAIN(s_programs[EPrograms::Alpha]);
