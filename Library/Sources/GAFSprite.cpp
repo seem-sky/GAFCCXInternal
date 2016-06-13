@@ -535,6 +535,44 @@ void GAFSprite::updateSlicedQuads(const cocos2d::Mat4 &transform)
     brq.br = m_quad.br;
 }
 
+void GAFSprite::updateColor()
+{
+    Sprite::updateColor();
+
+    if (m_scale9Enabled)
+    {
+        Color4B color4(_displayedColor.r, _displayedColor.g, _displayedColor.b, _displayedOpacity);
+
+        // special opacity for premultiplied textures
+        if (_opacityModifyRGB)
+        {
+            color4.r *= _displayedOpacity / 255.0f;
+            color4.g *= _displayedOpacity / 255.0f;
+            color4.b *= _displayedOpacity / 255.0f;
+        }
+
+        V3F_C4B_T2F_Quad &tlq = m_scale9Slices[0];
+        V3F_C4B_T2F_Quad &tcq = m_scale9Slices[1];
+        V3F_C4B_T2F_Quad &trq = m_scale9Slices[2];
+        V3F_C4B_T2F_Quad &clq = m_scale9Slices[3];
+        V3F_C4B_T2F_Quad &ccq = m_scale9Slices[4];
+        V3F_C4B_T2F_Quad &crq = m_scale9Slices[5];
+        V3F_C4B_T2F_Quad &blq = m_scale9Slices[6];
+        V3F_C4B_T2F_Quad &bcq = m_scale9Slices[7];
+        V3F_C4B_T2F_Quad &brq = m_scale9Slices[8];
+
+        tlq.tl.colors = tlq.tr.colors = tlq.bl.colors = tlq.br.colors = color4;
+        tcq.tl.colors = tcq.tr.colors = tcq.bl.colors = tcq.br.colors = color4;
+        trq.tl.colors = trq.tr.colors = trq.bl.colors = trq.br.colors = color4;
+        clq.tl.colors = clq.tr.colors = clq.bl.colors = clq.br.colors = color4;
+        ccq.tl.colors = ccq.tr.colors = ccq.bl.colors = ccq.br.colors = color4;
+        crq.tl.colors = crq.tr.colors = crq.bl.colors = crq.br.colors = color4;
+        blq.tl.colors = blq.tr.colors = blq.bl.colors = blq.br.colors = color4;
+        bcq.tl.colors = bcq.tr.colors = bcq.bl.colors = bcq.br.colors = color4;
+        brq.tl.colors = brq.tr.colors = brq.bl.colors = brq.br.colors = color4;
+    }
+}
+
 void GAFSprite::setExternalTransform(const cocos2d::AffineTransform& transform)
 {
     if (!cocos2d::AffineTransformEqualToTransform(getExternalTransform(), transform))

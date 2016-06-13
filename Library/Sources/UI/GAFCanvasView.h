@@ -1,0 +1,29 @@
+#pragma once
+#include "GAFMacros.h"
+#include "GAFLayoutView.h"
+
+NS_GAF_BEGIN
+
+class GAFCanvasView : public GAFLayoutView
+{
+public:
+    GAFCanvasView();
+
+    static GAFCanvasView* create(GAFAsset* anAsset, GAFTimeline* timeline);
+
+protected:
+    mutable cocos2d::Vec3 m_internalScale;
+
+    virtual cocos2d::AffineTransform& changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const override;
+    virtual cocos2d::AffineTransform& addAdditionalTransformations(cocos2d::AffineTransform& mtx) const override;
+
+    virtual cocos2d::AffineTransform& processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) override;
+    virtual cocos2d::AffineTransform& processGAFImageStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx) override;
+    virtual cocos2d::AffineTransform& processGAFTextFieldStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx) override;
+
+    virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
+    virtual cocos2d::Rect getInternalBoundingBox() const override;
+    virtual cocos2d::Vec3 getInternalScale() const;
+};
+
+NS_GAF_END

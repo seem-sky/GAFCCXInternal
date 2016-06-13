@@ -72,6 +72,11 @@ void GAFTimeline::pushExternalObject(uint32_t objectIdRef, const std::string& na
     m_externalObjects[objectIdRef] = name;
 }
 
+void GAFTimeline::pushCustomProperty(CustomProperty *property)
+{
+    m_customProperties.push_back(*property);
+}
+
 void GAFTimeline::setSceneFps(unsigned int v)
 {
     m_sceneFps = v;
@@ -130,6 +135,11 @@ const TextureAtlases_t& GAFTimeline::getTextureAtlases() const
 const ExternalObjects_t& GAFTimeline::getExternalObjects() const
 {
     return m_externalObjects;
+}
+
+const GAFTimeline::CustomProperties_t& GAFTimeline::getCustomProperties() const
+{
+    return m_customProperties;
 }
 
 const GAFAnimationSequence* GAFTimeline::getSequence(const std::string& name) const

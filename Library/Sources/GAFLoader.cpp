@@ -65,7 +65,7 @@ void GAFLoader::_registerTagLoadersV3()
 
 void GAFLoader::_registerTagLoadersV4()
 {
-    m_tagLoaders[Tags::TagDefineAnimationFrames2] = new TagDefineAnimationFrames2();
+    m_tagLoaders[Tags::TagDefineAnimationFrames2] = new TagDefineAnimationFrames2(2);
     m_tagLoaders[Tags::TagDefineAnimationObjects2] = new TagDefineAnimationObjects();
     m_tagLoaders[Tags::TagDefineAnimationMasks2] = new TagDefineAnimationMasks();
     m_tagLoaders[Tags::TagDefineAtlas2] = new TagDefineAtlas();
@@ -76,6 +76,7 @@ void GAFLoader::_registerTagLoadersV4()
     m_tagLoaders[Tags::TagDefineTimeline2] = new TagDefineTimeline2(this);
     m_tagLoaders[Tags::TagDefineSounds] = new TagDefineSounds();
     m_tagLoaders[Tags::TagDefineExternalObjects] = new TagDefineExternalObjects();
+    m_tagLoaders[Tags::TagDefineAnimationFrames3] = new TagDefineAnimationFrames2(3);
 }
 
 void GAFLoader::_registerTagLoadersCommon()

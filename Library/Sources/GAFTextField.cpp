@@ -38,7 +38,13 @@ void GAFTextField::setText(const std::string& text)
 cocos2d::Rect GAFTextField::getBoundingBox() const
 {
     cocos2d::Rect rect(m_label->getBoundingBox());
+    rect.origin.y = rect.getMaxY();
     return RectApplyAffineTransform(rect, getNodeToParentAffineTransform());
+}
+
+void GAFTextField::setExternalTransform(const cocos2d::AffineTransform & transform)
+{
+    GAFSprite::setExternalTransform(transform);
 }
 
 NS_GAF_END
