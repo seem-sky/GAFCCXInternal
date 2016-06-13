@@ -405,6 +405,10 @@ void GAFAsset::useExternalTextureAtlas(std::vector<cocos2d::Texture2D *> &textur
 
 void GAFAsset::linkLibraryAsset(GAFAsset * library)
 {
+    if (m_libraryAsset == library)
+    {
+        return;
+    }
     CC_SAFE_RELEASE(m_libraryAsset);
     m_libraryAsset = library;
     CC_SAFE_RETAIN(m_libraryAsset);

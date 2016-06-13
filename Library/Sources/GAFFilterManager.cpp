@@ -11,9 +11,9 @@ using namespace std;
 NS_GAF_BEGIN
 
 #if GAF_ENABLE_NEW_UNIFORM_SETTER
-#define getUniformId(x) GAFShaderManager::getUniformLocation(x)
+#define getUniformId(x) GAFShaderManager::getRef().getUniformLocation(x)
 #else
-#define getUniformId(x) GAFShaderManager::getUniformName(x)
+#define getUniformId(x) GAFShaderManager:getRef().:getUniformName(x)
 #endif
 
 static const int kGaussianKernelSize = 9;
@@ -99,7 +99,7 @@ Texture2D* GAFFilterManager::renderFilteredTexture(Sprite* sprite, GAFFilterData
 
 cocos2d::Texture2D* GAFFilterManager::renderGlowTexture(cocos2d::Sprite* sprite, GAFGlowFilterData* filter)
 {
-    GLProgram* program = GAFShaderManager::getProgram(GAFShaderManager::EPrograms::Glow);
+    GLProgram* program = GAFShaderManager::getRef().getProgram(GAFShaderManager::EPrograms::Glow);
 
     const float blurRadiusX = (filter->blurSize.width / 4.f);
     const float blurRadiusY = (filter->blurSize.height / 4.f);
@@ -189,7 +189,7 @@ cocos2d::Texture2D* GAFFilterManager::renderGlowTexture(cocos2d::Sprite* sprite,
 
 cocos2d::Texture2D* GAFFilterManager::renderBlurTexture(cocos2d::Sprite* sprite, GAFBlurFilterData* filter)
 {
-    GLProgram* program = GAFShaderManager::getProgram(GAFShaderManager::EPrograms::Blur);
+    GLProgram* program = GAFShaderManager::getRef().getProgram(GAFShaderManager::EPrograms::Blur);
 
     const float blurRadiusX = (filter->blurSize.width / 4.f);
     const float blurRadiusY = (filter->blurSize.height / 4.f);
@@ -267,7 +267,7 @@ cocos2d::Texture2D* GAFFilterManager::renderBlurTexture(cocos2d::Sprite* sprite,
 
 cocos2d::Texture2D* GAFFilterManager::renderShadowTexture(cocos2d::Sprite* sprite, GAFDropShadowFilterData* filter)
 {
-    GLProgram* program = GAFShaderManager::getProgram(GAFShaderManager::EPrograms::Glow);
+    GLProgram* program = GAFShaderManager::getRef().getProgram(GAFShaderManager::EPrograms::Glow);
 
     const float blurRadiusX = (filter->blurSize.width / 4.f);
     const float blurRadiusY = (filter->blurSize.height / 4.f);
