@@ -12,7 +12,7 @@
 
 NS_GAF_BEGIN
 
-GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTextureAtlasElement* txElemet, bool isMask)
+GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTextureAtlasElement* txElemet, bool isMask, uint32_t id)
 {
     GAFObject* result = nullptr;
     GAFAssetTextureManager* txMgr = asset->getTextureManager();
@@ -45,7 +45,7 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTextureAtla
     return result;
 }
 
-GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTextData* txtData, bool isMask)
+GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTextData* txtData, bool isMask, uint32_t id)
 {
     (void)asset;
     (void)isMask;
@@ -57,7 +57,7 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTextData* t
     return result;
 }
 
-GAFObject* GafObjectFactory::create(GAFAsset* asset, uint32_t id, GAFTimeline* timeline, bool isMask)
+GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTimeline* timeline, bool isMask, uint32_t id)
 {
     (void)isMask;
 

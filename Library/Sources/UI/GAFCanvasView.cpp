@@ -1,14 +1,15 @@
 #include "GAFPrecompiled.h"
 #include "GAFCanvasView.h"
 #include "GAFObject.h"
-#include "GAFSubobjectState.h"
 #include "GAFTimeline.h"
 #include "GAFUtils.h"
 
 NS_GAF_BEGIN
 
 GAFCanvasView::GAFCanvasView()
-    : m_internalScale(1.0f, 1.0f, 1.0f)
+    : m_internalScale(1.0f, 1.0f)
+    , m_fittingMode(FittingMode::none)
+    , m_scaleAlignedChildren(false)
 {
 }
 
@@ -38,7 +39,8 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
     bool alignTop = to_bool(customProperties.at("alignTop"));
     bool alignBottom = to_bool(customProperties.at("alignBottom"));
 
-    
+    cocos2d::Vec2 fittingScale(getFittingScale());
+
     bool anyOfAlignSet = alignLeft || alignRight || alignTop || alignBottom;
 
     if (anyOfAlignSet)
@@ -59,6 +61,10 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
             if (alignLeft)
                 childAdditionalScaleX = (actualInternalBounds.size.width - leftDistance - rightDistance) / childActualBounds.size.width;
         }
+        else if (m_scaleAlignedChildren)
+        {
+            childAdditionalScaleX = fittingScale.x;
+        }
 
         float finalTx = actualInternalBounds.origin.x + leftDistance + (mtx.tx - childActualBounds.origin.x) * childAdditionalScaleX;
 
@@ -75,6 +81,10 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
             if (alignTop)
                 childAdditionalScaleY = (actualInternalBounds.size.height - topDistance - bottomDistance) / childActualBounds.size.height;
         }
+        else if (m_scaleAlignedChildren)
+        {
+            childAdditionalScaleX = fittingScale.y;
+        }
 
         float finalTy = actualInternalBounds.origin.y + topDistance + (mtx.ty - childActualBounds.origin.y) * childAdditionalScaleY;
 
@@ -85,7 +95,7 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
     else
     {
         cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
-        scaleMtx = cocos2d::AffineTransformScale(scaleMtx, getInternalScale().x, getInternalScale().y);
+        scaleMtx = cocos2d::AffineTransformScale(scaleMtx, fittingScale.x, fittingScale.y);
         affineTransformSetFrom(mtx, AffineTransformConcat(mtx, scaleMtx));
     }
     
@@ -101,10 +111,13 @@ const cocos2d::Mat4& GAFCanvasView::getNodeToParentTransform() const
         _transform = GAFLayoutView::getNodeToParentTransform();
         _transformDirty = transformDirty;
 
-        _transform.getScale(&m_internalScale);
+        cocos2d::Vec3 innnerScale;
+        _transform.getScale(&innnerScale);
 
-        cocos2d::Vec3 inverseScale(1.0f / m_internalScale.x, 1.0f / m_internalScale.y, 1.0f / m_internalScale.z);
-        _transform.scale(inverseScale);
+        m_internalScale.set(innnerScale.x, innnerScale.y);
+
+        innnerScale.set(1.0f / innnerScale.x, 1.0f / innnerScale.y, 1.0f / innnerScale.z);
+        _transform.scale(innnerScale);
 
         _transformDirty = false;
     }
@@ -120,7 +133,7 @@ cocos2d::Rect GAFCanvasView::getInternalBoundingBox() const
     return RectApplyAffineTransform(unscaledInternalBounds, scaleMtx);
 }
 
-cocos2d::Vec3 GAFCanvasView::getInternalScale() const
+cocos2d::Vec2 GAFCanvasView::getInternalScale() const
 {
     if (_transformDirty)
         getNodeToParentTransform();
@@ -128,10 +141,39 @@ cocos2d::Vec3 GAFCanvasView::getInternalScale() const
     return m_internalScale;
 }
 
+cocos2d::Vec2 GAFCanvasView::getFittingScale() const
+{
+    cocos2d::Vec2 fittingScale;
+    auto internalScale = getInternalScale();
+    switch (m_fittingMode)
+    {
+    case FittingMode::none:
+        fittingScale.set(internalScale);
+        break;
+    case FittingMode::minimum:
+        fittingScale.x = fittingScale.y = (std::abs(internalScale.x) < std::abs(internalScale.y)) ? internalScale.x : internalScale.y;
+        break;
+    case FittingMode::maximum:
+        fittingScale.x = fittingScale.y = (std::abs(internalScale.x) > std::abs(internalScale.y)) ? internalScale.x : internalScale.y;
+        break;
+    case FittingMode::horizontal:
+        fittingScale.x = fittingScale.y = internalScale.x;
+        break;
+    case FittingMode::vertical:
+        fittingScale.x = fittingScale.y = internalScale.x;
+        break;
+    default:
+        fittingScale.set(internalScale);
+    }
+
+    return fittingScale;
+}
+
 cocos2d::AffineTransform& GAFCanvasView::addAdditionalTransformations(cocos2d::AffineTransform& mtx) const
 {
     cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
-    scaleMtx = cocos2d::AffineTransformScale(scaleMtx, getInternalScale().x, getInternalScale().y);
+    cocos2d::Vec2 fittingScale(getFittingScale());
+    scaleMtx = cocos2d::AffineTransformScale(scaleMtx, fittingScale.x, fittingScale.y);
     affineTransformSetFrom(mtx, AffineTransformConcat(mtx, scaleMtx));
     return mtx;
 }
@@ -144,18 +186,24 @@ cocos2d::AffineTransform & GAFCanvasView::processGAFTimelineStateTransform(GAFOb
 
 cocos2d::AffineTransform& GAFCanvasView::processGAFImageStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx)
 {
-    GAFObject::processGAFImageStateTransform(child, mtx);
     addAdditionalTransformations(mtx);
+    GAFObject::processGAFImageStateTransform(child, mtx);
 
     return mtx;
 }
 
 cocos2d::AffineTransform& GAFCanvasView::processGAFTextFieldStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx)
 {
-    GAFObject::processGAFImageStateTransform(child, mtx);
     addAdditionalTransformations(mtx);
+    GAFObject::processGAFTextFieldStateTransform(child, mtx);
 
     return mtx;
+}
+
+void GAFCanvasView::processOwnCustomProperties(const CustomPropertiesMap_t & customProperties)
+{
+    m_fittingMode = FittingMode::toEnum(customProperties.at("fittingMode"));
+    m_scaleAlignedChildren = to_bool(customProperties.at("scaleAlignedChildren"));
 }
 
 NS_GAF_END

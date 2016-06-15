@@ -82,16 +82,6 @@ void GAFBoxLayoutView::removeAllChildrenWithCleanup(bool cleanup)
     m_dynamicContentBoundsDirty = true;
 }
 
-void GAFBoxLayoutView::setPosition(float x, float y)
-{
-    GAFLayoutView::setPosition(x, y);
-}
-
-void GAFBoxLayoutView::visit(cocos2d::Renderer * renderer, const cocos2d::Mat4 & parentTransform, uint32_t parentFlags)
-{
-    GAFLayoutView::visit(renderer, parentTransform, parentFlags);
-}
-
 void GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
 {
     m_direction = Direction::toEnum(customProperties.at("direction"));

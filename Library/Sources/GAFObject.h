@@ -16,20 +16,20 @@ struct GAFObjectClass
     enum Enum
     {
         UNKNOWN = -1,
-        SOUND = 0,
-        BITMAP_DATA = 1,
-        SPRITE = 2,
-        MOVIE_CLIP = 3,
-        UI_COMPONENT = 4,
-        UI_VISUAL_COMPONENT = 5,
-        UI_LAYOUT = 6,
-        UI_CANVAS = 7,
-        UI_BOX_LAYOUT = 8,
-        UI_BUTTON = 9,
-        UI_SCROLL_VIEW = 10,
-        UI_TEXT_AREA = 11,
-        UI_LABEL = 12,
-        UI_PROGRESS_BAR = 13
+        SOUND,
+        BITMAP_DATA,
+        SPRITE,
+        MOVIE_CLIP,
+        UI_COMPONENT,
+        UI_VISUAL_COMPONENT,
+        UI_LAYOUT,
+        UI_CANVAS,
+        UI_BOX_LAYOUT,
+        UI_BUTTON,
+        UI_SCROLL_VIEW,
+        UI_TEXT_AREA,
+        UI_LABEL,
+        UI_PROGRESS_BAR
     };
 
     static std::string toString(Enum e)

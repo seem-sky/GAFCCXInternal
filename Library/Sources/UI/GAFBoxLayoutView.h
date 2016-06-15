@@ -126,9 +126,6 @@ public:
     virtual void removeChild(Node* child, bool cleanup = true) override;
     virtual void removeAllChildrenWithCleanup(bool cleanup) override;
 
-    virtual void setPosition(float x, float y) override;
-
-    virtual void visit(cocos2d::Renderer* renderer, const cocos2d::Mat4& parentTransform, uint32_t parentFlags) override;
 protected:
     Direction::Enum m_direction;
     float m_gap;

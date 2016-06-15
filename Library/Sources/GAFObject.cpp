@@ -157,7 +157,7 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         ExternalObjects_t::const_iterator externalTl = m_timeline->getExternalObjects().find(reference);
         assert(externalTl != m_timeline->getExternalObjects().end());
         GAFTimeline* externalTimeline = m_asset->getLibraryAsset()->getTimelineByName(externalTl->second);
-        result = GafObjectFactory::create(m_asset->getLibraryAsset(), id, externalTimeline, isMask);
+        result = GafObjectFactory::create(m_asset->getLibraryAsset(), externalTimeline, isMask, id);
         //m_asset->getLibraryAsset()->setRootTimeline(externalTl->second);
         //result = m_asset->getLibraryAsset()->createObject();
         result->retain(); // Will be released in m_displayList
@@ -172,7 +172,7 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
 
         CCAssert(tl != timelines.end(), "Invalid object reference.");
 
-        result = GafObjectFactory::create(m_asset, id, tl->second, isMask);
+        result = GafObjectFactory::create(m_asset, tl->second, isMask, id);
 
         //result = encloseNewTimeline(reference);
     }
@@ -181,7 +181,7 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         TextsData_t::const_iterator it = m_timeline->getTextsData().find(reference);
         if (it != m_timeline->getTextsData().end())
         {
-            result = GafObjectFactory::create(m_asset, id, it->second, isMask);
+            result = GafObjectFactory::create(m_asset, it->second, isMask, id);
         }
     }
     else if (type == GAFCharacterType::Texture)
@@ -194,7 +194,7 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         {
             txElemet = elIt->second;
 
-            result = GafObjectFactory::create(m_asset, id, txElemet, isMask);
+            result = GafObjectFactory::create(m_asset, txElemet, isMask, id);
         }
         else
         {
