@@ -1,6 +1,6 @@
 #include "GAFPrecompiled.h"
 #include "GAFComponentView.h"
-#include <CCStencilStateManager.hpp>
+#include <base/CCStencilStateManager.hpp>
 
 NS_GAF_BEGIN
 
@@ -19,7 +19,7 @@ GAFComponentView::GAFComponentView()
 
 GAFComponentView::~GAFComponentView()
 {
-    
+    CC_SAFE_DELETE(m_stencileStateManager);
 }
 
 void GAFComponentView::setClippingEnabled(bool enabled)
