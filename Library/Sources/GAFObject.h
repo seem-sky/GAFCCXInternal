@@ -185,8 +185,6 @@ protected:
     uint32_t    nextFrame();
 
 public:
-    GAFObject();
-
     void addUpdateListener(const GAFObjectUpdateCallback& callback);
 
     /// @note do not forget to call setSequenceDelegate(nullptr) before deleting your subscriber
@@ -276,8 +274,7 @@ public:
     void        setAnimationRunning(bool value, bool recurcive);
 
 public:
-    typedef std::map<const std::string, const std::string> CustomPropertiesMap_t;
-
+    GAFObject();
     virtual ~GAFObject();
 
     static GAFObject* create(GAFAsset* anAsset, GAFTimeline* timeline);
