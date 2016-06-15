@@ -19,6 +19,7 @@ GAFComponentView::GAFComponentView()
 
 GAFComponentView::~GAFComponentView()
 {
+    CC_SAFE_RELEASE(m_clippingStencil);
     CC_SAFE_DELETE(m_stencileStateManager);
 }
 
