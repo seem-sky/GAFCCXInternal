@@ -17,7 +17,7 @@ GAFBoxLayoutView::GAFBoxLayoutView()
     , m_horizontalAlign(HorizontalAlign::center)
     , m_verticalAlign(VerticalAlign::center)
     , m_usePercents(false)
-    , m_dynamicContentBounds(cocos2d::CCRect::ZERO)
+    , m_dynamicContentBounds(cocos2d::Rect::ZERO)
     , m_dynamicContentBoundsDirty(false)
 {
 }
