@@ -93,6 +93,7 @@
 		B63C5A7A1B4A83F1001C8112 /* GAFSoundInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A781B4A83F1001C8112 /* GAFSoundInfo.cpp */; };
 		B63C5A7B1B4A83F1001C8112 /* GAFSoundInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A781B4A83F1001C8112 /* GAFSoundInfo.cpp */; };
 		B643F9E119B741E0005D2E26 /* GAFAssetTextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B643F9DF19B741E0005D2E26 /* GAFAssetTextureManager.cpp */; };
+		B693A0831D145D61007BF426 /* GafObjectFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884DA1D1195A0008E725E /* GafObjectFactory.cpp */; };
 		B6AC347F1A03CBE5008BDF89 /* GAFTextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6AC347D1A03CBE5008BDF89 /* GAFTextField.cpp */; };
 		B6AC34821A03CBF0008BDF89 /* GAFTextData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6AC34801A03CBF0008BDF89 /* GAFTextData.cpp */; };
 		B6AC34851A03CBF9008BDF89 /* TagDefineTextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6AC34831A03CBF9008BDF89 /* TagDefineTextField.cpp */; };
@@ -569,6 +570,7 @@
 			files = (
 				29CC57FC1A36113E00B31D72 /* GAFObject.cpp in Sources */,
 				29CC57FD1A36113E00B31D72 /* TagDefineAtlas.cpp in Sources */,
+				B693A0831D145D61007BF426 /* GafObjectFactory.cpp in Sources */,
 				29CC57FE1A36113E00B31D72 /* GAFTimeline.cpp in Sources */,
 				29F1CA621C91D2180087FCFA /* TagDefineAtlas4.cpp in Sources */,
 				29CC57FF1A36113E00B31D72 /* GAFSubobjectState.cpp in Sources */,
