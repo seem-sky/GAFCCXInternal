@@ -15,6 +15,12 @@
 
 NS_GAF_BEGIN
 
+TagDefineAnimationFrames2::TagDefineAnimationFrames2(uint8_t version)
+: m_version(version)
+{
+    assert(version == 2 || version == 3);
+}
+
 TagDefineAnimationFrames2::~TagDefineAnimationFrames2()
 {
     for (States_t::iterator it = m_currentStates.begin(), ie = m_currentStates.end(); it != ie; ++it)
@@ -232,6 +238,16 @@ GAFSubobjectState* TagDefineAnimationFrames2::extractState(GAFStream* in)
     if (hasMasks)
     {
         state->maskObjectIdRef = in->readU32();
+    }
+    
+    if (m_version >= 3)
+    {
+        uint16_t customPropertiesCount = in->readU16();
+        for (uint16_t i = 0; i < customPropertiesCount; ++i)
+        {
+            uint32_t idx = in->readU32();
+            state->getCustomPropertiesValueIdxs().push_back(idx);
+        }
     }
 
     return state;

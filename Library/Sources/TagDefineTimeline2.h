@@ -10,7 +10,7 @@ class TagDefineTimeline2 : public TagDefineTimeline
 {
 public:
     TagDefineTimeline2(GAFLoader* loader);
-
+    
     virtual void read(GAFStream*, GAFAsset*, GAFTimeline*) override;
 };
 

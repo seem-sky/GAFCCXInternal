@@ -6,6 +6,10 @@
 #include "GAFAsset.h"
 #include "GAFTimeline.h"
 
+#include "json/document.h"
+#include "json/stringbuffer.h"
+#include "json/prettywriter.h"
+
 NS_GAF_BEGIN
 
 TagDefineTimeline2::TagDefineTimeline2(GAFLoader* loader) : TagDefineTimeline(loader)
@@ -18,23 +22,23 @@ void TagDefineTimeline2::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timel
     unsigned int framesCount = in->readU32();
     cocos2d::Rect aabb;
     cocos2d::Point pivot;
-
+    
     PrimitiveDeserializer::deserialize(in, &aabb);
     PrimitiveDeserializer::deserialize(in, &pivot);
-
+    
     GAFTimeline *tl = new GAFTimeline(timeline, id, aabb, pivot, framesCount);
-
+    
     //////////////////////////////////////////////////////////////////////////
-
+    
     std::string temp;
     in->readString(&temp);
     tl->setLinkageName(temp);
-
+    
     in->readString(&temp);
     tl->setBaseClass(temp);
-
+    
     m_loader->loadTags(in, asset, tl);
-
+    
     asset->pushTimeline(id, tl);
     if (id == 0)
     {

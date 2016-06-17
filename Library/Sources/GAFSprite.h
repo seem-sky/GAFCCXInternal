@@ -41,7 +41,7 @@ public:
     virtual void setTextureRect(const cocos2d::Rect& rect, bool rotated, const cocos2d::Size& untrimmedSize) override;
     virtual void setTextureCoords(cocos2d::Rect rect) override;
 
-    void setExternalTransform(const cocos2d::AffineTransform& transform);
+    virtual void setExternalTransform(const cocos2d::AffineTransform& transform);
     const cocos2d::AffineTransform& getExternalTransform() const;
 
     virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
@@ -88,6 +88,7 @@ protected:
 
     void updateSlicedQuads(const cocos2d::Mat4 &transform);
 
+    void updateColor() override;
 private:
     typedef std::array<cocos2d::V3F_C4B_T2F_Quad, 9> Scale9Slices_t;
 

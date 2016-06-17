@@ -15,6 +15,7 @@
 #include "GAFDelegates.h"
 #include "GAFTimeline.h"
 #include "GAFTextField.h"
+#include "GAFObjectFactory.h"
 
 #define GAF_VERSION 5.0
 
