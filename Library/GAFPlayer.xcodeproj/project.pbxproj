@@ -96,6 +96,7 @@
 		B6AC347F1A03CBE5008BDF89 /* GAFTextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6AC347D1A03CBE5008BDF89 /* GAFTextField.cpp */; };
 		B6AC34821A03CBF0008BDF89 /* GAFTextData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6AC34801A03CBF0008BDF89 /* GAFTextData.cpp */; };
 		B6AC34851A03CBF9008BDF89 /* TagDefineTextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6AC34831A03CBF9008BDF89 /* TagDefineTextField.cpp */; };
+		B6D14DF91D13DD3200B509B9 /* TagDefineTimeline3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6D14DF71D13DD3200B509B9 /* TagDefineTimeline3.cpp */; };
 		B6F8586B1A07D5A40022310D /* GAFTimelineAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6F858691A07D5A40022310D /* GAFTimelineAction.cpp */; };
 /* End PBXBuildFile section */
 
@@ -232,6 +233,8 @@
 		B6AC34811A03CBF0008BDF89 /* GAFTextData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAFTextData.h; sourceTree = "<group>"; };
 		B6AC34831A03CBF9008BDF89 /* TagDefineTextField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineTextField.cpp; sourceTree = "<group>"; };
 		B6AC34841A03CBF9008BDF89 /* TagDefineTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineTextField.h; sourceTree = "<group>"; };
+		B6D14DF71D13DD3200B509B9 /* TagDefineTimeline3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineTimeline3.cpp; sourceTree = "<group>"; };
+		B6D14DF81D13DD3200B509B9 /* TagDefineTimeline3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineTimeline3.h; sourceTree = "<group>"; };
 		B6F858691A07D5A40022310D /* GAFTimelineAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GAFTimelineAction.cpp; sourceTree = "<group>"; };
 		B6F8586A1A07D5A40022310D /* GAFTimelineAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAFTimelineAction.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -368,11 +371,13 @@
 		1A2FBF67192E00FB00631FE9 /* Tags */ = {
 			isa = PBXGroup;
 			children = (
+				B6D14DF71D13DD3200B509B9 /* TagDefineTimeline3.cpp */,
+				B6D14DF81D13DD3200B509B9 /* TagDefineTimeline3.h */,
 				B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */,
 				B60920621CCE7AC1000C25C9 /* TagDefineExternalObjects.h */,
 				29F1CA5C1C91D2050087FCFA /* TagDefineAtlas4.cpp */,
-				29F1CA5D1C91D2050087FCFA /* TagDefineTimeline2.cpp */,
 				29F1CA5E1C91D2050087FCFA /* TagDefineAtlas4.h */,
+				29F1CA5D1C91D2050087FCFA /* TagDefineTimeline2.cpp */,
 				29F1CA5F1C91D2050087FCFA /* TagDefineTimeline2.h */,
 				B63C5A701B4A83E2001C8112 /* TagDefineAtlas3.cpp */,
 				B63C5A711B4A83E2001C8112 /* TagDefineAtlas3.h */,
@@ -547,6 +552,7 @@
 				1A2FBF51192E00C800631FE9 /* GAFFile.cpp in Sources */,
 				1A2FBF60192E00C800631FE9 /* TagDefineAnimationMasks.cpp in Sources */,
 				B6AC347F1A03CBE5008BDF89 /* GAFTextField.cpp in Sources */,
+				B6D14DF91D13DD3200B509B9 /* TagDefineTimeline3.cpp in Sources */,
 				1A2FBF65192E00C800631FE9 /* TagDefineStage.cpp in Sources */,
 				B63C5A761B4A83E2001C8112 /* TagDefineSounds.cpp in Sources */,
 				1A2FBF64192E00C800631FE9 /* TagDefineSequences.cpp in Sources */,
