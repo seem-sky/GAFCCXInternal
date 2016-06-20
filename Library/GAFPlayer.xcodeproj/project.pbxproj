@@ -93,6 +93,12 @@
 		B63C5A7A1B4A83F1001C8112 /* GAFSoundInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A781B4A83F1001C8112 /* GAFSoundInfo.cpp */; };
 		B63C5A7B1B4A83F1001C8112 /* GAFSoundInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A781B4A83F1001C8112 /* GAFSoundInfo.cpp */; };
 		B643F9E119B741E0005D2E26 /* GAFAssetTextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B643F9DF19B741E0005D2E26 /* GAFAssetTextureManager.cpp */; };
+		B64C0E571D17DA260014C3C5 /* TagDefineTimeline3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6D14DF71D13DD3200B509B9 /* TagDefineTimeline3.cpp */; };
+		B64C0E581D17DA330014C3C5 /* GAFBoxLayoutView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884DF1D1195FB008E725E /* GAFBoxLayoutView.cpp */; };
+		B64C0E591D17DA360014C3C5 /* GAFCanvasView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884E11D1195FB008E725E /* GAFCanvasView.cpp */; };
+		B64C0E5A1D17DA380014C3C5 /* GAFComponentView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884E31D1195FB008E725E /* GAFComponentView.cpp */; };
+		B64C0E5B1D17DA3A0014C3C5 /* GAFLayoutView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884E51D1195FB008E725E /* GAFLayoutView.cpp */; };
+		B64C0E5C1D17DA3E0014C3C5 /* GAFScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884E71D1195FB008E725E /* GAFScrollView.cpp */; };
 		B693A0831D145D61007BF426 /* GafObjectFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884DA1D1195A0008E725E /* GafObjectFactory.cpp */; };
 		B6AC347F1A03CBE5008BDF89 /* GAFTextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6AC347D1A03CBE5008BDF89 /* GAFTextField.cpp */; };
 		B6AC34821A03CBF0008BDF89 /* GAFTextData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6AC34801A03CBF0008BDF89 /* GAFTextData.cpp */; };
@@ -571,6 +577,7 @@
 				29CC57FC1A36113E00B31D72 /* GAFObject.cpp in Sources */,
 				29CC57FD1A36113E00B31D72 /* TagDefineAtlas.cpp in Sources */,
 				B693A0831D145D61007BF426 /* GafObjectFactory.cpp in Sources */,
+				B64C0E5A1D17DA380014C3C5 /* GAFComponentView.cpp in Sources */,
 				29CC57FE1A36113E00B31D72 /* GAFTimeline.cpp in Sources */,
 				29F1CA621C91D2180087FCFA /* TagDefineAtlas4.cpp in Sources */,
 				29CC57FF1A36113E00B31D72 /* GAFSubobjectState.cpp in Sources */,
@@ -578,6 +585,7 @@
 				29CC58011A36113E00B31D72 /* TagDefineAnimationFrames.cpp in Sources */,
 				29F1CA631C91D22C0087FCFA /* TagDefineTimeline2.cpp in Sources */,
 				29CC58021A36113E00B31D72 /* GAFMovieClip.cpp in Sources */,
+				B64C0E591D17DA360014C3C5 /* GAFCanvasView.cpp in Sources */,
 				29CC58031A36113E00B31D72 /* GAFAssetTextureManager.cpp in Sources */,
 				29CC58041A36113E00B31D72 /* GAFAnimationSequence.cpp in Sources */,
 				29CC58051A36113E00B31D72 /* TagDefineTimeline.cpp in Sources */,
@@ -585,14 +593,17 @@
 				29CC58071A36113E00B31D72 /* GAFLoader.cpp in Sources */,
 				29CC58081A36113E00B31D72 /* GAFStream.cpp in Sources */,
 				29CC58091A36113E00B31D72 /* GAFAnimationFrame.cpp in Sources */,
+				B64C0E581D17DA330014C3C5 /* GAFBoxLayoutView.cpp in Sources */,
 				B60920BC1CCE8376000C25C9 /* TagDefineExternalObjects.cpp in Sources */,
 				29CC580A1A36113E00B31D72 /* TagDefineAnimationObjects.cpp in Sources */,
 				B63C5A751B4A83E2001C8112 /* TagDefineAtlas3.cpp in Sources */,
 				B63C5A7B1B4A83F1001C8112 /* GAFSoundInfo.cpp in Sources */,
 				29CC580B1A36113E00B31D72 /* GAFQuadCommand.cpp in Sources */,
 				29CC580C1A36113E00B31D72 /* GAFTextureAtlasElement.cpp in Sources */,
+				B64C0E5C1D17DA3E0014C3C5 /* GAFScrollView.cpp in Sources */,
 				29CC580D1A36113E00B31D72 /* GAFTextureAtlas.cpp in Sources */,
 				29CC580E1A36113E00B31D72 /* GAFTextData.cpp in Sources */,
+				B64C0E5B1D17DA3A0014C3C5 /* GAFLayoutView.cpp in Sources */,
 				29CC580F1A36113E00B31D72 /* GAFPrecompiled.cpp in Sources */,
 				29CC58101A36113E00B31D72 /* TagDefineTextField.cpp in Sources */,
 				29CC58111A36113E00B31D72 /* GAFAsset.cpp in Sources */,
@@ -606,6 +617,7 @@
 				29CC58191A36113E00B31D72 /* TagDefineStage.cpp in Sources */,
 				B63C5A771B4A83E2001C8112 /* TagDefineSounds.cpp in Sources */,
 				29CC581A1A36113E00B31D72 /* TagDefineSequences.cpp in Sources */,
+				B64C0E571D17DA260014C3C5 /* TagDefineTimeline3.cpp in Sources */,
 				29CC581B1A36113E00B31D72 /* PrimitiveDeserializer.cpp in Sources */,
 				29CC581C1A36113E00B31D72 /* GAFShaderManager.cpp in Sources */,
 				29CC581D1A36113E00B31D72 /* GAFCachedTexture.cpp in Sources */,
