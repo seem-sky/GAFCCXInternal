@@ -60,6 +60,8 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
 
             if (alignLeft)
                 childAdditionalScaleX = (actualInternalBounds.size.width - leftDistance - rightDistance) / childActualBounds.size.width;
+            else if (m_scaleAlignedChildren)
+                childAdditionalScaleX = fittingScale.x;
         }
         else if (m_scaleAlignedChildren)
         {
@@ -80,10 +82,12 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
 
             if (alignTop)
                 childAdditionalScaleY = (actualInternalBounds.size.height - topDistance - bottomDistance) / childActualBounds.size.height;
+            else if (m_scaleAlignedChildren)
+                childAdditionalScaleY = fittingScale.y;
         }
         else if (m_scaleAlignedChildren)
         {
-            childAdditionalScaleX = fittingScale.y;
+            childAdditionalScaleY = fittingScale.y;
         }
 
         float finalTy = actualInternalBounds.origin.y + topDistance + (mtx.ty - childActualBounds.origin.y) * childAdditionalScaleY;
