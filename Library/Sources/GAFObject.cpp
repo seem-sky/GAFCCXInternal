@@ -156,8 +156,9 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         assert(m_asset->getLibraryAsset());
         ExternalObjects_t::const_iterator externalTl = m_timeline->getExternalObjects().find(reference);
         assert(externalTl != m_timeline->getExternalObjects().end());
-        GAFTimeline* externalTimeline = m_asset->getLibraryAsset()->getTimelineByName(externalTl->second);
+        GAFTimeline* externalTimeline = m_asset->getLibraryAsset()->getTimelineByName(externalTl->second->getName());
         result = GafObjectFactory::create(m_asset->getLibraryAsset(), externalTimeline, isMask, id);
+        result->setCustomProperties(externalTl->second->getCustomProperties());
         //m_asset->getLibraryAsset()->setRootTimeline(externalTl->second);
         //result = m_asset->getLibraryAsset()->createObject();
         result->retain(); // Will be released in m_displayList
@@ -173,6 +174,7 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         CCAssert(tl != timelines.end(), "Invalid object reference.");
 
         result = GafObjectFactory::create(m_asset, tl->second, isMask, id);
+        result->setCustomProperties(tl->second->getCustomProperties());
 
         //result = encloseNewTimeline(reference);
     }
@@ -930,7 +932,7 @@ void GAFObject::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const G
     if (!child->m_isInResetState)
     {
         CustomPropertiesMap_t props;
-        fillCustomPropertiesMap(props, child->getTimeLine(), state);
+        fillCustomPropertiesMap(props, child->getCustomProperties(), state);
 
         processGAFTimelineStateTransform(child, mtx, props);
         child->setExternalTransform(mtx);
@@ -1231,10 +1233,8 @@ bool GAFObject::allNecessaryFieldsExist(const CustomPropertiesMap_t & customProp
     return false;
 }
 
-GAFObject::CustomPropertiesMap_t& GAFObject::fillCustomPropertiesMap(CustomPropertiesMap_t & map, const GAFTimeline * timeline, const GAFSubobjectState * state)
+GAFObject::CustomPropertiesMap_t& GAFObject::fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, const GAFSubobjectState * state) const
 {
-    const GAFTimeline::CustomProperties_t& timelineProperties = timeline->getCustomProperties();
-
     for (uint32_t propIdx = 0; propIdx < timelineProperties.size(); ++propIdx)
     {
         std::string currentProperty = timelineProperties[propIdx].name;
@@ -1413,6 +1413,51 @@ GAFObject* GAFObject::getObjectByName(const std::string& name)
 const GAFObject* GAFObject::getObjectByName(const std::string& name) const
 {
     return const_cast<GAFObject*>(this)->getObjectByName(name);
+}
+
+GAFObject* GAFObject::getObjectByNameForCurrentFrame(const std::string& name)
+{
+    if (name.empty())
+        return nullptr;
+
+    std::stringstream ss(name);
+    std::string item;
+    typedef std::vector<std::string> StringVec_t;
+    StringVec_t elems;
+    while (std::getline(ss, item, '.'))
+        elems.push_back(item);
+
+    GAFObject* retval = nullptr;
+    GAFObject* currentObj = this;
+
+    for (StringVec_t::const_iterator elIt = elems.cbegin(); elIt != elems.cend() && currentObj; ++elIt)
+    {
+        const NamedParts_t& np = currentObj->getTimeLine()->getNamedParts();
+
+        std::pair<NamedParts_t::const_iterator, NamedParts_t::const_iterator> range = np.equal_range(*elIt);
+
+        GAFObject* foundChild = nullptr;
+
+        for (NamedParts_t::const_iterator npIt = range.first; npIt != range.second; ++npIt)
+        {
+            GAFObject* child = currentObj->getDisplayList().at(npIt->second);
+
+            if (child && child->isVisibleInCurrentFrame())
+            {
+                foundChild = child;
+                break;
+            }
+        }
+
+        retval = currentObj = foundChild;
+    }
+
+    return retval;
+}
+
+const GAFObject* GAFObject::getObjectByNameForCurrentFrame(const std::string& name) const
+{
+    return const_cast<GAFObject*>(this)->getObjectByNameForCurrentFrame(name);
 }
 
 bool GAFObject::isVisibleInCurrentFrame() const

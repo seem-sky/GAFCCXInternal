@@ -36,9 +36,10 @@ void TagDefineTimeline3::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timel
 
     in->readString(&temp);
     tl->setBaseClass(temp);
-    
-    in->readString(&temp);
-    parseCustomProperties(tl, temp);
+
+    CustomProperties_t properties;
+    m_loader->readCustomProperties(in, &properties);
+    tl->setCustomProperties(properties);
 
     m_loader->loadTags(in, asset, tl);
 
@@ -46,49 +47,6 @@ void TagDefineTimeline3::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timel
     if (id == 0)
     {
         asset->setRootTimeline(0u);
-    }
-}
-
-void TagDefineTimeline3::parseCustomProperties(GAFTimeline* tl, const std::string& jsonStr)
-{
-    //JSON // (format: {"cps" /* custom properties */: [{"n" /* name */: "propName1", "vs" /* values */: [val1, val2, val3, ...]}, [{"n": "propName2", "vs": [val1, val2, val3, ...]}, ...]})
-    if (jsonStr.empty())
-        return;
-    
-    rapidjson::Document doc;
-    doc.Parse<0>(jsonStr.c_str());
-    
-    const rapidjson::Value& root = doc["cps"];
-    assert(root.IsArray());
-    
-    for (rapidjson::SizeType i = 0; i < root.Size(); ++i)
-    {
-        const rapidjson::Value& prop_value = root[i];
-        assert(prop_value.MemberCount() == 1);
-        
-        GAFTimeline::CustomProperty custom_prop;
-        
-        rapidjson::Value::ConstMemberIterator firstMember = prop_value.MemberBegin();
-        custom_prop.name = firstMember->name.GetString();
-        const rapidjson::Value& firstMemberValue = firstMember->value;
-        assert(firstMemberValue.IsArray());
-        for (rapidjson::SizeType j = 0; j < firstMemberValue.Size(); ++j)
-        {
-            if (firstMemberValue[j].IsString())
-            {
-                std::string value = firstMemberValue[j].GetString();
-                custom_prop.possibleValues.push_back(value);
-            }
-            else
-            {
-                rapidjson::StringBuffer valueBuffer;
-                rapidjson::PrettyWriter<rapidjson::StringBuffer> wr(valueBuffer);
-                firstMemberValue[j].Accept(wr);
-                custom_prop.possibleValues.push_back(valueBuffer.GetString());
-            }
-        }
-        
-        tl->pushCustomProperty(&custom_prop);
     }
 }
 

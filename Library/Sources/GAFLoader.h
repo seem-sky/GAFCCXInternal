@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TagDefines.h"
+#include "GAFCollections.h"
 
 NS_GAF_BEGIN
 
@@ -45,6 +46,7 @@ public:
     void                 registerTagLoader(unsigned int idx, DefinitionTagBase*);
 
     void                 loadTags(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline);
+    void                 readCustomProperties(GAFStream* in, CustomProperties_t* customProperties) const;
 };
 
 NS_GAF_END

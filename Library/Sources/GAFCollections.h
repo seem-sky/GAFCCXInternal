@@ -10,6 +10,7 @@ class GAFAnimationFrame;
 class GAFSprite;
 class GAFFilterData;
 class GAFTimeline;
+class ExternalObject;
 class GAFTextData;
 class GAFObject;
 class GAFSoundInfo;
@@ -86,11 +87,18 @@ typedef std::unordered_map<uint32_t, GAFTextData*>          TextsData_t;
 typedef std::unordered_map<uint32_t, int>                   CaptureObjects_t;      // Object id -> capture flags
 
 typedef std::unordered_map<std::string, GAFAnimationSequence>         AnimationSequences_t;
-typedef std::unordered_map<std::string, uint32_t>                     NamedParts_t;
-typedef std::unordered_map<uint32_t, std::string>                     ExternalObjects_t;
+typedef std::multimap<std::string, uint32_t>                          NamedParts_t;
+typedef std::unordered_map<uint32_t, ExternalObject*>                 ExternalObjects_t;
 
 typedef std::unordered_map<uint32_t, GAFSoundInfo*>         SoundInfos_t;
 
+struct CustomProperty
+{
+    std::string name;
+    std::vector<std::string> possibleValues;
+};
+
+typedef std::vector<CustomProperty> CustomProperties_t;
 
 static const uint32_t IDNONE = UINT_MAX;
 

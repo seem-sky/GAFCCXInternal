@@ -1,5 +1,6 @@
 #include "GAFPrecompiled.h"
 #include "GAFLoader.h"
+
 #include "GAFAsset.h"
 #include "DefinitionTagBase.h"
 #include "GAFHeader.h"
@@ -25,6 +26,11 @@
 #include "TagDefineTextField.h"
 #include "TagDefineSounds.h"
 #include "TagDefineExternalObjects.h"
+#include "TagDefineExternalObjects2.h"
+
+#include <json/document.h>
+#include <json/stringbuffer.h>
+#include <json/prettywriter.h>
 
 NS_GAF_BEGIN
 
@@ -79,6 +85,7 @@ void GAFLoader::_registerTagLoadersV4()
     m_tagLoaders[Tags::TagDefineSounds] = new TagDefineSounds();
     m_tagLoaders[Tags::TagDefineExternalObjects] = new TagDefineExternalObjects();
     m_tagLoaders[Tags::TagDefineAnimationFrames3] = new TagDefineAnimationFrames2(3);
+    m_tagLoaders[Tags::TagDefineExternalObjects2] = new TagDefineExternalObjects2(this);
 }
 
 void GAFLoader::_registerTagLoadersCommon()
@@ -138,6 +145,52 @@ void GAFLoader::loadTags(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
     }
 }
 
+void GAFLoader::readCustomProperties(GAFStream* in, CustomProperties_t* customProperties) const
+{
+    std::string jsonStr;
+    in->readString(&jsonStr);
+
+    //JSON // (format: {"cps" /* custom properties */: [{"n" /* name */: "propName1", "vs" /* values */: [val1, val2, val3, ...]}, [{"n": "propName2", "vs": [val1, val2, val3, ...]}, ...]})
+    if (jsonStr.empty())
+        return;
+
+    rapidjson::Document doc;
+    doc.Parse<0>(jsonStr.c_str());
+
+    const rapidjson::Value& root = doc["cps"];
+    assert(root.IsArray());
+
+    for (rapidjson::SizeType i = 0; i < root.Size(); ++i)
+    {
+        const rapidjson::Value& prop_value = root[i];
+        assert(prop_value.MemberCount() == 1);
+
+        CustomProperty custom_prop;
+
+        rapidjson::Value::ConstMemberIterator firstMember = prop_value.MemberBegin();
+        custom_prop.name = firstMember->name.GetString();
+        const rapidjson::Value& firstMemberValue = firstMember->value;
+        assert(firstMemberValue.IsArray());
+        for (rapidjson::SizeType j = 0; j < firstMemberValue.Size(); ++j)
+        {
+            if (firstMemberValue[j].IsString())
+            {
+                std::string value = firstMemberValue[j].GetString();
+                custom_prop.possibleValues.push_back(value);
+            }
+            else
+            {
+                rapidjson::StringBuffer valueBuffer;
+                rapidjson::PrettyWriter<rapidjson::StringBuffer> wr(valueBuffer);
+                firstMemberValue[j].Accept(wr);
+                custom_prop.possibleValues.push_back(valueBuffer.GetString());
+            }
+        }
+
+        customProperties->push_back(custom_prop);
+    }
+}
+
 bool GAFLoader::loadData(const unsigned char* data, size_t len, GAFAsset* context)
 {
     GAFFile* file = new GAFFile();
@@ -162,7 +215,7 @@ void GAFLoader::_processLoad(GAFFile* file, GAFAsset* context)
 
     GAFHeader& header = m_stream->getInput()->getHeader();
 
-	GAFTimeline *timeline = nullptr;
+    GAFTimeline *timeline = nullptr;
     if (header.getMajorVersion() >= 4)
     {
         _readHeaderEndV4(header);
@@ -173,8 +226,8 @@ void GAFLoader::_processLoad(GAFFile* file, GAFAsset* context)
         _readHeaderEnd(header);
         _registerTagLoadersV3();
 
-		timeline = new GAFTimeline(nullptr, 0, header.frameSize, header.pivot, header.framesCount);
-		context->pushTimeline(0, timeline);
+        timeline = new GAFTimeline(nullptr, 0, header.frameSize, header.pivot, header.framesCount);
+        context->pushTimeline(0, timeline);
         context->setRootTimeline((uint32_t)0);
     }
 

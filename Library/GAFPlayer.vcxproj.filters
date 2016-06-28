@@ -234,6 +234,9 @@
     <ClCompile Include="Sources\TagDefineTimeline3.cpp">
       <Filter>Sources\GAFLoader\Tags</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\TagDefineExternalObjects2.cpp">
+      <Filter>Sources\GAFLoader\Tags</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\ShadersPrecompiled\GAFPrecompiledShaders.h">
@@ -468,6 +471,9 @@
       <Filter>Sources\Render</Filter>
     </ClInclude>
     <ClInclude Include="Sources\TagDefineTimeline3.h">
+      <Filter>Sources\GAFLoader\Tags</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\TagDefineExternalObjects2.h">
       <Filter>Sources\GAFLoader\Tags</Filter>
     </ClInclude>
   </ItemGroup>

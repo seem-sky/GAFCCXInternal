@@ -8,9 +8,6 @@ class GAFLoader;
 
 class TagDefineTimeline3 : public TagDefineTimeline
 {
-private:
-    void parseCustomProperties(GAFTimeline* tl, const std::string& jsonStr);
-    
 public:
     TagDefineTimeline3(GAFLoader* loader);
 

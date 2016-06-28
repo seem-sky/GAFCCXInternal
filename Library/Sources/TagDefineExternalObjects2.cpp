@@ -1,13 +1,18 @@
 #include "GAFPrecompiled.h"
-#include "TagDefineExternalObjects.h"
-
+#include "TagDefineExternalObjects2.h"
+#include "GAFLoader.h"
 #include "GAFStream.h"
 #include "GAFAsset.h"
 #include "GAFTimeline.h"
 
 NS_GAF_BEGIN
 
-void TagDefineExternalObjects::read(GAFStream* in, GAFAsset*, GAFTimeline* timeline)
+TagDefineExternalObjects2::TagDefineExternalObjects2(GAFLoader* loader) :
+    m_loader(loader)
+{
+}
+
+void TagDefineExternalObjects2::read(GAFStream* in, GAFAsset*, GAFTimeline* timeline)
 {
     uint32_t count = in->readU32();
 
@@ -19,6 +24,10 @@ void TagDefineExternalObjects::read(GAFStream* in, GAFAsset*, GAFTimeline* timel
         in->readString(&name);
 
         ExternalObject* externalObj = new ExternalObject(objectIdRef, name);
+
+        CustomProperties_t properties;
+        m_loader->readCustomProperties(in, &properties);
+        externalObj->setCustomProperties(properties);
 
         timeline->pushExternalObject(externalObj);
     }

@@ -150,6 +150,8 @@ protected:
 
     GAFObjectUpdateCallback                 m_updateEventListener;
 
+    CustomProperties_t                      m_customProperties;
+
     const cocos2d::AffineTransform AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const;
 
     void  setTimelineParentObject(GAFObject* obj) { m_timelineParentObject = obj; }
@@ -176,7 +178,7 @@ protected:
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties);
     virtual bool allNecessaryFieldsExist(const CustomPropertiesMap_t& customProperties) const;
 
-    virtual CustomPropertiesMap_t& fillCustomPropertiesMap(CustomPropertiesMap_t& map, const GAFTimeline* timeline, const GAFSubobjectState* state);
+    virtual CustomPropertiesMap_t& fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, const GAFSubobjectState* state) const;
 
     virtual GAFObject* encloseNewTimeline(uint32_t reference);
 
@@ -297,6 +299,9 @@ public:
     void setLastVisibleInFrame(uint32_t frame) { m_lastVisibleInFrame = frame; }
     uint32_t getLastVisibleInFrame() const { return m_lastVisibleInFrame; }
 
+    void setCustomProperties(const CustomProperties_t& customProperties) { m_customProperties = customProperties; }
+    const CustomProperties_t& getCustomProperties() const { return m_customProperties; }
+
     virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
     virtual cocos2d::AffineTransform getNodeToParentAffineTransform() const override;
 
@@ -336,6 +341,9 @@ public:
     // @returns instance of GAFObject or null. Warning: the instance could be invalidated when the system catches EVENT_COME_TO_FOREGROUND event
     GAFObject* getObjectByName(const std::string& name);
     const GAFObject* getObjectByName(const std::string& name) const;
+
+    GAFObject* getObjectByNameForCurrentFrame(const std::string& name);
+    const GAFObject* getObjectByNameForCurrentFrame(const std::string& name) const;
 
     const std::string& getObjectName() const { return m_objectName; }
 
