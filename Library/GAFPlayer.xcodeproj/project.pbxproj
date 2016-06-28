@@ -86,6 +86,8 @@
 		524884EE1D1195FB008E725E /* GAFScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884E71D1195FB008E725E /* GAFScrollView.cpp */; };
 		B60920631CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */; };
 		B60920BC1CCE8376000C25C9 /* TagDefineExternalObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */; };
+		B61B57541D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B61B57521D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp */; };
+		B61B57551D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B61B57521D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp */; };
 		B63C5A741B4A83E2001C8112 /* TagDefineAtlas3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A701B4A83E2001C8112 /* TagDefineAtlas3.cpp */; };
 		B63C5A751B4A83E2001C8112 /* TagDefineAtlas3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A701B4A83E2001C8112 /* TagDefineAtlas3.cpp */; };
 		B63C5A761B4A83E2001C8112 /* TagDefineSounds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A721B4A83E2001C8112 /* TagDefineSounds.cpp */; };
@@ -226,6 +228,8 @@
 		524884E91D1195FB008E725E /* GAFUIMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GAFUIMacros.h; path = UI/GAFUIMacros.h; sourceTree = "<group>"; };
 		B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineExternalObjects.cpp; sourceTree = "<group>"; };
 		B60920621CCE7AC1000C25C9 /* TagDefineExternalObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineExternalObjects.h; sourceTree = "<group>"; };
+		B61B57521D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineExternalObjects2.cpp; sourceTree = "<group>"; };
+		B61B57531D22CAFC0099A0E4 /* TagDefineExternalObjects2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineExternalObjects2.h; sourceTree = "<group>"; };
 		B63C5A701B4A83E2001C8112 /* TagDefineAtlas3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineAtlas3.cpp; sourceTree = "<group>"; };
 		B63C5A711B4A83E2001C8112 /* TagDefineAtlas3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineAtlas3.h; sourceTree = "<group>"; };
 		B63C5A721B4A83E2001C8112 /* TagDefineSounds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineSounds.cpp; sourceTree = "<group>"; };
@@ -378,6 +382,8 @@
 		1A2FBF67192E00FB00631FE9 /* Tags */ = {
 			isa = PBXGroup;
 			children = (
+				B61B57521D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp */,
+				B61B57531D22CAFC0099A0E4 /* TagDefineExternalObjects2.h */,
 				B6D14DF71D13DD3200B509B9 /* TagDefineTimeline3.cpp */,
 				B6D14DF81D13DD3200B509B9 /* TagDefineTimeline3.h */,
 				B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */,
@@ -561,6 +567,7 @@
 				B6AC347F1A03CBE5008BDF89 /* GAFTextField.cpp in Sources */,
 				B6D14DF91D13DD3200B509B9 /* TagDefineTimeline3.cpp in Sources */,
 				1A2FBF65192E00C800631FE9 /* TagDefineStage.cpp in Sources */,
+				B61B57541D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp in Sources */,
 				B63C5A761B4A83E2001C8112 /* TagDefineSounds.cpp in Sources */,
 				1A2FBF64192E00C800631FE9 /* TagDefineSequences.cpp in Sources */,
 				1A2FBF5E192E00C800631FE9 /* PrimitiveDeserializer.cpp in Sources */,
@@ -616,6 +623,7 @@
 				29CC58181A36113E00B31D72 /* GAFTextField.cpp in Sources */,
 				29CC58191A36113E00B31D72 /* TagDefineStage.cpp in Sources */,
 				B63C5A771B4A83E2001C8112 /* TagDefineSounds.cpp in Sources */,
+				B61B57551D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp in Sources */,
 				29CC581A1A36113E00B31D72 /* TagDefineSequences.cpp in Sources */,
 				B64C0E571D17DA260014C3C5 /* TagDefineTimeline3.cpp in Sources */,
 				29CC581B1A36113E00B31D72 /* PrimitiveDeserializer.cpp in Sources */,
