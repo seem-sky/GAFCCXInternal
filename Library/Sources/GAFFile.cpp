@@ -118,7 +118,7 @@ void GAFFile::readBytes(void* dst, unsigned int len)
 
 void GAFFile::close()
 {
-    delete[] m_data;
+    free(m_data);
     m_data = nullptr;
     m_dataLen = 0;
     m_dataPosition = 0;
@@ -200,7 +200,7 @@ unsigned char* GAFFile::_getData(const std::string& filename, const char* openMo
         size = ftell(fp);
         fseek(fp, 0, SEEK_SET);
         
-        ret = new unsigned char[size];
+        ret = static_cast<unsigned char*>(malloc(size));
 
         size = fread(ret, sizeof(unsigned char), size, fp);
         fclose(fp);
@@ -238,26 +238,27 @@ bool GAFFile::_processOpen()
     {
 #if USE_ZLIB
         unsigned long uncompressedSize = m_header.fileLenght;
-        char* uncompressedBuffer = new char[uncompressedSize];
+        char* uncompressedBuffer = static_cast<char*>(malloc(uncompressedSize));
 
         int retStatus = uncompress((Bytef*)uncompressedBuffer, &uncompressedSize, (Bytef*)(m_data + m_dataPosition), m_dataLen - m_dataPosition); // Decompress rest
 
         if (retStatus != Z_OK)
         {
+            free(uncompressedBuffer);
             return false;
         }
 
         assert("Paranoid mode" && uncompressedSize == m_header.fileLenght);
 
-        delete[] m_data;
+        free(m_data);
 
-        m_data = new unsigned char[uncompressedSize];
+        m_data = static_cast<unsigned char*>(malloc(uncompressedSize));
 
         memcpy(m_data, uncompressedBuffer, uncompressedSize);
         m_dataLen = uncompressedSize;
         m_dataPosition = 0;
 
-        delete[] uncompressedBuffer;
+        free(uncompressedBuffer);
 #else
         assert("ZLIB is disabled" && false);
 #endif
