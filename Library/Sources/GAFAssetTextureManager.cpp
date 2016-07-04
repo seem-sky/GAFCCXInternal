@@ -98,9 +98,13 @@ void GAFAssetTextureManager::loadImages(const std::string& dir, GAFTextureLoadDe
                 ssize_t sz = 0;
                 unsigned char* imgData = bundle->getFileData(path, &sz);
                 if (!imgData || !sz)
+                {
+                    free(imgData);
                     return;
+                }
 
                 image->initWithImageData(imgData, sz);
+                free(imgData);
             }
 
             m_memoryConsumption += image->getDataLen();
