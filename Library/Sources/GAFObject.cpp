@@ -80,6 +80,7 @@ GAFObject::~GAFObject()
     GAF_SAFE_RELEASE_ARRAY_WITH_NULL_CHECK(MaskList_t, m_masks);
     GAF_SAFE_RELEASE_ARRAY_WITH_NULL_CHECK(DisplayList_t, m_displayList);
     CC_SAFE_RELEASE(m_asset);
+    CC_SAFE_RELEASE(m_timeline);
     CC_SAFE_DELETE(m_customFilter);
 }
 
@@ -159,9 +160,6 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         GAFTimeline* externalTimeline = m_asset->getLibraryAsset()->getTimelineByName(externalTl->second->getName());
         result = GafObjectFactory::create(m_asset->getLibraryAsset(), externalTimeline, isMask, id);
         result->setCustomProperties(externalTl->second->getCustomProperties());
-        //m_asset->getLibraryAsset()->setRootTimeline(externalTl->second);
-        //result = m_asset->getLibraryAsset()->createObject();
-        result->retain(); // Will be released in m_displayList
     }
     else if (type == GAFCharacterType::Timeline)
     {

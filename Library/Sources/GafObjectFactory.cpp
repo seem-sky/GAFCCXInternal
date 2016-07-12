@@ -36,6 +36,7 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTextureAtlasElement* txE
             result->setAtlasScale(1.0f / txElemet->getScale());
 
         result->setBlendFunc(cocos2d::BlendFunc::ALPHA_PREMULTIPLIED);
+        result->autorelease();
     }
     else
     {
@@ -53,6 +54,8 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTextData* txtData, bool 
     GAFTextField* result = new GAFTextField();
     result->initWithTextData(txtData);
     result->objectIdRef = id;
+
+    result->autorelease();
 
     return result;
 }

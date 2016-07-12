@@ -24,7 +24,6 @@ private:
     std::vector<uint32_t> m_customPropertiesValueIdxs;
 
 public:
-
     unsigned int objectIdRef;
     unsigned int maskObjectIdRef;
 
