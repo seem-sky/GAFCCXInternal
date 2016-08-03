@@ -145,7 +145,7 @@ protected:
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
     virtual void processStates(cocos2d::Node* out, uint32_t frameIndex, const GAFAnimationFrame* frame) override;
 
-    virtual cocos2d::Point& layoutChild(const GAFObject* subObject, cocos2d::AffineTransform& stateMatrix, cocos2d::Point& currentTopLeft, const cocos2d::Rect& actualInternalBounds) const;
+    virtual cocos2d::Point& layoutChild(const GAFObject* subObject, cocos2d::AffineTransform& stateMatrix, cocos2d::Point& currPos, const cocos2d::Rect& actualInternalBounds) const;
 
     virtual cocos2d::Rect getDynamicContentBounds() const;
 };

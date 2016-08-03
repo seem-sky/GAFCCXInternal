@@ -103,11 +103,37 @@ void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, co
 {
     auto unscaledInternalBounds = m_timeline->getRect();
     auto actualInternalBounds = getInternalBoundingBox();
+    auto actualChildrenBounds = getDynamicContentBounds();
 
-    auto currLeft = actualInternalBounds.origin.x + m_marginLeft;
-    auto currTop = actualInternalBounds.origin.y + m_marginTop;
+    float currHPos;
+    if (m_horizontalAlign == HorizontalAlign::left)
+    {
+        currHPos = actualInternalBounds.origin.x + m_marginLeft;
+    }
+    else if (m_horizontalAlign == HorizontalAlign::right)
+    {
+        currHPos = actualInternalBounds.origin.x + actualInternalBounds.size.width - m_marginRight;
+    }
+    else
+    {
+        currHPos = (actualInternalBounds.size.width - actualChildrenBounds.size.width) / 2;
+    }
 
-    cocos2d::Point currTopLeft(currLeft, currTop);
+    float currVPos;
+    if (m_verticalAlign == VerticalAlign::top)
+    {
+        currVPos = actualInternalBounds.origin.y + m_marginTop;
+    }
+    else if (m_verticalAlign == VerticalAlign::bottom)
+    {
+        currVPos = actualInternalBounds.origin.y + actualInternalBounds.size.height - m_marginBottom;
+    }
+    else
+    {
+        currVPos = (actualInternalBounds.size.height - actualChildrenBounds.size.height) / 2;
+    }
+
+    cocos2d::Point currPos(currHPos, currVPos);
 
     const GAFAnimationFrame::SubobjectStates_t& states = frame->getObjectStates();
     for (const GAFSubobjectState* state : states)
@@ -123,7 +149,7 @@ void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, co
         if (!state->isVisible())
             continue;
 
-        layoutChild(subObject, stateMatrix, currTopLeft, actualInternalBounds);
+        layoutChild(subObject, stateMatrix, currPos, actualInternalBounds);
 
         if (subObject->getCharType() == GAFCharacterType::Timeline)
         {
@@ -144,7 +170,7 @@ void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, co
         }
     }
 
-    currTopLeft.set(currLeft, currTop);
+    currPos.set(currHPos, currVPos);
     for (int i = 0; i < _children.size(); ++i)
     {
         cocos2d::Node* child = _children.at(i);
@@ -154,7 +180,7 @@ void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, co
 
         cocos2d::AffineTransform stateMatrix = cocos2d::AffineTransformMakeIdentity();
 
-        layoutChild(subObject, stateMatrix, currTopLeft, actualInternalBounds);
+        layoutChild(subObject, stateMatrix, currPos, actualInternalBounds);
 
         if (subObject->getCharType() == GAFCharacterType::Timeline)
         {
@@ -177,17 +203,25 @@ void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, co
     }
 }
 
-cocos2d::Point& GAFBoxLayoutView::layoutChild(const GAFObject* subObject, cocos2d::AffineTransform& stateMatrix, cocos2d::Point& currentTopLeft, const cocos2d::Rect& actualInternalBounds) const
+cocos2d::Point& GAFBoxLayoutView::layoutChild(const GAFObject* subObject, cocos2d::AffineTransform& stateMatrix, cocos2d::Point& currPos, const cocos2d::Rect& actualInternalBounds) const
 {
     auto childActualBounds = cocos2d::RectApplyAffineTransform(subObject->getInternalBoundingBox(), stateMatrix);
     if (m_direction == Direction::horizontal)
     {
-        stateMatrix.tx = currentTopLeft.x + (stateMatrix.tx - childActualBounds.origin.x);
-        currentTopLeft.x += childActualBounds.size.width + m_gap;
+        if (m_horizontalAlign == HorizontalAlign::right)
+        {
+            stateMatrix.tx = currPos.x - (stateMatrix.tx - childActualBounds.origin.x + childActualBounds.size.width);
+            currPos.x -= childActualBounds.size.width + m_gap;
+        }
+        else
+        {
+            stateMatrix.tx = currPos.x + (stateMatrix.tx - childActualBounds.origin.x);
+            currPos.x += childActualBounds.size.width + m_gap;
+        }
 
         if (m_verticalAlign == VerticalAlign::top)
         {
-            stateMatrix.ty = currentTopLeft.y;
+            stateMatrix.ty = currPos.y + (stateMatrix.ty - childActualBounds.origin.y);
         }
         else if (m_verticalAlign == VerticalAlign::bottom)
         {
@@ -209,12 +243,20 @@ cocos2d::Point& GAFBoxLayoutView::layoutChild(const GAFObject* subObject, cocos2
     }
     else
     {
-        stateMatrix.ty = currentTopLeft.y + (stateMatrix.ty - childActualBounds.origin.y);
-        currentTopLeft.y += childActualBounds.size.height + m_gap;
+        if (m_horizontalAlign == VerticalAlign::bottom)
+        {
+            stateMatrix.ty = currPos.y - (stateMatrix.ty - childActualBounds.origin.y + childActualBounds.size.height);
+            currPos.y -= childActualBounds.size.height + m_gap;
+        }
+        else
+        {
+            stateMatrix.ty = currPos.y + (stateMatrix.ty - childActualBounds.origin.y);
+            currPos.y += childActualBounds.size.height + m_gap;
+        }
 
         if (m_horizontalAlign == HorizontalAlign::left)
         {
-            stateMatrix.tx = currentTopLeft.x;
+            stateMatrix.tx = currPos.x + (stateMatrix.tx - childActualBounds.origin.x);
         }
         else if (m_horizontalAlign == HorizontalAlign::right)
         {
@@ -235,7 +277,7 @@ cocos2d::Point& GAFBoxLayoutView::layoutChild(const GAFObject* subObject, cocos2
         }
     }
 
-    return currentTopLeft;
+    return currPos;
 }
 
 cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const

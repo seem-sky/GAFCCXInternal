@@ -9,7 +9,7 @@ NS_GAF_BEGIN
 GAFCanvasView::GAFCanvasView()
     : m_internalScale(1.0f, 1.0f)
     , m_fittingMode(FittingMode::none)
-    , m_scaleAlignedChildren(false)
+    , m_scaleAlignedChildren(true)
 {
 }
 
