@@ -88,7 +88,7 @@ void GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& c
     m_horizontalAlign = HorizontalAlign::toEnum(customProperties.at("horizontalAlign"));
     m_verticalAlign = VerticalAlign::toEnum(customProperties.at("verticalAlign"));
 
-    m_usePercents = customProperties.at("units") == "percents";
+    m_usePercents = customProperties.at("alignMode") == "percents";
 
     m_gap = std::stof(customProperties.at("gap"));
     m_marginTop = std::stof(customProperties.at("marginTop"));
@@ -210,7 +210,7 @@ cocos2d::Point& GAFBoxLayoutView::layoutChild(const GAFObject* subObject, cocos2
     {
         if (m_horizontalAlign == HorizontalAlign::right)
         {
-            stateMatrix.tx = currPos.x - (stateMatrix.tx - childActualBounds.origin.x + childActualBounds.size.width);
+            stateMatrix.tx = currPos.x - childActualBounds.size.width + (stateMatrix.tx - childActualBounds.origin.x);
             currPos.x -= childActualBounds.size.width + m_gap;
         }
         else
@@ -245,7 +245,7 @@ cocos2d::Point& GAFBoxLayoutView::layoutChild(const GAFObject* subObject, cocos2
     {
         if (m_horizontalAlign == VerticalAlign::bottom)
         {
-            stateMatrix.ty = currPos.y - (stateMatrix.ty - childActualBounds.origin.y + childActualBounds.size.height);
+            stateMatrix.ty = currPos.y - childActualBounds.size.height + (stateMatrix.ty - childActualBounds.origin.y);
             currPos.y -= childActualBounds.size.height + m_gap;
         }
         else

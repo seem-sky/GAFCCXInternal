@@ -33,7 +33,8 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
     auto actualInternalBounds = getInternalBoundingBox();
     auto childActualBounds = RectApplyAffineTransform(child->getInternalBoundingBox(), mtx);
 
-    bool usePercents = customProperties.at("units") == "percents";
+    bool usePercents = customProperties.at("alignMode") == "percents";
+    bool useProportional = customProperties.at("alignMode") == "proportional";
     bool alignLeft = to_bool(customProperties.at("alignLeft"));
     bool alignRight = to_bool(customProperties.at("alignRight"));
     bool alignTop = to_bool(customProperties.at("alignTop"));
@@ -51,12 +52,16 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
         float leftDistance = childActualBounds.origin.x - unscaledInternalBounds.origin.x;
         if (usePercents)
             leftDistance = leftDistance / unscaledInternalBounds.size.width * actualInternalBounds.size.width;
+        else if (useProportional)
+            leftDistance *= fittingScale.x;
 
         if (alignRight)
         {
             float rightDistance = unscaledInternalBounds.origin.x + unscaledInternalBounds.size.width - (childActualBounds.origin.x + childActualBounds.size.width);
             if (usePercents)
                 rightDistance = rightDistance / unscaledInternalBounds.size.width * actualInternalBounds.size.width;
+            else if (useProportional)
+                rightDistance *= fittingScale.x;
 
             if (alignLeft)
             {
@@ -80,12 +85,16 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
         float topDistance = childActualBounds.origin.y - unscaledInternalBounds.origin.y;
         if (usePercents)
             topDistance = topDistance / unscaledInternalBounds.size.height * actualInternalBounds.size.height;
+        else if (useProportional)
+            topDistance *= fittingScale.y;
 
         if (alignBottom)
         {
             float bottomDistance = unscaledInternalBounds.origin.y + unscaledInternalBounds.size.height - (childActualBounds.origin.y + childActualBounds.size.height);
             if (usePercents)
                 bottomDistance = bottomDistance / unscaledInternalBounds.size.height * actualInternalBounds.size.height;
+            else if (useProportional)
+                bottomDistance *= fittingScale.y;
 
             if (alignTop)
             {
