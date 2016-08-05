@@ -1440,7 +1440,7 @@ GAFObject* GAFObject::getObjectByNameForCurrentFrame(const std::string& name)
         {
             GAFObject* child = currentObj->getDisplayList().at(npIt->second);
 
-            if (child && child->isVisibleInCurrentFrame())
+            if (np.size() == 1 || (child != nullptr && child->isVisibleInCurrentFrame()))
             {
                 foundChild = child;
                 break;
