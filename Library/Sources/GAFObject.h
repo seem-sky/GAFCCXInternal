@@ -217,7 +217,12 @@ public:
         (void)renderer;
         (void)transform;
     }
-
+    
+    virtual void setLocator(bool locator) override
+    {
+        m_container->setVisible(!locator);
+    };
+    
     virtual void update(float delta) override;
 
     void useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements);
