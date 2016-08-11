@@ -2,6 +2,7 @@
 #include "GAFLayoutView.h"
 
 NS_GAF_BEGIN
+
 class GAFBoxLayoutView : public GAFLayoutView
 {
     struct Direction
@@ -10,6 +11,8 @@ class GAFBoxLayoutView : public GAFLayoutView
         {
             horizontal,
             vertical,
+            tiledByWidth,
+            tiledByHeight,
             unknown
         };
 
@@ -19,6 +22,10 @@ class GAFBoxLayoutView : public GAFLayoutView
                 return horizontal;
             else if (direction == toString(vertical))
                 return vertical;
+            else if (direction == toString(tiledByWidth))
+                return tiledByWidth;
+            else if (direction == toString(tiledByHeight))
+                return tiledByHeight;
             else
                 return unknown;
         }
@@ -31,6 +38,10 @@ class GAFBoxLayoutView : public GAFLayoutView
                 return "horizontal";
             case vertical:
                 return "vertical";
+            case tiledByWidth:
+                return "tiledByWidth";
+            case tiledByHeight:
+                return "tiledByHeight";
             default:
                 return "unknown";
             }
@@ -127,6 +138,9 @@ public:
     virtual void removeAllChildrenWithCleanup(bool cleanup) override;
 
 protected:
+    typedef std::tuple<GAFObject*, const GAFSubobjectState*, cocos2d::AffineTransform> ObjectStatePosition_t;
+    typedef std::vector<ObjectStatePosition_t> ObjectsStatesPositions_t;
+
     Direction::Enum m_direction;
     float m_gap;
     float m_marginTop;
@@ -145,7 +159,7 @@ protected:
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
     virtual void processStates(cocos2d::Node* out, uint32_t frameIndex, const GAFAnimationFrame* frame) override;
 
-    virtual cocos2d::Point& layoutChild(const GAFObject* subObject, cocos2d::AffineTransform& stateMatrix, cocos2d::Point& currPos, const cocos2d::Rect& actualInternalBounds) const;
+    virtual void processChildren(cocos2d::Node* out, ObjectsStatesPositions_t& objects);
 
     virtual cocos2d::Rect getDynamicContentBounds() const;
 };
