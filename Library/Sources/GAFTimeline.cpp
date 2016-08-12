@@ -6,17 +6,28 @@
 
 NS_GAF_BEGIN
 
-GAFTimeline::GAFTimeline(GAFTimeline* parent, uint32_t id, const cocos2d::Rect& aabb, cocos2d::Point& pivot, uint32_t framesCount) :
-m_id(id)
-, m_aabb(aabb)
-, m_pivot(pivot)
-, m_framesCount(framesCount)
-, m_parent(parent)
-, m_sceneFps(0)
-, m_sceneWidth(0)
-, m_sceneHeight(0)
+ExternalObject::ExternalObject() : ExternalObject(IDNONE, "")
 {
+}
 
+ExternalObject::ExternalObject(uint32_t objectIdRef, const std::string& name)
+    : m_objectIdRef(objectIdRef)
+    , m_name(name)
+{
+}
+
+GAFTimeline::GAFTimeline(GAFTimeline* parent, uint32_t id, const cocos2d::Rect& aabb, cocos2d::Point& pivot, uint32_t framesCount)
+    : m_id(id)
+    , m_aabb(aabb)
+    , m_pivot(pivot)
+    , m_sceneFps(0)
+    , m_sceneWidth(0)
+    , m_sceneHeight(0)
+    , m_framesCount(framesCount)
+    , m_currentTextureAtlas(nullptr)
+    , m_usedAtlasContentScaleFactor(1.f)
+    , m_parent(parent)
+{
 }
 
 GAFTimeline::~GAFTimeline()
@@ -25,6 +36,7 @@ GAFTimeline::~GAFTimeline()
     GAF_RELEASE_ARRAY(AnimationFrames_t, m_animationFrames);
     GAF_RELEASE_MAP(TextsData_t, m_textsData);
     GAF_RELEASE_MAP(CustomData_t, m_userData);
+    GAF_RELEASE_MAP(ExternalObjects_t, m_externalObjects);
 }
 
 void GAFTimeline::pushTextureAtlas(GAFTextureAtlas* atlas)
@@ -59,7 +71,7 @@ void GAFTimeline::pushAnimationSequence(const std::string& nameId, int start, in
 
 void GAFTimeline::pushNamedPart(unsigned int objectIdRef, const std::string& name)
 {
-    m_namedParts[name] = objectIdRef;
+    m_namedParts.insert(std::pair<std::string, uint32_t>(name, objectIdRef));
 }
 
 void GAFTimeline::pushTextData(uint32_t objectIdRef, GAFTextData* textField)
@@ -67,14 +79,9 @@ void GAFTimeline::pushTextData(uint32_t objectIdRef, GAFTextData* textField)
     m_textsData[objectIdRef] = textField;
 }
 
-void GAFTimeline::pushExternalObject(uint32_t objectIdRef, const std::string& name)
+void GAFTimeline::pushExternalObject(ExternalObject* externalObj)
 {
-    m_externalObjects[objectIdRef] = name;
-}
-
-void GAFTimeline::pushCustomProperty(CustomProperty *property)
-{
-    m_customProperties.push_back(*property);
+    m_externalObjects[externalObj->getObjectIdRef()] = externalObj;
 }
 
 void GAFTimeline::setSceneFps(unsigned int v)
@@ -137,7 +144,12 @@ const ExternalObjects_t& GAFTimeline::getExternalObjects() const
     return m_externalObjects;
 }
 
-const GAFTimeline::CustomProperties_t& GAFTimeline::getCustomProperties() const
+void GAFTimeline::setCustomProperties(const CustomProperties_t& properties)
+{
+    m_customProperties = properties;
+}
+
+const CustomProperties_t& GAFTimeline::getCustomProperties() const
 {
     return m_customProperties;
 }

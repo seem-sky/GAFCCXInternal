@@ -54,10 +54,10 @@ public:
     
     void setAtlasScale(float scale);
 
-    inline void setLocator(bool locator)
+    virtual void setLocator(bool locator)
     {
         m_isLocator = locator;
-    }
+    };
 
     inline float getAtlasScale() const { return m_atlasScale; }
     
@@ -100,6 +100,7 @@ protected:
     cocos2d::AffineTransform  m_externalTransform;
     cocos2d::CustomCommand    m_customCommand;
     GAFQuadCommand            m_quadCommand;
+    bool                      m_isLocator;
 
 private:
     /**
@@ -120,7 +121,6 @@ private:
     //-------------------------------------------------------------------------------------------------
 
     float                     m_atlasScale;
-    bool                      m_isLocator;
 
     /* Never used */
     gafBlendFuncSeparate      m_blendFuncSeparate;

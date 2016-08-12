@@ -16,7 +16,7 @@ GAFTextField::~GAFTextField()
 // TODO: Factory
 void GAFTextField::initWithTextData(GAFTextData const* data)
 {
-    m_label = cocos2d::Label::createWithSystemFont(data->m_text, data->m_textFormat.m_font, data->m_textFormat.m_size);
+    m_label = cocos2d::Label::createWithSystemFont(data->m_text, data->m_textFormat.m_font, static_cast<float>(data->m_textFormat.m_size));
 
     CC_SAFE_RETAIN(m_label);
     

@@ -1,13 +1,32 @@
 #pragma once
 
 #include "GAFCollections.h"
-#include "GAFHeader.h"
-
 #include "GAFDelegates.h"
 
 NS_GAF_BEGIN
 
 class GAFTextureAtlas;
+
+class ExternalObject
+{
+private:
+    uint32_t           m_objectIdRef;
+    std::string        m_name;
+    CustomProperties_t m_customProperties;
+
+public:
+    ExternalObject();
+    ExternalObject(uint32_t objectIdRef, const std::string& name);
+
+    uint32_t getObjectIdRef() const { return m_objectIdRef; }
+    void setObjectIdRef(uint32_t objectIdRef) { m_objectIdRef = objectIdRef; }
+
+    const std::string& getName() const { return m_name; }
+    void setName(const std::string& name) { m_name = name; }
+
+    const CustomProperties_t& getCustomProperties() const { return m_customProperties; }
+    void setCustomProperties(const CustomProperties_t& customProperties) { m_customProperties = customProperties; }
+};
 
 class GAFTimeline : public cocos2d::Ref
 {
@@ -45,7 +64,6 @@ private:
 
     void                    _chooseTextureAtlas(float desiredAtlasScale);
 public:
-
     GAFTimeline(GAFTimeline* parent, uint32_t id, const cocos2d::Rect& aabb, cocos2d::Point& pivot, uint32_t framesCount);
     virtual ~GAFTimeline();
 
@@ -56,7 +74,7 @@ public:
     void                        pushAnimationSequence(const std::string& nameId, int start, int end);
     void                        pushNamedPart(uint32_t objectIdRef, const std::string& name);
     void                        pushTextData(uint32_t objectIdRef, GAFTextData* textField);
-    void                        pushExternalObject(uint32_t objectIdRef, const std::string& name);
+    void                        pushExternalObject(ExternalObject* externalObj);
 
     void                        setSceneFps(unsigned int);
     void                        setSceneWidth(unsigned int);
@@ -98,18 +116,9 @@ public:
 
     float                       usedAtlasScale() const;
 
-    
     // Custom flash properties;
 public:
-    struct CustomProperty
-    {
-        std::string name;
-        std::vector<std::string> possibleValues;
-    };
-    
-    typedef std::vector<CustomProperty> CustomProperties_t;
-    
-    void pushCustomProperty(CustomProperty* property);
+    void setCustomProperties(const CustomProperties_t& properties);
     const CustomProperties_t& getCustomProperties() const;
     
 private:

@@ -53,7 +53,7 @@ bool GAFLayoutView::allNecessaryFieldsExist(const CustomPropertiesMap_t & custom
         && (customProperties.find("alignRight") != customProperties.end())
         && (customProperties.find("alignTop") != customProperties.end())
         && (customProperties.find("alignBottom") != customProperties.end())
-        && (customProperties.find("units") != customProperties.end());
+        && (customProperties.find("alignMode") != customProperties.end());
 
     return allFieldsExist;
 }

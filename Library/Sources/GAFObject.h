@@ -16,20 +16,20 @@ struct GAFObjectClass
     enum Enum
     {
         UNKNOWN = -1,
-        SOUND = 0,
-        BITMAP_DATA = 1,
-        SPRITE = 2,
-        MOVIE_CLIP = 3,
-        UI_COMPONENT = 4,
-        UI_VISUAL_COMPONENT = 5,
-        UI_LAYOUT = 6,
-        UI_CANVAS = 7,
-        UI_BOX_LAYOUT = 8,
-        UI_BUTTON = 9,
-        UI_SCROLL_VIEW = 10,
-        UI_TEXT_AREA = 11,
-        UI_LABEL = 12,
-        UI_PROGRESS_BAR = 13
+        SOUND,
+        BITMAP_DATA,
+        SPRITE,
+        MOVIE_CLIP,
+        UI_COMPONENT,
+        UI_VISUAL_COMPONENT,
+        UI_LAYOUT,
+        UI_CANVAS,
+        UI_BOX_LAYOUT,
+        UI_BUTTON,
+        UI_SCROLL_VIEW,
+        UI_TEXT_AREA,
+        UI_LABEL,
+        UI_PROGRESS_BAR
     };
 
     static std::string toString(Enum e)
@@ -150,6 +150,8 @@ protected:
 
     GAFObjectUpdateCallback                 m_updateEventListener;
 
+    CustomProperties_t                      m_customProperties;
+
     const cocos2d::AffineTransform AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const;
 
     void  setTimelineParentObject(GAFObject* obj) { m_timelineParentObject = obj; }
@@ -176,7 +178,7 @@ protected:
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties);
     virtual bool allNecessaryFieldsExist(const CustomPropertiesMap_t& customProperties) const;
 
-    virtual CustomPropertiesMap_t& fillCustomPropertiesMap(CustomPropertiesMap_t& map, const GAFTimeline* timeline, const GAFSubobjectState* state);
+    virtual CustomPropertiesMap_t& fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, const GAFSubobjectState* state) const;
 
     virtual GAFObject* encloseNewTimeline(uint32_t reference);
 
@@ -185,8 +187,6 @@ protected:
     uint32_t    nextFrame();
 
 public:
-    GAFObject();
-
     void addUpdateListener(const GAFObjectUpdateCallback& callback);
 
     /// @note do not forget to call setSequenceDelegate(nullptr) before deleting your subscriber
@@ -217,7 +217,12 @@ public:
         (void)renderer;
         (void)transform;
     }
-
+    
+    virtual void setLocator(bool locator) override
+    {
+        m_container->setVisible(!locator);
+    };
+    
     virtual void update(float delta) override;
 
     void useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements);
@@ -276,8 +281,7 @@ public:
     void        setAnimationRunning(bool value, bool recurcive);
 
 public:
-    typedef std::map<const std::string, const std::string> CustomPropertiesMap_t;
-
+    GAFObject();
     virtual ~GAFObject();
 
     static GAFObject* create(GAFAsset* anAsset, GAFTimeline* timeline);
@@ -299,6 +303,9 @@ public:
     GAFCharacterType getCharType() const { return m_charType; }
     void setLastVisibleInFrame(uint32_t frame) { m_lastVisibleInFrame = frame; }
     uint32_t getLastVisibleInFrame() const { return m_lastVisibleInFrame; }
+
+    void setCustomProperties(const CustomProperties_t& customProperties) { m_customProperties = customProperties; }
+    const CustomProperties_t& getCustomProperties() const { return m_customProperties; }
 
     virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
     virtual cocos2d::AffineTransform getNodeToParentAffineTransform() const override;
@@ -339,6 +346,9 @@ public:
     // @returns instance of GAFObject or null. Warning: the instance could be invalidated when the system catches EVENT_COME_TO_FOREGROUND event
     GAFObject* getObjectByName(const std::string& name);
     const GAFObject* getObjectByName(const std::string& name) const;
+
+    GAFObject* getObjectByNameForCurrentFrame(const std::string& name);
+    const GAFObject* getObjectByNameForCurrentFrame(const std::string& name) const;
 
     const std::string& getObjectName() const { return m_objectName; }
 

@@ -69,6 +69,7 @@
     <ClCompile Include="Sources\TagDefineAtlas3.cpp" />
     <ClCompile Include="Sources\TagDefineAtlas4.cpp" />
     <ClCompile Include="Sources\TagDefineExternalObjects.cpp" />
+    <ClCompile Include="Sources\TagDefineExternalObjects2.cpp" />
     <ClCompile Include="Sources\TagDefineNamedParts.cpp" />
     <ClCompile Include="Sources\TagDefineSequences.cpp" />
     <ClCompile Include="Sources\TagDefineSounds.cpp" />
@@ -76,6 +77,7 @@
     <ClCompile Include="Sources\TagDefineTextField.cpp" />
     <ClCompile Include="Sources\TagDefineTimeline.cpp" />
     <ClCompile Include="Sources\TagDefineTimeline2.cpp" />
+    <ClCompile Include="Sources\TagDefineTimeline3.cpp" />
     <ClCompile Include="Sources\UI\GAFBoxLayoutView.cpp" />
     <ClCompile Include="Sources\UI\GAFCanvasView.cpp" />
     <ClCompile Include="Sources\UI\GAFComponentView.cpp" />
@@ -127,6 +129,7 @@
     <ClInclude Include="Sources\TagDefineAtlas3.h" />
     <ClInclude Include="Sources\TagDefineAtlas4.h" />
     <ClInclude Include="Sources\TagDefineExternalObjects.h" />
+    <ClInclude Include="Sources\TagDefineExternalObjects2.h" />
     <ClInclude Include="Sources\TagDefineNamedParts.h" />
     <ClInclude Include="Sources\TagDefines.h" />
     <ClInclude Include="Sources\TagDefineSequences.h" />
@@ -135,6 +138,7 @@
     <ClInclude Include="Sources\TagDefineTextField.h" />
     <ClInclude Include="Sources\TagDefineTimeline.h" />
     <ClInclude Include="Sources\TagDefineTimeline2.h" />
+    <ClInclude Include="Sources\TagDefineTimeline3.h" />
     <ClInclude Include="Sources\UI\GAFBoxLayoutView.h" />
     <ClInclude Include="Sources\UI\GAFCanvasView.h" />
     <ClInclude Include="Sources\UI\GAFComponentView.h" />

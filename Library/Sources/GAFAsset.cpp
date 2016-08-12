@@ -75,7 +75,8 @@ GAFAsset::GAFAsset()
 
 GAFAsset::~GAFAsset()
 {
-    GAF_RELEASE_MAP(Timelines_t, m_timelines);
+    //GAF_RELEASE_MAP(Timelines_t, m_timelines);
+    GAF_SAFE_RELEASE_MAP(Timelines_t, m_timelines);
     GAF_RELEASE_MAP(SoundInfos_t, m_soundInfos);
     GAF_RELEASE_ARRAY(TextureAtlases_t, m_textureAtlases);
     //CC_SAFE_RELEASE(m_rootTimeline);
@@ -150,13 +151,41 @@ void GAFAsset::getResourceReferencesFromBundle(const std::string& zipfilePath, c
     return;
 }
 
-bool GAFAsset::initWithGAFBundle(const std::string& zipFilePath, const std::string& entryFile, GAFTextureLoadDelegate_t delegate, GAFLoader* customLoader /*= nullptr*/)
+bool GAFAsset::initWithGAFBundle(const std::string& zipFilePath, const std::string& inEntryFile, GAFTextureLoadDelegate_t delegate, GAFLoader* customLoader /*= nullptr*/)
 {
     m_gafFileName = zipFilePath;
-    m_gafFileName.append("/" + entryFile);
+
     std::string fullfilePath = cocos2d::FileUtils::getInstance()->fullPathForFilename(zipFilePath);
 
     cocos2d::ZipFile bundle(fullfilePath);
+
+    std::string entryFile = inEntryFile;
+
+    if (entryFile.empty())
+    {
+        entryFile = bundle.getFirstFilename();
+        std::string ext = "";
+
+        bool bFirst = true;
+        while (ext != ".gaf")
+        {
+            if (!bFirst)
+                entryFile = bundle.getNextFilename();
+
+            assert("There is no any GAFs in the bundle" && !entryFile.empty());
+
+            size_t pos = entryFile.find_last_of('.');
+
+            assert("All files must have an extension for appropriate identification" && pos != std::string::npos);
+
+            ext = entryFile.substr(pos);
+
+            bFirst = false;
+        }
+    }
+
+    m_gafFileName.append("/" + entryFile);
+
     ssize_t sz = 0;
     unsigned char* gafData = bundle.getFileData(entryFile, &sz);
 
@@ -471,7 +500,7 @@ GAFTimeline* GAFAsset::getTimelineByName(const std::string& name) const
 void GAFAsset::pushTimeline(uint32_t timelineIdRef, GAFTimeline* t)
 {
     m_timelines[timelineIdRef] = t;
-    t->retain();
+    //t->retain();
 }
 
 void GAFAsset::pushSound(uint32_t id, GAFSoundInfo* sound)
