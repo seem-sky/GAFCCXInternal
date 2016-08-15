@@ -18,6 +18,7 @@ public:
     virtual void draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags) override;
     virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags) override;
 #endif    
+    virtual void setExternalTransform(const cocos2d::AffineTransform& transform) override;
 };
 
 NS_GAF_END
