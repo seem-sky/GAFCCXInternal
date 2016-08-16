@@ -30,8 +30,8 @@ GAFCanvasView * GAFCanvasView::create(GAFAsset * anAsset, GAFTimeline * timeline
 cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
 {
     auto unscaledInternalBounds = m_timeline->getRect();
-    auto actualInternalBounds = getInternalBoundingBox();
-    auto childActualBounds = RectApplyAffineTransform(child->getInternalBoundingBox(), mtx);
+    auto actualInternalBounds = getFlashInternalBoundingBox();
+    auto childActualBounds = RectApplyAffineTransform(child->getFlashInternalBoundingBox(), mtx);
 
     bool usePercents = customProperties.at("alignMode") == "percents";
     bool useProportional = customProperties.at("alignMode") == "proportional";

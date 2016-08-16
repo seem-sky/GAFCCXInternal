@@ -38,7 +38,7 @@ void GAFComponentView::setClippingEnabled(bool enabled)
                 m_clippingStencil->onEnter();
 
             m_clippingStencil->retain();
-            //setStencilClippingRect(getInternalBoundingBox());
+            setStencilClippingRect(getInternalBoundingBox());
         }
         else
         {
@@ -245,7 +245,7 @@ void GAFComponentView::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
 {
     GAFObject::realizeFrame(out, frameIndex);
     if (m_clippingRectDirty)
-        setStencilClippingRect(getInternalBoundingBox());
+        setStencilClippingRect(getFlashInternalBoundingBox());
 }
 
 const cocos2d::Mat4 & GAFComponentView::getNodeToParentTransform() const

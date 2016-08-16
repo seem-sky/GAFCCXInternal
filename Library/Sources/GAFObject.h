@@ -152,7 +152,7 @@ protected:
 
     CustomProperties_t                      m_customProperties;
 
-    const cocos2d::AffineTransform AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const;
+    cocos2d::AffineTransform AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const;
 
     void  setTimelineParentObject(GAFObject* obj) { m_timelineParentObject = obj; }
     
@@ -292,9 +292,6 @@ public:
 
     bool isVisibleInCurrentFrame() const;
 
-    virtual cocos2d::Rect getInternalBoundingBoxForCurrentFrame() const;
-    virtual cocos2d::Rect getBoundingBoxForCurrentFrame() const;
-
     const AnimationSequences_t& getSequences() const;
     GAFTimeline* getTimeLine() { return m_timeline; }
     DisplayList_t& getDisplayList() { return m_displayList; }
@@ -312,6 +309,12 @@ public:
 
     virtual cocos2d::Rect getBoundingBox() const override;
     virtual cocos2d::Rect getInternalBoundingBox() const;
+
+    virtual cocos2d::Rect getFlashBoundingBox() const override;
+    virtual cocos2d::Rect getFlashInternalBoundingBox() const;
+
+    virtual cocos2d::Rect getInternalBoundingBoxForCurrentFrame() const;
+    virtual cocos2d::Rect getBoundingBoxForCurrentFrame() const;
 
     virtual void setColor(const cocos2d::Color3B& color) override;
     virtual void setOpacity(GLubyte opacity) override;

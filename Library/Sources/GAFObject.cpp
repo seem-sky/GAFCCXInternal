@@ -23,16 +23,14 @@ NS_GAF_BEGIN
 
 static const AnimationSequences_t s_emptySequences = AnimationSequences_t();
 
-const cocos2d::AffineTransform GAFObject::AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const
+cocos2d::AffineTransform GAFObject::AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const
 {
     cocos2d::AffineTransform transform = aTransform;
     transform.b = -transform.b;
     transform.c = -transform.c;
-    float flipMul = isFlippedY() ? -2.0f : 2.0f;
-    transform.ty = getAnchorPointInPoints().y * flipMul - transform.ty;
+    transform.ty = getAnchorPointInPoints().y - transform.ty;
     return transform;
 }
-
 
 GAFObject::GAFObject()
     : m_timelineParentObject(nullptr)
@@ -827,12 +825,23 @@ cocos2d::Rect GAFObject::getBoundingBox() const
 cocos2d::Rect GAFObject::getInternalBoundingBox() const
 {
     if (m_charType == GAFCharacterType::Timeline)
-        return m_timeline->getRect();
+        return flashBoundsToCocos(m_timeline->getRect());
     else
         return cocos2d::Rect(0, 0, _contentSize.width, _contentSize.height);
 }
 
-void GAFObject::setColor(const cocos2d::Color3B& color)
+cocos2d::Rect GAFObject::getFlashBoundingBox() const
+{
+    cocos2d::Rect rect = getInternalBoundingBox();
+    return cocosBoundsToFlash(RectApplyAffineTransform(rect, getNodeToParentAffineTransform()));
+}
+
+cocos2d::Rect GAFObject::getFlashInternalBoundingBox() const
+{
+    return cocosBoundsToFlash(getInternalBoundingBox());
+}
+
+    void GAFObject::setColor(const cocos2d::Color3B& color)
 {
     m_isManualColor = true;
     Node::setColor(color);
@@ -1142,7 +1151,7 @@ cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* ch
 {
     affineTransformSetFrom(mtx, AffineTransformFlashToCocos(mtx));
 
-    if (isFlippedX() || isFlippedY())
+    /*if (isFlippedX() || isFlippedY())
     {
         float flipMulX = isFlippedX() ? -1.f : 1.f;
         float flipOffsetX = isFlippedX() ? getContentSize().width - m_asset->getHeader().frameSize.getMinX() : 0;
@@ -1151,7 +1160,7 @@ cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* ch
 
         cocos2d::AffineTransform flipCenterTransform = cocos2d::AffineTransformMake(flipMulX, 0, 0, flipMulY, flipOffsetX, flipOffsetY);
         affineTransformSetFrom(mtx, AffineTransformConcat(mtx, flipCenterTransform));
-    }
+    }*/
 
     float curScaleX = child->getScaleX();
     if (fabs(curScaleX - 1.0) > std::numeric_limits<float>::epsilon())
@@ -1192,7 +1201,7 @@ cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject
 
     affineTransformSetFrom(mtx, AffineTransformFlashToCocos(mtx));
 
-    if (isFlippedX() || isFlippedY())
+    /*if (isFlippedX() || isFlippedY())
     {
         float flipMulX = isFlippedX() ? -1.f : 1.f;
         float flipOffsetX = isFlippedX() ? getContentSize().width - m_asset->getHeader().frameSize.getMinX() : 0;
@@ -1201,7 +1210,7 @@ cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject
 
         cocos2d::AffineTransform flipCenterTransform = cocos2d::AffineTransformMake(flipMulX, 0, 0, flipMulY, flipOffsetX, flipOffsetY);
         affineTransformSetFrom(mtx, AffineTransformConcat(mtx, flipCenterTransform));
-    }
+    }*/
 
     return mtx;
 }

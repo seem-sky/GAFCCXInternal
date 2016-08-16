@@ -49,7 +49,7 @@ bool GAFBoxLayoutView::init(GAFAsset* anAnimationData, GAFTimeline* timeline)
 cocos2d::Rect GAFBoxLayoutView::getInternalBoundingBox() const
 {
     auto result = GAFLayoutView::getInternalBoundingBox();
-    result = result.unionWithRect(getDynamicContentBounds());
+    result = result.unionWithRect(flashBoundsToCocos(getDynamicContentBounds()));
 
     return result;
 }
@@ -134,7 +134,7 @@ void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, co
 
 void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPositions_t& objects)
 {
-    cocos2d::Rect bb = GAFLayoutView::getInternalBoundingBox();
+    cocos2d::Rect bb = GAFLayoutView::getFlashInternalBoundingBox();
     cocos2d::Rect childrenBB = cocos2d::Rect::ZERO;
 
     cocos2d::Size maxLineSize;
@@ -164,7 +164,7 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
         for (auto mtx : lineChildren)
         {
             mtx->tx += lineOffset.x;
-            mtx->tx += lineOffset.y;
+            mtx->ty += lineOffset.y;
         }
     };
 
@@ -226,7 +226,7 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
             continue;
         }
 
-        cocos2d::Rect childBB = cocos2d::RectApplyAffineTransform(child->getInternalBoundingBox(), stateMatrix);
+        cocos2d::Rect childBB = cocos2d::RectApplyAffineTransform(child->getFlashInternalBoundingBox(), stateMatrix);
         cocos2d::Point pivot = cocos2d::Point(stateMatrix.tx - childBB.getMinX(), stateMatrix.ty - childBB.getMinY());
 
         switch (m_direction)
@@ -433,7 +433,7 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
 {
     if (!m_dynamicContentBoundsDirty) return m_dynamicContentBounds;
 
-    cocos2d::Rect bb = GAFLayoutView::getInternalBoundingBox();
+    cocos2d::Rect bb = cocosBoundsToFlash(GAFLayoutView::getInternalBoundingBox());
     cocos2d::Rect childrenBB = cocos2d::Rect::ZERO;
 
     cocos2d::Size maxLineSize;
@@ -467,7 +467,7 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
             continue;
         }
 
-        auto childBB = child->getBoundingBox();
+        auto childBB = child->getFlashBoundingBox();
 
         switch (m_direction)
         {
