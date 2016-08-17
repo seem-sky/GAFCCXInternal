@@ -350,6 +350,8 @@ public:
     GAFObject* getObjectByName(const std::string& name);
     const GAFObject* getObjectByName(const std::string& name) const;
 
+    cocos2d::Vector<GAFObject*> getObjectsByName(const std::string& name);
+
     GAFObject* getObjectByNameForCurrentFrame(const std::string& name);
     const GAFObject* getObjectByNameForCurrentFrame(const std::string& name) const;
 

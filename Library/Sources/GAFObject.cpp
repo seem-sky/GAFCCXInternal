@@ -1422,6 +1422,44 @@ const GAFObject* GAFObject::getObjectByName(const std::string& name) const
     return const_cast<GAFObject*>(this)->getObjectByName(name);
 }
 
+cocos2d::Vector<GAFObject*> GAFObject::getObjectsByName(const std::string & name)
+{
+    cocos2d::Vector<GAFObject*> currentObjects;
+
+    if (name.empty())
+        return currentObjects;
+
+    std::stringstream ss(name);
+    std::string item;
+    typedef std::vector<std::string> StringVec_t;
+    StringVec_t elems;
+    while (std::getline(ss, item, '.'))
+        elems.push_back(item);
+
+    currentObjects.pushBack(this);
+
+    for (StringVec_t::const_iterator elIt = elems.cbegin(); elIt != elems.cend() && currentObjects.size() > 0; ++elIt)
+    {
+        cocos2d::Vector<GAFObject*> foundObjects;
+        for (GAFObject* currentObject : currentObjects)
+        {
+            const NamedParts_t& np = currentObject->getTimeLine()->getNamedParts();
+
+            std::pair<NamedParts_t::const_iterator, NamedParts_t::const_iterator> range = np.equal_range(*elIt);
+            for (NamedParts_t::const_iterator npIt = range.first; npIt != range.second; ++npIt)
+            {
+                GAFObject* child = currentObject->getDisplayList().at(npIt->second);
+                if (child)
+                    foundObjects.pushBack(child);
+            }
+        }
+
+        currentObjects = foundObjects;
+    }
+
+    return currentObjects;
+}
+
 GAFObject* GAFObject::getObjectByNameForCurrentFrame(const std::string& name)
 {
     if (name.empty())
@@ -1449,7 +1487,7 @@ GAFObject* GAFObject::getObjectByNameForCurrentFrame(const std::string& name)
         {
             GAFObject* child = currentObj->getDisplayList().at(npIt->second);
 
-            if (np.size() == 1 || (child != nullptr && child->isVisibleInCurrentFrame()))
+            if (child != nullptr && child->isVisibleInCurrentFrame())
             {
                 foundChild = child;
                 break;
