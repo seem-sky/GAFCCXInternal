@@ -841,10 +841,18 @@ cocos2d::Rect GAFObject::getFlashInternalBoundingBox() const
     return cocosBoundsToFlash(getInternalBoundingBox());
 }
 
-    void GAFObject::setColor(const cocos2d::Color3B& color)
+void GAFObject::setColor(const cocos2d::Color3B& color)
 {
-    m_isManualColor = true;
-    Node::setColor(color);
+   if (m_isManualColor && color == cocos2d::Color3B::WHITE)
+   {
+       m_isManualColor = false;
+   }
+   else
+   {
+       m_isManualColor = true;
+   }
+
+   Node::setColor(color);
 }
 
 void GAFObject::setOpacity(GLubyte opacity)
