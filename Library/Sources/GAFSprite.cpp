@@ -191,9 +191,9 @@ bool GAFSprite::initWithTexture(cocos2d::Texture2D *pTexture, const cocos2d::Rec
 void GAFSprite::setTexture(cocos2d::Texture2D *texture)
 {
     // If batch node, then texture id should be the same
-    CCAssert(!_batchNode || texture->getName() == _batchNode->getTexture()->getName(), "cocos2d::Sprite: Batched sprites should use the same texture as the batchnode");
+    CC_ASSERT((!_batchNode || texture->getName() == _batchNode->getTexture()->getName()) && "cocos2d::Sprite: Batched sprites should use the same texture as the batchnode");
     // accept texture==nil as argument
-    CCAssert(!texture || dynamic_cast<cocos2d::Texture2D*>(texture), "setTexture expects a cocos2d::Texture2D. Invalid argument");
+    CC_ASSERT((!texture || dynamic_cast<cocos2d::Texture2D*>(texture)) && "setTexture expects a cocos2d::Texture2D. Invalid argument");
 
     if (!_batchNode && _texture != texture)
     {
@@ -701,7 +701,7 @@ uint32_t GAFSprite::setUniforms()
 
 void GAFSprite::customDraw(cocos2d::Mat4& transform)
 {
-    CCAssert(!_batchNode, "If cocos2d::Sprite is being rendered by CCSpriteBatchNode, cocos2d::Sprite#draw SHOULD NOT be called");
+    CC_ASSERT(!_batchNode && "If cocos2d::Sprite is being rendered by CCSpriteBatchNode, cocos2d::Sprite#draw SHOULD NOT be called");
 
     getGLProgramState()->apply(transform);
 

@@ -98,8 +98,8 @@ GAFObject * GAFObject::create(GAFAsset * anAsset, GAFTimeline* timeline)
 
 bool GAFObject::init(GAFAsset * anAnimationData, GAFTimeline* timeline)
 {
-    CCAssert(anAnimationData, "anAssetData data should not be nil");
-    CCAssert(timeline, "Timeline data should not be nil");
+    CC_ASSERT(anAnimationData && "anAssetData data should not be nil");
+    CC_ASSERT(timeline && "Timeline data should not be nil");
 
     if (!anAnimationData || !timeline)
     {
@@ -163,11 +163,11 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
     {
         Timelines_t& timelines = m_asset->getTimelines();
 
-        CCAssert(reference != IDNONE, "Invalid object reference.");
+        CC_ASSERT(reference != IDNONE && "Invalid object reference.");
 
         Timelines_t::iterator tl = timelines.find(reference);
 
-        CCAssert(tl != timelines.end(), "Invalid object reference.");
+        CC_ASSERT(tl != timelines.end() && "Invalid object reference.");
 
         result = GafObjectFactory::create(m_asset, tl->second, isMask, id);
         result->setCustomProperties(tl->second->getCustomProperties());
@@ -265,11 +265,11 @@ GAFObject* GAFObject::encloseNewTimeline(uint32_t reference)
 {
     Timelines_t& timelines = m_asset->getTimelines();
 
-    CCAssert(reference != IDNONE, "Invalid object reference.");
+    CC_ASSERT(reference != IDNONE && "Invalid object reference.");
 
     Timelines_t::iterator tl = timelines.find(reference);
 
-    CCAssert(tl != timelines.end(), "Invalid object reference.");
+    CC_ASSERT(tl != timelines.end() && "Invalid object reference.");
 
     GAFObject* newObject = new GAFObject();
     newObject->init(m_asset, tl->second);
