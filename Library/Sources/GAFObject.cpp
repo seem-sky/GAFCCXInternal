@@ -792,6 +792,15 @@ cocos2d::Rect GAFObject::getInternalBoundingBoxForCurrentFrame() const
         isFirstObj = false;
     }
 
+    for (Node* subObject : _children)
+    {
+        if (subObject == m_container || !subObject->isVisible())
+            continue;
+
+        cocos2d::Rect bb = subObject->getBoundingBox();
+        result = GAFCCRectUnion(result, bb);
+    }
+
     return result;
 }
 
