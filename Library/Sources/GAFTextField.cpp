@@ -16,17 +16,32 @@ GAFTextField::~GAFTextField()
 // TODO: Factory
 void GAFTextField::initWithTextData(GAFTextData const* data)
 {
-    m_label = cocos2d::Label::createWithSystemFont(data->m_text, data->m_textFormat.m_font, static_cast<float>(data->m_textFormat.m_size));
-
+    bool prevPopupNotify = cocos2d::FileUtils::getInstance()->isPopupNotify(); // disabling annoing missing font notifiers
+    cocos2d::FileUtils::getInstance()->setPopupNotify(false);
+    
+    std::string generatedFileName = data->m_textFormat.m_font;
+    std::replace(generatedFileName.begin(), generatedFileName.end(), ' ', '_');
+    generatedFileName += ".ttf";
+    if (cocos2d::FileUtils::getInstance()->isFileExist(generatedFileName))
+    {
+        m_label = cocos2d::Label::createWithTTF(data->m_text, generatedFileName, static_cast<float>(data->m_textFormat.m_size));
+    }
+    else // Using old name from config
+    {
+        m_label = cocos2d::Label::createWithSystemFont(data->m_text, data->m_textFormat.m_font, static_cast<float>(data->m_textFormat.m_size));
+    }
+    
+    cocos2d::FileUtils::getInstance()->setPopupNotify(prevPopupNotify);
+    
     CC_SAFE_RETAIN(m_label);
     
     m_label->setDimensions(data->m_width, data->m_height);
     m_label->setTextColor(cocos2d::Color4B(data->m_textFormat.m_color));
     m_label->setHorizontalAlignment(data->m_textFormat.getTextAlignForCocos());
-
+    
     cocos2d::Point anchor = cocos2d::Point(data->m_pivot.x / data->m_width, 1 - data->m_pivot.y / data->m_height);
     m_label->setAnchorPoint(anchor);
-
+    
     addChild(m_label);
 }
 
