@@ -14,9 +14,10 @@ GAFBoxLayoutView::GAFBoxLayoutView()
     , m_marginRight(0.f)
     , m_marginBottom(0.f)
     , m_marginLeft(0.f)
+    , m_gapMode(MarginGapMode::percents)
+    , m_marginMode(MarginGapMode::percents)
     , m_horizontalAlign(HorizontalAlign::center)
     , m_verticalAlign(VerticalAlign::center)
-    , m_usePercents(false)
     , m_dynamicContentBounds(cocos2d::Rect::ZERO)
     , m_dynamicContentBoundsDirty(false)
 {
@@ -88,13 +89,14 @@ void GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& c
     m_horizontalAlign = HorizontalAlign::toEnum(customProperties.at("horizontalAlign"));
     m_verticalAlign = VerticalAlign::toEnum(customProperties.at("verticalAlign"));
 
-    m_usePercents = customProperties.at("alignMode") == "percents";
-
     m_gap = std::stof(customProperties.at("gap"));
     m_marginTop = std::stof(customProperties.at("marginTop"));
     m_marginRight = std::stof(customProperties.at("marginRight"));
     m_marginBottom = std::stof(customProperties.at("marginBottom"));
     m_marginLeft = std::stof(customProperties.at("marginLeft"));
+
+    m_gapMode = MarginGapMode::toEnum(customProperties.at("gapMode"));
+    m_marginMode = MarginGapMode::toEnum(customProperties.at("marginMode"));
 
     m_dynamicContentBoundsDirty = true;
 }
@@ -134,17 +136,21 @@ void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, co
 
 void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPositions_t& objects)
 {
-    cocos2d::Rect bb = GAFLayoutView::getFlashInternalBoundingBox();
+    const cocos2d::Rect bb = getFlashInternalBoundingBox();
     cocos2d::Rect childrenBB = cocos2d::Rect::ZERO;
+
+    const cocos2d::Point fittingScale = getFittingScale();
+    const cocos2d::Point gapScale = getGapScale();
+    const cocos2d::Point marginScale = getMarginScale();
 
     cocos2d::Size maxLineSize;
     switch (m_direction)
     {
     case Direction::tiledByWidth:
-        maxLineSize.setSize(bb.size.width - m_marginLeft - m_marginRight, std::numeric_limits<float>::max());
+        maxLineSize.setSize(bb.size.width - (m_marginLeft * m_marginRight) * marginScale.x, std::numeric_limits<float>::max());
         break;
     case Direction::tiledByHeight:
-        maxLineSize.setSize(std::numeric_limits<float>::max(), bb.size.height - m_marginTop - m_marginBottom);
+        maxLineSize.setSize(std::numeric_limits<float>::max(), bb.size.height - (m_marginTop + m_marginBottom) * marginScale.y);
         break;
     default:
         maxLineSize.setSize(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
@@ -168,28 +174,28 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
         }
     };
 
-    auto calculateLineOffset = [this, &bb, &currPos, &currMinPos, &currLineSize](bool isHorizontal)
+    auto calculateLineOffset = [this, &bb, &currPos, &currMinPos, &currLineSize, &marginScale](bool isHorizontal)
     {
         cocos2d::Point rowOffset;
         if (isHorizontal)
         {
             if (m_horizontalAlign == HorizontalAlign::right)
-                rowOffset.x = bb.getMaxX() - m_marginRight - currLineSize.width;
+                rowOffset.x = bb.getMaxX() - m_marginRight * marginScale.x - currLineSize.width;
             else if (m_horizontalAlign == HorizontalAlign::center)
                 rowOffset.x = bb.getMinX() + (bb.size.width - currLineSize.width) / 2;
             else
-                rowOffset.x = bb.getMinX() + m_marginLeft;
+                rowOffset.x = bb.getMinX() + m_marginLeft * marginScale.x;
 
             rowOffset.y = currPos.y - currMinPos.y;
         }
         else
         {
             if (m_verticalAlign == VerticalAlign::bottom)
-                rowOffset.y = bb.getMaxY() - m_marginBottom - currLineSize.height;
+                rowOffset.y = bb.getMaxY() - m_marginBottom * marginScale.y - currLineSize.height;
             else if (m_verticalAlign == VerticalAlign::center)
                 rowOffset.y = bb.getMinY() + (bb.size.height - currLineSize.height) / 2;
             else
-                rowOffset.y = bb.getMinY() + m_marginTop;
+                rowOffset.y = bb.getMinY() + m_marginTop * marginScale.y;
 
             rowOffset.x = currPos.x - currMinPos.x;
         }
@@ -227,6 +233,9 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
         }
 
         cocos2d::Rect childBB = cocos2d::RectApplyAffineTransform(child->getFlashInternalBoundingBox(), stateMatrix);
+        childBB.setRect(
+            childBB.origin.x * fittingScale.x, childBB.origin.y * fittingScale.y,
+            childBB.size.width * fittingScale.x, childBB.size.height * fittingScale.y);
         cocos2d::Point pivot = cocos2d::Point(stateMatrix.tx - childBB.getMinX(), stateMatrix.ty - childBB.getMinY());
 
         switch (m_direction)
@@ -244,7 +253,7 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
                 contentSize.width = std::max(contentSize.width, currLineSize.width);
 
                 if (!firstChild)
-                    currPos.y += currLineSize.height + m_gap;
+                    currPos.y += currLineSize.height + m_gap * gapScale.y;
 
                 childTopLeft.x = 0.0;
                 currLineSize.width = firstLineChildSize.width = childBB.size.width;
@@ -257,7 +266,7 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
                 currLineSize.height = std::max(currLineSize.height, childBB.size.height);
             }
 
-            currPos.x = childTopLeft.x + childBB.size.width + m_gap; // calculate next child possible x-position
+            currPos.x = childTopLeft.x + childBB.size.width + m_gap * gapScale.x; // calculate next child possible x-position
             stateMatrix.tx = childTopLeft.x + pivot.x;
 
             // first loop, align by first child
@@ -307,7 +316,7 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
                 contentSize.height = std::max(contentSize.height, currLineSize.height);
 
                 if (!firstChild)
-                    currPos.x += currLineSize.width + m_gap;
+                    currPos.x += currLineSize.width + m_gap * gapScale.x;
 
                 childTopLeft.y = 0.0;
                 currLineSize.width = firstLineChildSize.width = childBB.size.width;
@@ -320,7 +329,7 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
                 currLineSize.height = std::max(currLineSize.height, childTopLeft.y + childBB.size.height);
             }
 
-            currPos.y = childTopLeft.y + childBB.size.height + m_gap; // calculate next child possible y-position
+            currPos.y = childTopLeft.y + childBB.size.height + m_gap * gapScale.y; // calculate next child possible y-position
             stateMatrix.ty = childTopLeft.y + pivot.y;
 
             // first loop, align by first child
@@ -366,20 +375,20 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
     if (m_direction == Direction::horizontal || m_direction == Direction::tiledByWidth)
     {
         if (m_verticalAlign == VerticalAlign::bottom)
-            contentOffset.y = bb.getMaxY() - m_marginBottom - contentSize.height;
+            contentOffset.y = bb.getMaxY() - m_marginBottom * marginScale.y - contentSize.height;
         else if (m_verticalAlign == VerticalAlign::center)
             contentOffset.y = bb.getMinY() + (bb.size.height - contentSize.height) / 2;
         else
-            contentOffset.y = bb.getMinY() + m_marginTop;
+            contentOffset.y = bb.getMinY() + m_marginTop * marginScale.y;
     }
     else
     {
         if (m_horizontalAlign == HorizontalAlign::right)
-            contentOffset.x = bb.getMaxX() - m_marginRight - contentSize.width;
+            contentOffset.x = bb.getMaxX() - m_marginRight * marginScale.x - contentSize.width;
         else if (m_horizontalAlign == HorizontalAlign::center)
             contentOffset.x = bb.getMinX() + (bb.size.width - contentSize.width) / 2;
         else
-            contentOffset.x = bb.getMinX() + m_marginLeft;
+            contentOffset.x = bb.getMinX() + m_marginLeft * marginScale.x;
     }
 
     for (auto& childAndMtx : objects)
@@ -436,14 +445,18 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
     cocos2d::Rect bb = cocosBoundsToFlash(GAFLayoutView::getInternalBoundingBox());
     cocos2d::Rect childrenBB = cocos2d::Rect::ZERO;
 
+    cocos2d::Point fittingScale = getFittingScale();
+    cocos2d::Point gapScale = getGapScale();
+    cocos2d::Point marginScale = getMarginScale();
+
     cocos2d::Size maxLineSize;
     switch (m_direction)
     {
     case Direction::tiledByWidth:
-        maxLineSize.setSize(bb.size.width - m_marginLeft - m_marginRight, std::numeric_limits<float>::max());
+        maxLineSize.setSize(bb.size.width - (m_marginLeft + m_marginRight) * marginScale.x, std::numeric_limits<float>::max());
         break;
     case Direction::tiledByHeight:
-        maxLineSize.setSize(std::numeric_limits<float>::max(), bb.size.height - m_marginTop - m_marginBottom);
+        maxLineSize.setSize(std::numeric_limits<float>::max(), bb.size.height - (m_marginTop - m_marginBottom) * marginScale.y);
         break;
     default:
         maxLineSize.setSize(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
@@ -467,26 +480,28 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
             continue;
         }
 
-        auto childBB = child->getFlashBoundingBox();
-
+        cocos2d::Rect childBB = child->getFlashBoundingBox();
+        childBB.setRect(
+            childBB.origin.x * fittingScale.x, childBB.origin.y * fittingScale.y,
+            childBB.size.width * fittingScale.x, childBB.size.height * fittingScale.y);
         switch (m_direction)
         {
             case Direction::horizontal:
             case Direction::tiledByWidth:
             {
-                bool startNewLine = (first || currLineBB.size.width + m_gap + childBB.size.width > maxLineSize.width);
+                bool startNewLine = (first || currLineBB.size.width + m_gap * gapScale.x + childBB.size.width > maxLineSize.width);
                 if (startNewLine)
                 {
                     childrenBB = childrenBB.unionWithRect(currLineBB);
 
                     if (!first)
-                        currLineBB.origin.y += m_gap + currLineBB.size.height;
+                        currLineBB.origin.y += m_gap * gapScale.y + currLineBB.size.height;
                     
                     currLineBB.size.setSize(childBB.size.width, childBB.size.height);
                 }
                 else
                 {
-                    currLineBB.size.width += m_gap + childBB.size.width;
+                    currLineBB.size.width += m_gap * gapScale.x + childBB.size.width;
                     currLineBB.size.height = std::max(currLineBB.size.height, childBB.size.height);
                 }
                 break;
@@ -494,20 +509,20 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
             case Direction::vertical:
             case Direction::tiledByHeight:
             {
-                bool startNewLine = (first || currLineBB.size.height + m_gap + childBB.size.height > maxLineSize.height);
+                bool startNewLine = (first || currLineBB.size.height + m_gap * gapScale.y + childBB.size.height > maxLineSize.height);
                 if (startNewLine)
                 {
                     childrenBB = childrenBB.unionWithRect(currLineBB);
 
                     if (!first)
-                        currLineBB.origin.x += m_gap + currLineBB.size.width;
+                        currLineBB.origin.x += m_gap * gapScale.x + currLineBB.size.width;
 
                     currLineBB.size.setSize(childBB.size.width, childBB.size.height);
                 }
                 else
                 {
                     currLineBB.size.width = std::max(currLineBB.size.width, childBB.size.width);
-                    currLineBB.size.height += m_gap + childBB.size.height;
+                    currLineBB.size.height += m_gap * gapScale.y + childBB.size.height;
                 }
                 break;
             }
@@ -521,8 +536,8 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
         first = false;
     }
 
-    childrenBB.size.width += m_marginLeft + m_marginRight;
-    childrenBB.size.height += m_marginTop + m_marginBottom;
+    childrenBB.size.width += (m_marginLeft + m_marginRight) * marginScale.x;
+    childrenBB.size.height += (m_marginTop + m_marginBottom) * marginScale.y;
 
     if (m_horizontalAlign == HorizontalAlign::right)
         childrenBB.origin.x = bb.getMaxX() - childrenBB.size.width;
@@ -543,6 +558,26 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
     m_dynamicContentBoundsDirty = false;
 
     return m_dynamicContentBounds;
+}
+
+cocos2d::Point GAFBoxLayoutView::getGapScale() const
+{
+    if (m_marginMode == MarginGapMode::percents)
+        return m_internalScale;
+    else if (m_marginMode == MarginGapMode::proportional)
+        return getFittingScale();
+    else
+        return cocos2d::Point(1, 1);
+}
+
+cocos2d::Point GAFBoxLayoutView::getMarginScale() const
+{
+    if (m_gapMode == MarginGapMode::percents)
+        return m_internalScale;
+    else if (m_gapMode == MarginGapMode::proportional)
+        return getFittingScale();
+    else
+        return cocos2d::Point(1, 1);
 }
 
 NS_GAF_END

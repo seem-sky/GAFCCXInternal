@@ -124,6 +124,43 @@ class GAFBoxLayoutView : public GAFLayoutView
         }
     };
 
+    struct MarginGapMode
+    {
+        enum Enum
+        {
+            pixels,
+            percents,
+            proportional,
+            unknown
+        };
+
+        static Enum toEnum(const std::string& mode)
+        {
+            if (mode == toString(pixels))
+                return pixels;
+            else if (mode == toString(percents))
+                return percents;
+            else if (mode == toString(proportional))
+                return proportional;
+            else
+                return unknown;
+        }
+
+        static std::string toString(Enum mode)
+        {
+            switch (mode)
+            {
+            case pixels:
+                return "pixels";
+            case percents:
+                return "percents";
+            case proportional:
+                return "proportional";
+            default:
+                return "unknown";
+            }
+        }
+    };
 
 public:
     GAFBoxLayoutView();
@@ -148,10 +185,11 @@ protected:
     float m_marginBottom;
     float m_marginLeft;
 
+    MarginGapMode::Enum m_gapMode;
+    MarginGapMode::Enum m_marginMode;
+
     HorizontalAlign::Enum m_horizontalAlign;
     VerticalAlign::Enum m_verticalAlign;
-
-    bool m_usePercents;
 
     mutable cocos2d::Rect m_dynamicContentBounds;
     mutable bool m_dynamicContentBoundsDirty;
@@ -162,6 +200,8 @@ protected:
     virtual void processChildren(cocos2d::Node* out, ObjectsStatesPositions_t& objects);
 
     virtual cocos2d::Rect getDynamicContentBounds() const;
+    virtual cocos2d::Point getGapScale() const;
+    virtual cocos2d::Point getMarginScale() const;
 };
 
 NS_GAF_END
