@@ -45,7 +45,7 @@ bool GAFScrollView::init(GAFAsset* anAnimationData, GAFTimeline* timeline)
 
 void GAFScrollView::onEnter()
 {
-    GAFLayoutView::onEnter();
+    GAFComponentView::onEnter();
 
     scheduleUpdate();
 
@@ -58,7 +58,7 @@ void GAFScrollView::processGAFTimeline(cocos2d::Node* out, GAFObject* child, con
     if (child == m_scrollBarH || child == m_scrollBarV)
     {
         cocos2d::Vec3 internalScale;
-        auto transform = GAFLayoutView::getNodeToParentTransform();
+        auto transform = GAFComponentView::getNodeToParentTransform();
         transform.getScale(&internalScale);
         cocos2d::Vec3 inverseScale(1.0f / internalScale.x, 1.0f / internalScale.y, 1.0f / internalScale.z);
         if (child == m_scrollBarH)
@@ -73,7 +73,7 @@ void GAFScrollView::processGAFTimeline(cocos2d::Node* out, GAFObject* child, con
         }
     }
 
-    GAFLayoutView::processGAFTimeline(out, child, state, mtx);
+    GAFComponentView::processGAFTimeline(out, child, state, mtx);
 }
 
 NS_GAF_END

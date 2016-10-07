@@ -3,7 +3,7 @@
 
 NS_GAF_BEGIN
 
-class GAFScrollView : public GAFLayoutView
+class GAFScrollView : public GAFComponentView
 {
 protected:
     GAFObject* m_innerContainer;
