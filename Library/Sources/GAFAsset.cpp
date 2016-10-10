@@ -494,6 +494,15 @@ GAFTimeline* GAFAsset::getTimelineByName(const std::string& name) const
             return it.second;
     }
 
+    if (m_libraryAsset != nullptr)
+    {
+        for (Timelines_t::value_type it : m_libraryAsset->m_timelines)
+        {
+            if (it.second->getLinkageName() == name)
+                return it.second;
+        }
+    }
+
     return nullptr;
 }
 

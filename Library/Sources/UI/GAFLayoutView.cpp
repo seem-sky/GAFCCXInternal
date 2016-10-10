@@ -15,41 +15,6 @@ GAFLayoutView::~GAFLayoutView()
 {
 }
 
-/*const cocos2d::Mat4& GAFLayoutView::getNodeToParentTransform() const
-{
-    bool transformDirty = _transformDirty;
-    if (transformDirty)
-    {
-        _transform = GAFObject::getNodeToParentTransform();
-        _transformDirty = transformDirty;
-
-        _transform.getScale(&m_internalScale);
-
-        cocos2d::Vec3 inverseScale(1.0f / m_internalScale.x, 1.0f / m_internalScale.y, 1.0f / m_internalScale.z);
-        _transform.scale(inverseScale);
-
-        _transformDirty = false;
-    }
-
-    return _transform;
-}*/
-
-/*cocos2d::Rect GAFLayoutView::getInternalBoundingBox() const
-{
-    cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
-    scaleMtx = cocos2d::AffineTransformScale(scaleMtx, getInternalScale().x, getInternalScale().y);
-    auto unscaledInternalBounds = GAFObject::getInternalBoundingBox();
-    return RectApplyAffineTransform(unscaledInternalBounds, scaleMtx);
-}*/
-
-/*cocos2d::Vec3 GAFLayoutView::getInternalScale() const
-{
-    if (_transformDirty)
-        getNodeToParentTransform();
-
-    return m_internalScale;
-}*/
-
 cocos2d::AffineTransform & GAFLayoutView::addAdditionalTransformations(cocos2d::AffineTransform & mtx) const
 {
     cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
@@ -121,7 +86,7 @@ cocos2d::Rect GAFLayoutView::getInternalBoundingBox() const
 {
     cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
     scaleMtx = cocos2d::AffineTransformScale(scaleMtx, getInternalScale().x, getInternalScale().y);
-    auto unscaledInternalBounds = GAFComponentView::getInternalBoundingBox();
+    cocos2d::Rect unscaledInternalBounds = GAFComponentView::getInternalBoundingBox();
     return RectApplyAffineTransform(unscaledInternalBounds, scaleMtx);
 }
 

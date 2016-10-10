@@ -26,9 +26,9 @@ GAFCanvasView * GAFCanvasView::create(GAFAsset * anAsset, GAFTimeline * timeline
 
 cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
 {
-    auto unscaledInternalBounds = m_timeline->getRect();
+    auto unscaledInternalBounds = getFlashInitialInternalBoundingBox();
     auto actualInternalBounds = getFlashInternalBoundingBox();
-    auto childActualBounds = RectApplyAffineTransform(child->getFlashInternalBoundingBox(), mtx);
+    auto childActualBounds = RectApplyAffineTransform(child->getFlashInitialInternalBoundingBox(), mtx);
 
     bool usePercents = customProperties.at("alignMode") == "percents";
     bool useProportional = customProperties.at("alignMode") == "proportional";
@@ -122,7 +122,6 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
         scaleMtx = cocos2d::AffineTransformScale(scaleMtx, fittingScale.x, fittingScale.y);
         affineTransformSetFrom(mtx, AffineTransformConcat(mtx, scaleMtx));
     }
-    
 
     return mtx;
 }

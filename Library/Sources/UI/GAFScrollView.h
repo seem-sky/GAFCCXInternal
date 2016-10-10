@@ -3,7 +3,7 @@
 
 NS_GAF_BEGIN
 
-class GAFScrollView : public GAFComponentView
+class GAFScrollView : public GAFLayoutView
 {
 protected:
     GAFObject* m_innerContainer;
@@ -23,6 +23,7 @@ public:
     virtual void onEnter() override;
 
 protected:
+    virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
     virtual void processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx) override;
 };
 

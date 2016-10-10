@@ -85,6 +85,7 @@ void GAFBoxLayoutView::removeAllChildrenWithCleanup(bool cleanup)
 
 void GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
 {
+    GAFLayoutView::processOwnCustomProperties(customProperties);
     m_direction = Direction::toEnum(customProperties.at("direction"));
     m_horizontalAlign = HorizontalAlign::toEnum(customProperties.at("horizontalAlign"));
     m_verticalAlign = VerticalAlign::toEnum(customProperties.at("verticalAlign"));
@@ -132,6 +133,19 @@ void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, co
     }
 
     processChildren(out, childrenToAlign);
+}
+
+cocos2d::AffineTransform & GAFBoxLayoutView::addAdditionalTransformations(cocos2d::AffineTransform & mtx) const
+{
+    if (m_scaleAlignedChildren)
+    {
+        cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
+        cocos2d::Vec2 fittingScale(getFittingScale());
+        scaleMtx = cocos2d::AffineTransformScale(scaleMtx, fittingScale.x, fittingScale.y);
+        affineTransformSetFrom(mtx, AffineTransformConcat(mtx, scaleMtx));
+    }
+    
+    return mtx;
 }
 
 void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPositions_t& objects)
@@ -232,10 +246,10 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
             continue;
         }
 
+        if (m_scaleAlignedChildren)
+            affineTransformSetFrom(stateMatrix, cocos2d::AffineTransformScale(stateMatrix, fittingScale.x, fittingScale.y));
+
         cocos2d::Rect childBB = cocos2d::RectApplyAffineTransform(child->getFlashInternalBoundingBox(), stateMatrix);
-        childBB.setRect(
-            childBB.origin.x * fittingScale.x, childBB.origin.y * fittingScale.y,
-            childBB.size.width * fittingScale.x, childBB.size.height * fittingScale.y);
         cocos2d::Point pivot = cocos2d::Point(stateMatrix.tx - childBB.getMinX(), stateMatrix.ty - childBB.getMinY());
 
         switch (m_direction)
@@ -481,9 +495,10 @@ cocos2d::Rect GAFBoxLayoutView::getDynamicContentBounds() const
         }
 
         cocos2d::Rect childBB = child->getFlashBoundingBox();
-        childBB.setRect(
-            childBB.origin.x * fittingScale.x, childBB.origin.y * fittingScale.y,
-            childBB.size.width * fittingScale.x, childBB.size.height * fittingScale.y);
+        if (m_scaleAlignedChildren)
+            childBB.setRect(
+                childBB.origin.x * fittingScale.x, childBB.origin.y * fittingScale.y,
+                childBB.size.width * fittingScale.x, childBB.size.height * fittingScale.y);
         switch (m_direction)
         {
             case Direction::horizontal:

@@ -196,6 +196,7 @@ protected:
 
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
     virtual void processStates(cocos2d::Node* out, uint32_t frameIndex, const GAFAnimationFrame* frame) override;
+    virtual cocos2d::AffineTransform& addAdditionalTransformations(cocos2d::AffineTransform& mtx) const override;
 
     virtual void processChildren(cocos2d::Node* out, ObjectsStatesPositions_t& objects);
 

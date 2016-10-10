@@ -58,9 +58,8 @@ public:
     GAFLayoutView();
     virtual ~GAFLayoutView() = 0;
 
-    //virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
-    //virtual cocos2d::Rect getInternalBoundingBox() const override;
-    //virtual cocos2d::Vec3 getInternalScale() const;
+    virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
+    virtual cocos2d::Rect getInternalBoundingBox() const override;
 
 protected:
     mutable cocos2d::Vec2 m_internalScale;
@@ -69,11 +68,8 @@ protected:
 
     virtual cocos2d::AffineTransform& addAdditionalTransformations(cocos2d::AffineTransform& mtx) const override;
 
-    virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
-
     virtual cocos2d::Vec2 getInternalScale() const;
     virtual cocos2d::Vec2 getFittingScale() const;
-    virtual cocos2d::Rect getInternalBoundingBox() const override;
 
     virtual bool allNecessaryFieldsExist(const CustomPropertiesMap_t& customProperties) const override;
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
