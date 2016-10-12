@@ -50,11 +50,9 @@ void GAFTextField::setText(const std::string& text)
     m_label->setString(text);
 }
 
-cocos2d::Rect GAFTextField::getBoundingBox() const
+cocos2d::Rect GAFTextField::getInternalBoundingBox() const
 {
-    cocos2d::Rect rect(m_label->getBoundingBox());
-    rect.origin.y = rect.getMaxY();
-    return RectApplyAffineTransform(rect, getNodeToParentAffineTransform());
+    return m_label->getBoundingBox();
 }
 
 void GAFTextField::setExternalTransform(const cocos2d::AffineTransform & transform)
