@@ -190,14 +190,18 @@ uint32_t GAFMovieClip::setUniforms()
     }
     return XXH32((void*)&hash, sizeof(GAFMovieClipHash), 0);
 }
-void GAFMovieClip::setColorTransform(const GLfloat * mults, const GLfloat * offsets)
+void GAFMovieClip::setColorTransform(const cocos2d::Vec4& mults, const cocos2d::Vec4& offsets)
 {
     if (m_isStencil)
     {
         return;
     }
-    m_colorTransformMult = Vec4(mults);
-    m_colorTransformOffsets = Vec4(offsets);
+
+    if (m_colorTransformMult == mults && m_colorTransformOffsets == offsets)
+        return;
+
+    m_colorTransformMult = mults;
+    m_colorTransformOffsets = offsets;
     _setBlendingFunc();
     m_ctxDirty = true;
 }

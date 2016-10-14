@@ -17,7 +17,7 @@
 #include "GAFObjectFactory.h"
 #include "GAFUtils.h"
 
-#define ENABLE_RUNTIME_FILTERS 1
+#define ENABLE_RUNTIME_FILTERS 0
 
 NS_GAF_BEGIN
 
@@ -43,7 +43,7 @@ GAFObject::GAFObject()
     , m_isReversed(false)
     , m_timeDelta(0.0)
     , m_fps(0)
-    , m_skipFpsCheck(false)
+    , m_skipFpsCheck(true)
     , m_asset(nullptr)
     , m_timeline(nullptr)
     , m_currentFrame(GAFFirstFrameIndex)
@@ -939,7 +939,9 @@ void GAFObject::rearrangeSubobject(cocos2d::Node* out, cocos2d::Node* child, int
     }
     else
     {
-        static_cast<GAFObject*>(child)->_transformUpdated = true;
+        if (child->getLocalZOrder() != zIndex)
+            static_cast<GAFObject*>(child)->_transformUpdated = true;
+
         child->setLocalZOrder(zIndex);
     }
 }
@@ -1096,18 +1098,18 @@ void GAFObject::processGAFImage(cocos2d::Node* out, GAFObject* child, const GAFS
     if (child->m_objectType == GAFObjectType::MovieClip)
     {
         GAFMovieClip* mc = static_cast<GAFMovieClip*>(child);
-        float colorMults[4] = {
+        cocos2d::Vec4 colorMults(
             state->colorMults()[0] * m_parentColorTransforms[0].x * _displayedColor.r / 255,
             state->colorMults()[1] * m_parentColorTransforms[0].y * _displayedColor.g / 255,
             state->colorMults()[2] * m_parentColorTransforms[0].z * _displayedColor.b / 255,
             state->colorMults()[3] * m_parentColorTransforms[0].w * _displayedOpacity / 255
-        };
-        float colorOffsets[4] = {
+        );
+        cocos2d::Vec4 colorOffsets(
             state->colorOffsets()[0] + m_parentColorTransforms[1].x,
             state->colorOffsets()[1] + m_parentColorTransforms[1].y,
             state->colorOffsets()[2] + m_parentColorTransforms[1].z,
             state->colorOffsets()[3] + m_parentColorTransforms[1].w
-        };
+        );
 
         mc->setColorTransform(colorMults, colorOffsets);
     }

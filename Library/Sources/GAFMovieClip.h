@@ -39,7 +39,7 @@ public:
 
     virtual bool initWithTexture(cocos2d::Texture2D *pTexture, const cocos2d::Rect& rect, bool rotated) override;
 
-    void setColorTransform(const GLfloat * mults, const GLfloat * offsets);
+    void setColorTransform(const cocos2d::Vec4& mults, const cocos2d::Vec4& offsets);
     void setColorTransform(const GLfloat * colorTransform);
 
     void setColorMarixFilterData(GAFColorMatrixFilterData* data);
