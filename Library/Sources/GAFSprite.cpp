@@ -636,7 +636,9 @@ void GAFSprite::draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform
 {
     (void)flags;
 #endif
-    if (m_isLocator)
+    
+    bool isInsideCameraSpace = renderer->checkVisibility(transform, _contentSize);
+    if (m_isLocator || !isInsideCameraSpace)
     {
         return;
     }
