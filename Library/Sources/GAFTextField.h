@@ -18,7 +18,7 @@ public:
 
     void setText(const std::string& text);
 
-    virtual cocos2d::Rect getBoundingBox() const override;
+    virtual cocos2d::Rect getInternalBoundingBox() const override;
 
     virtual void setExternalTransform(const cocos2d::AffineTransform& transform) override;
 };

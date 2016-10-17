@@ -11,7 +11,7 @@ class TagDefineAnimationFrames2 : public DefinitionTagBase
 private:
     GAFSubobjectState* extractState(GAFStream* in);
     
-    typedef std::map<unsigned int, GAFSubobjectState*> States_t;
+    typedef std::unordered_map<unsigned int, GAFSubobjectState*> States_t;
     States_t m_currentStates;
     
     uint8_t m_version;

@@ -28,14 +28,15 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTextureAtlasElement* txE
 
         result->initWithSpriteFrame(spriteFrame, txElemet->rotation, txElemet->scale9GridRect);
         result->objectIdRef = id;
-        cocos2d::Vec2 pt = cocos2d::Vec2(0 - (0 - (txElemet->pivotPoint.x / result->getContentSize().width)),
-            0 + (1 - (txElemet->pivotPoint.y / result->getContentSize().height)));
+        cocos2d::Vec2 pt = cocos2d::Vec2(txElemet->pivotPoint.x / result->getContentSize().width,
+            1 - txElemet->pivotPoint.y / result->getContentSize().height);
         result->setAnchorPoint(pt);
 
         if (txElemet->getScale() != 1.0f)
             result->setAtlasScale(1.0f / txElemet->getScale());
 
         result->setBlendFunc(cocos2d::BlendFunc::ALPHA_PREMULTIPLIED);
+        result->autorelease();
     }
     else
     {
@@ -53,6 +54,8 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTextData* txtData, bool 
     GAFTextField* result = new GAFTextField();
     result->initWithTextData(txtData);
     result->objectIdRef = id;
+
+    result->autorelease();
 
     return result;
 }

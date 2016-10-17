@@ -14,7 +14,7 @@ cocos2d::TextHAlignment GAFTextData::TextFormat::getTextAlignForCocos() const
     case TextAlign::Center:
         return cocos2d::TextHAlignment::CENTER;
     default:
-        CCAssert(false, "Not Implemented");
+        CC_ASSERT(false && "Not Implemented");
     }
     return cocos2d::TextHAlignment::LEFT;
 }

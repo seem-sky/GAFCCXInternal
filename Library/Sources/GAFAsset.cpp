@@ -75,7 +75,8 @@ GAFAsset::GAFAsset()
 
 GAFAsset::~GAFAsset()
 {
-    GAF_RELEASE_MAP(Timelines_t, m_timelines);
+    //GAF_RELEASE_MAP(Timelines_t, m_timelines);
+    GAF_SAFE_RELEASE_MAP(Timelines_t, m_timelines);
     GAF_RELEASE_MAP(SoundInfos_t, m_soundInfos);
     GAF_RELEASE_ARRAY(TextureAtlases_t, m_textureAtlases);
     //CC_SAFE_RELEASE(m_rootTimeline);
@@ -493,13 +494,22 @@ GAFTimeline* GAFAsset::getTimelineByName(const std::string& name) const
             return it.second;
     }
 
+    if (m_libraryAsset != nullptr)
+    {
+        for (Timelines_t::value_type it : m_libraryAsset->m_timelines)
+        {
+            if (it.second->getLinkageName() == name)
+                return it.second;
+        }
+    }
+
     return nullptr;
 }
 
 void GAFAsset::pushTimeline(uint32_t timelineIdRef, GAFTimeline* t)
 {
     m_timelines[timelineIdRef] = t;
-    t->retain();
+    //t->retain();
 }
 
 void GAFAsset::pushSound(uint32_t id, GAFSoundInfo* sound)

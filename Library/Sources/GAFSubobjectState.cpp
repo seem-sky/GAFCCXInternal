@@ -7,8 +7,7 @@
 
 NS_GAF_BEGIN
 
-GAFSubobjectState::GAFSubobjectState()
-:
+GAFSubobjectState::GAFSubobjectState() :
 objectIdRef(IDNONE),
 maskObjectIdRef(IDNONE)
 {

@@ -45,7 +45,7 @@ bool GAFScrollView::init(GAFAsset* anAnimationData, GAFTimeline* timeline)
 
 void GAFScrollView::onEnter()
 {
-    GAFLayoutView::onEnter();
+    GAFComponentView::onEnter();
 
     scheduleUpdate();
 
@@ -53,24 +53,16 @@ void GAFScrollView::onEnter()
     if (m_scrollBarV) m_scrollBarV->scheduleUpdate();
 }
 
+void GAFScrollView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
+{
+    GAFComponentView::processOwnCustomProperties(customProperties);
+}
+
 void GAFScrollView::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
 {
-    if (child == m_scrollBarH || child == m_scrollBarV)
+    if (child == m_innerContainer)
     {
-        cocos2d::Vec3 internalScale;
-        auto transform = GAFLayoutView::getNodeToParentTransform();
-        transform.getScale(&internalScale);
-        cocos2d::Vec3 inverseScale(1.0f / internalScale.x, 1.0f / internalScale.y, 1.0f / internalScale.z);
-        if (child == m_scrollBarH)
-        {
-            mtx.b *= inverseScale.y;
-            mtx.d *= inverseScale.y;
-        }
-        else
-        {
-            mtx.a *= inverseScale.x;
-            mtx.c *= inverseScale.x;
-        }
+        affineTransformSetFrom(mtx, cocos2d::AffineTransformScale(mtx, m_internalScale.x, m_internalScale.y));
     }
 
     GAFLayoutView::processGAFTimeline(out, child, state, mtx);

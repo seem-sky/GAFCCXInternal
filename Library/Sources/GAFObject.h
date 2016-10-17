@@ -152,7 +152,7 @@ protected:
 
     CustomProperties_t                      m_customProperties;
 
-    const cocos2d::AffineTransform AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const;
+    cocos2d::AffineTransform AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const;
 
     void  setTimelineParentObject(GAFObject* obj) { m_timelineParentObject = obj; }
     
@@ -217,7 +217,12 @@ public:
         (void)renderer;
         (void)transform;
     }
-
+    
+    virtual void setLocator(bool locator) override
+    {
+        m_container->setVisible(!locator);
+    };
+    
     virtual void update(float delta) override;
 
     void useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements);
@@ -287,9 +292,6 @@ public:
 
     bool isVisibleInCurrentFrame() const;
 
-    virtual cocos2d::Rect getInternalBoundingBoxForCurrentFrame() const;
-    virtual cocos2d::Rect getBoundingBoxForCurrentFrame() const;
-
     const AnimationSequences_t& getSequences() const;
     GAFTimeline* getTimeLine() { return m_timeline; }
     DisplayList_t& getDisplayList() { return m_displayList; }
@@ -307,6 +309,14 @@ public:
 
     virtual cocos2d::Rect getBoundingBox() const override;
     virtual cocos2d::Rect getInternalBoundingBox() const;
+
+    virtual cocos2d::Rect getFlashBoundingBox() const override;
+    virtual cocos2d::Rect getFlashInternalBoundingBox() const;
+
+    virtual cocos2d::Rect getFlashInitialInternalBoundingBox() const;
+
+    virtual cocos2d::Rect getInternalBoundingBoxForCurrentFrame() const;
+    virtual cocos2d::Rect getBoundingBoxForCurrentFrame() const;
 
     virtual void setColor(const cocos2d::Color3B& color) override;
     virtual void setOpacity(GLubyte opacity) override;
@@ -341,6 +351,8 @@ public:
     // @returns instance of GAFObject or null. Warning: the instance could be invalidated when the system catches EVENT_COME_TO_FOREGROUND event
     GAFObject* getObjectByName(const std::string& name);
     const GAFObject* getObjectByName(const std::string& name) const;
+
+    cocos2d::Vector<GAFObject*> getObjectsByName(const std::string& name);
 
     GAFObject* getObjectByNameForCurrentFrame(const std::string& name);
     const GAFObject* getObjectByNameForCurrentFrame(const std::string& name) const;

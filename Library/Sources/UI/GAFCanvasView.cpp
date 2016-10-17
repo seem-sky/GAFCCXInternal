@@ -7,9 +7,6 @@
 NS_GAF_BEGIN
 
 GAFCanvasView::GAFCanvasView()
-    : m_internalScale(1.0f, 1.0f)
-    , m_fittingMode(FittingMode::none)
-    , m_scaleAlignedChildren(false)
 {
 }
 
@@ -29,11 +26,12 @@ GAFCanvasView * GAFCanvasView::create(GAFAsset * anAsset, GAFTimeline * timeline
 
 cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
 {
-    auto unscaledInternalBounds = m_timeline->getRect();
-    auto actualInternalBounds = getInternalBoundingBox();
-    auto childActualBounds = RectApplyAffineTransform(child->getInternalBoundingBox(), mtx);
+    auto unscaledInternalBounds = getFlashInitialInternalBoundingBox();
+    auto actualInternalBounds = getFlashInternalBoundingBox();
+    auto childActualBounds = RectApplyAffineTransform(child->getFlashInitialInternalBoundingBox(), mtx);
 
-    bool usePercents = customProperties.at("units") == "percents";
+    bool usePercents = customProperties.at("alignMode") == "percents";
+    bool useProportional = customProperties.at("alignMode") == "proportional";
     bool alignLeft = to_bool(customProperties.at("alignLeft"));
     bool alignRight = to_bool(customProperties.at("alignRight"));
     bool alignTop = to_bool(customProperties.at("alignTop"));
@@ -51,12 +49,16 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
         float leftDistance = childActualBounds.origin.x - unscaledInternalBounds.origin.x;
         if (usePercents)
             leftDistance = leftDistance / unscaledInternalBounds.size.width * actualInternalBounds.size.width;
+        else if (useProportional)
+            leftDistance *= fittingScale.x;
 
         if (alignRight)
         {
             float rightDistance = unscaledInternalBounds.origin.x + unscaledInternalBounds.size.width - (childActualBounds.origin.x + childActualBounds.size.width);
             if (usePercents)
                 rightDistance = rightDistance / unscaledInternalBounds.size.width * actualInternalBounds.size.width;
+            else if (useProportional)
+                rightDistance *= fittingScale.x;
 
             if (alignLeft)
             {
@@ -80,12 +82,16 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
         float topDistance = childActualBounds.origin.y - unscaledInternalBounds.origin.y;
         if (usePercents)
             topDistance = topDistance / unscaledInternalBounds.size.height * actualInternalBounds.size.height;
+        else if (useProportional)
+            topDistance *= fittingScale.y;
 
         if (alignBottom)
         {
             float bottomDistance = unscaledInternalBounds.origin.y + unscaledInternalBounds.size.height - (childActualBounds.origin.y + childActualBounds.size.height);
             if (usePercents)
                 bottomDistance = bottomDistance / unscaledInternalBounds.size.height * actualInternalBounds.size.height;
+            else if (useProportional)
+                bottomDistance *= fittingScale.y;
 
             if (alignTop)
             {
@@ -116,83 +122,7 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
         scaleMtx = cocos2d::AffineTransformScale(scaleMtx, fittingScale.x, fittingScale.y);
         affineTransformSetFrom(mtx, AffineTransformConcat(mtx, scaleMtx));
     }
-    
 
-    return mtx;
-}
-
-const cocos2d::Mat4& GAFCanvasView::getNodeToParentTransform() const
-{
-    bool transformDirty = _transformDirty;
-    if (transformDirty)
-    {
-        _transform = GAFLayoutView::getNodeToParentTransform();
-        _transformDirty = transformDirty;
-
-        cocos2d::Vec3 innnerScale;
-        _transform.getScale(&innnerScale);
-
-        m_internalScale.set(innnerScale.x, innnerScale.y);
-
-        innnerScale.set(1.0f / innnerScale.x, 1.0f / innnerScale.y, 1.0f / innnerScale.z);
-        _transform.scale(innnerScale);
-
-        _transformDirty = false;
-    }
-
-    return _transform;
-}
-
-cocos2d::Rect GAFCanvasView::getInternalBoundingBox() const
-{
-    cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
-    scaleMtx = cocos2d::AffineTransformScale(scaleMtx, getInternalScale().x, getInternalScale().y);
-    auto unscaledInternalBounds = GAFLayoutView::getInternalBoundingBox();
-    return RectApplyAffineTransform(unscaledInternalBounds, scaleMtx);
-}
-
-cocos2d::Vec2 GAFCanvasView::getInternalScale() const
-{
-    if (_transformDirty)
-        getNodeToParentTransform();
-
-    return m_internalScale;
-}
-
-cocos2d::Vec2 GAFCanvasView::getFittingScale() const
-{
-    cocos2d::Vec2 fittingScale;
-    auto internalScale = getInternalScale();
-    switch (m_fittingMode)
-    {
-    case FittingMode::none:
-        fittingScale.set(internalScale);
-        break;
-    case FittingMode::minimum:
-        fittingScale.x = fittingScale.y = (std::abs(internalScale.x) < std::abs(internalScale.y)) ? internalScale.x : internalScale.y;
-        break;
-    case FittingMode::maximum:
-        fittingScale.x = fittingScale.y = (std::abs(internalScale.x) > std::abs(internalScale.y)) ? internalScale.x : internalScale.y;
-        break;
-    case FittingMode::horizontal:
-        fittingScale.x = fittingScale.y = internalScale.x;
-        break;
-    case FittingMode::vertical:
-        fittingScale.x = fittingScale.y = internalScale.x;
-        break;
-    default:
-        fittingScale.set(internalScale);
-    }
-
-    return fittingScale;
-}
-
-cocos2d::AffineTransform& GAFCanvasView::addAdditionalTransformations(cocos2d::AffineTransform& mtx) const
-{
-    cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
-    cocos2d::Vec2 fittingScale(getFittingScale());
-    scaleMtx = cocos2d::AffineTransformScale(scaleMtx, fittingScale.x, fittingScale.y);
-    affineTransformSetFrom(mtx, AffineTransformConcat(mtx, scaleMtx));
     return mtx;
 }
 
@@ -216,12 +146,6 @@ cocos2d::AffineTransform& GAFCanvasView::processGAFTextFieldStateTransform(GAFOb
     GAFObject::processGAFTextFieldStateTransform(child, mtx);
 
     return mtx;
-}
-
-void GAFCanvasView::processOwnCustomProperties(const CustomPropertiesMap_t & customProperties)
-{
-    m_fittingMode = FittingMode::toEnum(customProperties.at("fittingMode"));
-    m_scaleAlignedChildren = to_bool(customProperties.at("scaleAlignedChildren"));
 }
 
 NS_GAF_END

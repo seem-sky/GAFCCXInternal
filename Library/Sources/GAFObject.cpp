@@ -17,22 +17,20 @@
 #include "GAFObjectFactory.h"
 #include "GAFUtils.h"
 
-#define ENABLE_RUNTIME_FILTERS 1
+#define ENABLE_RUNTIME_FILTERS 0
 
 NS_GAF_BEGIN
 
 static const AnimationSequences_t s_emptySequences = AnimationSequences_t();
 
-const cocos2d::AffineTransform GAFObject::AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const
+cocos2d::AffineTransform GAFObject::AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const
 {
     cocos2d::AffineTransform transform = aTransform;
     transform.b = -transform.b;
     transform.c = -transform.c;
-    float flipMul = isFlippedY() ? -2.0f : 2.0f;
-    transform.ty = getAnchorPointInPoints().y * flipMul - transform.ty;
+    transform.ty = getAnchorPointInPoints().y - transform.ty;
     return transform;
 }
-
 
 GAFObject::GAFObject()
     : m_timelineParentObject(nullptr)
@@ -45,7 +43,7 @@ GAFObject::GAFObject()
     , m_isReversed(false)
     , m_timeDelta(0.0)
     , m_fps(0)
-    , m_skipFpsCheck(false)
+    , m_skipFpsCheck(true)
     , m_asset(nullptr)
     , m_timeline(nullptr)
     , m_currentFrame(GAFFirstFrameIndex)
@@ -80,6 +78,7 @@ GAFObject::~GAFObject()
     GAF_SAFE_RELEASE_ARRAY_WITH_NULL_CHECK(MaskList_t, m_masks);
     GAF_SAFE_RELEASE_ARRAY_WITH_NULL_CHECK(DisplayList_t, m_displayList);
     CC_SAFE_RELEASE(m_asset);
+    CC_SAFE_RELEASE(m_timeline);
     CC_SAFE_DELETE(m_customFilter);
 }
 
@@ -99,8 +98,8 @@ GAFObject * GAFObject::create(GAFAsset * anAsset, GAFTimeline* timeline)
 
 bool GAFObject::init(GAFAsset * anAnimationData, GAFTimeline* timeline)
 {
-    CCAssert(anAnimationData, "anAssetData data should not be nil");
-    CCAssert(timeline, "Timeline data should not be nil");
+    CC_ASSERT(anAnimationData && "anAssetData data should not be nil");
+    CC_ASSERT(timeline && "Timeline data should not be nil");
 
     if (!anAnimationData || !timeline)
     {
@@ -159,19 +158,16 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         GAFTimeline* externalTimeline = m_asset->getLibraryAsset()->getTimelineByName(externalTl->second->getName());
         result = GafObjectFactory::create(m_asset->getLibraryAsset(), externalTimeline, isMask, id);
         result->setCustomProperties(externalTl->second->getCustomProperties());
-        //m_asset->getLibraryAsset()->setRootTimeline(externalTl->second);
-        //result = m_asset->getLibraryAsset()->createObject();
-        result->retain(); // Will be released in m_displayList
     }
     else if (type == GAFCharacterType::Timeline)
     {
         Timelines_t& timelines = m_asset->getTimelines();
 
-        CCAssert(reference != IDNONE, "Invalid object reference.");
+        CC_ASSERT(reference != IDNONE && "Invalid object reference.");
 
         Timelines_t::iterator tl = timelines.find(reference);
 
-        CCAssert(tl != timelines.end(), "Invalid object reference.");
+        CC_ASSERT(tl != timelines.end() && "Invalid object reference.");
 
         result = GafObjectFactory::create(m_asset, tl->second, isMask, id);
         result->setCustomProperties(tl->second->getCustomProperties());
@@ -269,11 +265,11 @@ GAFObject* GAFObject::encloseNewTimeline(uint32_t reference)
 {
     Timelines_t& timelines = m_asset->getTimelines();
 
-    CCAssert(reference != IDNONE, "Invalid object reference.");
+    CC_ASSERT(reference != IDNONE && "Invalid object reference.");
 
     Timelines_t::iterator tl = timelines.find(reference);
 
-    CCAssert(tl != timelines.end(), "Invalid object reference.");
+    CC_ASSERT(tl != timelines.end() && "Invalid object reference.");
 
     GAFObject* newObject = new GAFObject();
     newObject->init(m_asset, tl->second);
@@ -796,6 +792,15 @@ cocos2d::Rect GAFObject::getInternalBoundingBoxForCurrentFrame() const
         isFirstObj = false;
     }
 
+    for (Node* subObject : _children)
+    {
+        if (subObject == m_container || !subObject->isVisible())
+            continue;
+
+        cocos2d::Rect bb = subObject->getBoundingBox();
+        result = GAFCCRectUnion(result, bb);
+    }
+
     return result;
 }
 
@@ -829,15 +834,39 @@ cocos2d::Rect GAFObject::getBoundingBox() const
 cocos2d::Rect GAFObject::getInternalBoundingBox() const
 {
     if (m_charType == GAFCharacterType::Timeline)
-        return m_timeline->getRect();
+        return flashBoundsToCocos(m_timeline->getRect());
     else
         return cocos2d::Rect(0, 0, _contentSize.width, _contentSize.height);
 }
 
+cocos2d::Rect GAFObject::getFlashBoundingBox() const
+{
+    cocos2d::Rect rect = getInternalBoundingBox();
+    return cocosBoundsToFlash(RectApplyAffineTransform(rect, getNodeToParentAffineTransform()));
+}
+
+cocos2d::Rect GAFObject::getFlashInternalBoundingBox() const
+{
+    return cocosBoundsToFlash(getInternalBoundingBox());
+}
+
+cocos2d::Rect GAFObject::getFlashInitialInternalBoundingBox() const
+{
+    return cocosBoundsToFlash(GAFObject::getInternalBoundingBox());
+}
+
 void GAFObject::setColor(const cocos2d::Color3B& color)
 {
-    m_isManualColor = true;
-    Node::setColor(color);
+   if (m_isManualColor && color == cocos2d::Color3B::WHITE)
+   {
+       m_isManualColor = false;
+   }
+   else
+   {
+       m_isManualColor = true;
+   }
+
+   Node::setColor(color);
 }
 
 void GAFObject::setOpacity(GLubyte opacity)
@@ -910,7 +939,9 @@ void GAFObject::rearrangeSubobject(cocos2d::Node* out, cocos2d::Node* child, int
     }
     else
     {
-        static_cast<GAFObject*>(child)->_transformUpdated = true;
+        if (child->getLocalZOrder() != zIndex)
+            static_cast<GAFObject*>(child)->_transformUpdated = true;
+
         child->setLocalZOrder(zIndex);
     }
 }
@@ -1067,18 +1098,18 @@ void GAFObject::processGAFImage(cocos2d::Node* out, GAFObject* child, const GAFS
     if (child->m_objectType == GAFObjectType::MovieClip)
     {
         GAFMovieClip* mc = static_cast<GAFMovieClip*>(child);
-        float colorMults[4] = {
+        cocos2d::Vec4 colorMults(
             state->colorMults()[0] * m_parentColorTransforms[0].x * _displayedColor.r / 255,
             state->colorMults()[1] * m_parentColorTransforms[0].y * _displayedColor.g / 255,
             state->colorMults()[2] * m_parentColorTransforms[0].z * _displayedColor.b / 255,
             state->colorMults()[3] * m_parentColorTransforms[0].w * _displayedOpacity / 255
-        };
-        float colorOffsets[4] = {
+        );
+        cocos2d::Vec4 colorOffsets(
             state->colorOffsets()[0] + m_parentColorTransforms[1].x,
             state->colorOffsets()[1] + m_parentColorTransforms[1].y,
             state->colorOffsets()[2] + m_parentColorTransforms[1].z,
             state->colorOffsets()[3] + m_parentColorTransforms[1].w
-        };
+        );
 
         mc->setColorTransform(colorMults, colorOffsets);
     }
@@ -1144,7 +1175,7 @@ cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* ch
 {
     affineTransformSetFrom(mtx, AffineTransformFlashToCocos(mtx));
 
-    if (isFlippedX() || isFlippedY())
+    /*if (isFlippedX() || isFlippedY())
     {
         float flipMulX = isFlippedX() ? -1.f : 1.f;
         float flipOffsetX = isFlippedX() ? getContentSize().width - m_asset->getHeader().frameSize.getMinX() : 0;
@@ -1153,7 +1184,7 @@ cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* ch
 
         cocos2d::AffineTransform flipCenterTransform = cocos2d::AffineTransformMake(flipMulX, 0, 0, flipMulY, flipOffsetX, flipOffsetY);
         affineTransformSetFrom(mtx, AffineTransformConcat(mtx, flipCenterTransform));
-    }
+    }*/
 
     float curScaleX = child->getScaleX();
     if (fabs(curScaleX - 1.0) > std::numeric_limits<float>::epsilon())
@@ -1194,7 +1225,7 @@ cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject
 
     affineTransformSetFrom(mtx, AffineTransformFlashToCocos(mtx));
 
-    if (isFlippedX() || isFlippedY())
+    /*if (isFlippedX() || isFlippedY())
     {
         float flipMulX = isFlippedX() ? -1.f : 1.f;
         float flipOffsetX = isFlippedX() ? getContentSize().width - m_asset->getHeader().frameSize.getMinX() : 0;
@@ -1203,7 +1234,7 @@ cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject
 
         cocos2d::AffineTransform flipCenterTransform = cocos2d::AffineTransformMake(flipMulX, 0, 0, flipMulY, flipOffsetX, flipOffsetY);
         affineTransformSetFrom(mtx, AffineTransformConcat(mtx, flipCenterTransform));
-    }
+    }*/
 
     return mtx;
 }
@@ -1415,6 +1446,44 @@ const GAFObject* GAFObject::getObjectByName(const std::string& name) const
     return const_cast<GAFObject*>(this)->getObjectByName(name);
 }
 
+cocos2d::Vector<GAFObject*> GAFObject::getObjectsByName(const std::string & name)
+{
+    cocos2d::Vector<GAFObject*> currentObjects;
+
+    if (name.empty())
+        return currentObjects;
+
+    std::stringstream ss(name);
+    std::string item;
+    typedef std::vector<std::string> StringVec_t;
+    StringVec_t elems;
+    while (std::getline(ss, item, '.'))
+        elems.push_back(item);
+
+    currentObjects.pushBack(this);
+
+    for (StringVec_t::const_iterator elIt = elems.cbegin(); elIt != elems.cend() && currentObjects.size() > 0; ++elIt)
+    {
+        cocos2d::Vector<GAFObject*> foundObjects;
+        for (GAFObject* currentObject : currentObjects)
+        {
+            const NamedParts_t& np = currentObject->getTimeLine()->getNamedParts();
+
+            std::pair<NamedParts_t::const_iterator, NamedParts_t::const_iterator> range = np.equal_range(*elIt);
+            for (NamedParts_t::const_iterator npIt = range.first; npIt != range.second; ++npIt)
+            {
+                GAFObject* child = currentObject->getDisplayList().at(npIt->second);
+                if (child)
+                    foundObjects.pushBack(child);
+            }
+        }
+
+        currentObjects = foundObjects;
+    }
+
+    return currentObjects;
+}
+
 GAFObject* GAFObject::getObjectByNameForCurrentFrame(const std::string& name)
 {
     if (name.empty())
@@ -1442,7 +1511,7 @@ GAFObject* GAFObject::getObjectByNameForCurrentFrame(const std::string& name)
         {
             GAFObject* child = currentObj->getDisplayList().at(npIt->second);
 
-            if (child && child->isVisibleInCurrentFrame())
+            if (child != nullptr && child->isVisibleInCurrentFrame())
             {
                 foundChild = child;
                 break;

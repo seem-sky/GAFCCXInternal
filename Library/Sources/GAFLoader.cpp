@@ -226,7 +226,8 @@ void GAFLoader::_processLoad(GAFFile* file, GAFAsset* context)
         _readHeaderEnd(header);
         _registerTagLoadersV3();
 
-        timeline = new GAFTimeline(nullptr, 0, header.frameSize, header.pivot, header.framesCount);
+        timeline = new GAFTimeline(nullptr, 0, header.frameSize, header.pivot, header.framesCount);  // will be released in assset dtor
+
         context->pushTimeline(0, timeline);
         context->setRootTimeline((uint32_t)0);
     }

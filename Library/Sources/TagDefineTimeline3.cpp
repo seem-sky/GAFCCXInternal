@@ -26,7 +26,7 @@ void TagDefineTimeline3::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timel
     PrimitiveDeserializer::deserialize(in, &aabb);
     PrimitiveDeserializer::deserialize(in, &pivot);
 
-    GAFTimeline *tl = new GAFTimeline(timeline, id, aabb, pivot, framesCount);
+    GAFTimeline *tl = new GAFTimeline(timeline, id, aabb, pivot, framesCount);  // will be released in assset dtor
 
     //////////////////////////////////////////////////////////////////////////
 

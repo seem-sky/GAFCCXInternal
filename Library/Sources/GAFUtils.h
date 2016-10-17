@@ -1,9 +1,6 @@
 #pragma once
 #include <sstream>
-#include <string>
 #include <iomanip>
-#include <algorithm>
-#include <cctype>
 
 inline bool to_bool(const std::string& str)
 {
@@ -26,6 +23,15 @@ inline cocos2d::AffineTransform& affineTransformSetFrom(cocos2d::AffineTransform
     to.ty = from.ty;
 
     return to;
+}
+
+inline cocos2d::Rect scaleRect(const cocos2d::Rect& rect, const cocos2d::Vec2& scale)
+{
+    cocos2d::Rect result = cocos2d::Rect(
+        rect.origin.x * scale.x, rect.origin.y * scale.y,
+        rect.size.width * scale.x, rect.size.height * scale.y);
+
+    return result;
 }
 
 inline static cocos2d::Vec2 affineTransformGetScale(const cocos2d::AffineTransform& mtx)

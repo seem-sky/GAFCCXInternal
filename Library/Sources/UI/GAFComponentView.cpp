@@ -38,7 +38,7 @@ void GAFComponentView::setClippingEnabled(bool enabled)
                 m_clippingStencil->onEnter();
 
             m_clippingStencil->retain();
-            //setStencilClippingRect(getInternalBoundingBox());
+            setStencilClippingRect(getInternalBoundingBox());
         }
         else
         {
@@ -225,16 +225,9 @@ const cocos2d::Rect& GAFComponentView::getClippingRect()
 {
     if (m_clippingRectDirty)
     {
-        cocos2d::Vec2 worldPos = convertToWorldSpace(cocos2d::Vec2::ZERO);
+        cocos2d::Rect bb = getFlashInternalBoundingBox();
         cocos2d::AffineTransform t = getNodeToWorldAffineTransform();
-        float scissorWidth = _contentSize.width*t.a;
-        float scissorHeight = _contentSize.height*t.d;
-        cocos2d::Rect parentClippingRect;
-
-        m_clippingRect.origin.x = worldPos.x - (scissorWidth * _anchorPoint.x);
-        m_clippingRect.origin.y = worldPos.y - (scissorHeight * _anchorPoint.y);
-        m_clippingRect.size.width = scissorWidth;
-        m_clippingRect.size.height = scissorHeight;
+        m_clippingRect = cocos2d::RectApplyAffineTransform(bb, t);
 
         m_clippingRectDirty = false;
     }
@@ -245,7 +238,7 @@ void GAFComponentView::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
 {
     GAFObject::realizeFrame(out, frameIndex);
     if (m_clippingRectDirty)
-        setStencilClippingRect(getInternalBoundingBox());
+        setStencilClippingRect(getFlashInternalBoundingBox());
 }
 
 const cocos2d::Mat4 & GAFComponentView::getNodeToParentTransform() const
