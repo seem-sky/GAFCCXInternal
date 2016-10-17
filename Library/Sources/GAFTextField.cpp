@@ -25,7 +25,7 @@ void GAFTextField::initWithTextData(GAFTextData const* data)
     //
 
     // TEMPORARY STUB. Since isFileExist consumes a lot of CPU time, we temporary check for name of our font
-#if 0
+#if 1
     if (generatedFileName != "Exo_Bold.ttf" && generatedFileName != "Exo_Regular.ttf")
         generatedFileName = "Exo_Bold.ttf";
 
