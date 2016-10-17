@@ -18,6 +18,21 @@ void GAFTextField::initWithTextData(GAFTextData const* data)
 {
     m_label = cocos2d::Label::createWithSystemFont(data->m_text, data->m_textFormat.m_font, static_cast<float>(data->m_textFormat.m_size));
 
+    // TEMPORARY STUB. Since isFileExist consumes a lot of CPU time, we temporary check for name of our font
+    if (generatedFileName != "Exo_Bold.ttf" && generatedFileName != "Exo_Regular.ttf")
+        generatedFileName = "Exo_Bold.ttf";
+
+    {
+        m_label = cocos2d::Label::createWithTTF2(data->m_text, generatedFileName, static_cast<float>(data->m_textFormat.m_size));
+    }
+#if 0
+    else // Using old name from config
+    {
+        m_label = cocos2d::Label::createWithSystemFont(data->m_text, data->m_textFormat.m_font, static_cast<float>(data->m_textFormat.m_size));
+    }
+#endif
+    cocos2d::FileUtils::getInstance()->setPopupNotify(prevPopupNotify);
+
     CC_SAFE_RETAIN(m_label);
     
     m_label->setDimensions(data->m_width, data->m_height);
