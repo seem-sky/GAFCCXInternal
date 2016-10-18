@@ -939,7 +939,7 @@ void GAFObject::rearrangeSubobject(cocos2d::Node* out, cocos2d::Node* child, int
     }
     else
     {
-        if (child->getLocalZOrder() != zIndex)
+        //if (child->getLocalZOrder() != zIndex)
             static_cast<GAFObject*>(child)->_transformUpdated = true;
 
         child->setLocalZOrder(zIndex);
