@@ -25,12 +25,12 @@ void GAFTextField::initWithTextData(GAFTextData const* data)
     //
 
     // TEMPORARY STUB. Since isFileExist consumes a lot of CPU time, we temporary check for name of our font
-#if 0
+#if 1
     if (generatedFileName != "Exo_Bold.ttf" && generatedFileName != "Exo_Regular.ttf")
         generatedFileName = "Exo_Bold.ttf";
 
     {
-        m_label = cocos2d::Label::createWithTTF2(data->m_text, generatedFileName, static_cast<float>(data->m_textFormat.m_size));
+        m_label = cocos2d::Label::createWithTTF(data->m_text, generatedFileName, static_cast<float>(data->m_textFormat.m_size));
     }
 #else
     if (cocos2d::FileUtils::getInstance()->isFileExist(generatedFileName))
