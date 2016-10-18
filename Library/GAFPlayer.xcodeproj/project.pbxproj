@@ -78,6 +78,8 @@
 		29F1CA631C91D22C0087FCFA /* TagDefineTimeline2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29F1CA5D1C91D2050087FCFA /* TagDefineTimeline2.cpp */; };
 		39869DB219532453004628D9 /* TagDefineAnimationFrames2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39869DAE19532453004628D9 /* TagDefineAnimationFrames2.cpp */; };
 		39869DB319532453004628D9 /* TagDefineTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39869DB019532453004628D9 /* TagDefineTimeline.cpp */; };
+		523E93A61DB6715F006F1BC1 /* TagDefineAnimationFrames3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523E93A41DB6715F006F1BC1 /* TagDefineAnimationFrames3.cpp */; };
+		523E93A71DB6715F006F1BC1 /* TagDefineAnimationFrames3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523E93A41DB6715F006F1BC1 /* TagDefineAnimationFrames3.cpp */; };
 		524884DC1D1195A0008E725E /* GafObjectFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884DA1D1195A0008E725E /* GafObjectFactory.cpp */; };
 		524884EA1D1195FB008E725E /* GAFBoxLayoutView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884DF1D1195FB008E725E /* GAFBoxLayoutView.cpp */; };
 		524884EB1D1195FB008E725E /* GAFCanvasView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884E11D1195FB008E725E /* GAFCanvasView.cpp */; };
@@ -212,6 +214,8 @@
 		39869DAF19532453004628D9 /* TagDefineAnimationFrames2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineAnimationFrames2.h; sourceTree = "<group>"; };
 		39869DB019532453004628D9 /* TagDefineTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineTimeline.cpp; sourceTree = "<group>"; };
 		39869DB119532453004628D9 /* TagDefineTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineTimeline.h; sourceTree = "<group>"; };
+		523E93A41DB6715F006F1BC1 /* TagDefineAnimationFrames3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineAnimationFrames3.cpp; sourceTree = "<group>"; };
+		523E93A51DB6715F006F1BC1 /* TagDefineAnimationFrames3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineAnimationFrames3.h; sourceTree = "<group>"; };
 		524884DA1D1195A0008E725E /* GafObjectFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GafObjectFactory.cpp; sourceTree = "<group>"; };
 		524884DB1D1195A0008E725E /* GAFObjectFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAFObjectFactory.h; sourceTree = "<group>"; };
 		524884DD1D1195B4008E725E /* GAFUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAFUtils.h; sourceTree = "<group>"; };
@@ -382,6 +386,8 @@
 		1A2FBF67192E00FB00631FE9 /* Tags */ = {
 			isa = PBXGroup;
 			children = (
+				523E93A41DB6715F006F1BC1 /* TagDefineAnimationFrames3.cpp */,
+				523E93A51DB6715F006F1BC1 /* TagDefineAnimationFrames3.h */,
 				B61B57521D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp */,
 				B61B57531D22CAFC0099A0E4 /* TagDefineExternalObjects2.h */,
 				B6D14DF71D13DD3200B509B9 /* TagDefineTimeline3.cpp */,
@@ -571,6 +577,7 @@
 				B63C5A761B4A83E2001C8112 /* TagDefineSounds.cpp in Sources */,
 				1A2FBF64192E00C800631FE9 /* TagDefineSequences.cpp in Sources */,
 				1A2FBF5E192E00C800631FE9 /* PrimitiveDeserializer.cpp in Sources */,
+				523E93A61DB6715F006F1BC1 /* TagDefineAnimationFrames3.cpp in Sources */,
 				1A2FBF55192E00C800631FE9 /* GAFShaderManager.cpp in Sources */,
 				1A95AE27193F29EB00AE1F30 /* GAFCachedTexture.cpp in Sources */,
 				1A2FBF63192E00C800631FE9 /* TagDefineNamedParts.cpp in Sources */,
@@ -627,6 +634,7 @@
 				29CC581A1A36113E00B31D72 /* TagDefineSequences.cpp in Sources */,
 				B64C0E571D17DA260014C3C5 /* TagDefineTimeline3.cpp in Sources */,
 				29CC581B1A36113E00B31D72 /* PrimitiveDeserializer.cpp in Sources */,
+				523E93A71DB6715F006F1BC1 /* TagDefineAnimationFrames3.cpp in Sources */,
 				29CC581C1A36113E00B31D72 /* GAFShaderManager.cpp in Sources */,
 				29CC581D1A36113E00B31D72 /* GAFCachedTexture.cpp in Sources */,
 				29CC581E1A36113E00B31D72 /* TagDefineNamedParts.cpp in Sources */,
