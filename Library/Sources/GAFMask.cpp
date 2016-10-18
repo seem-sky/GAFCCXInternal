@@ -45,9 +45,4 @@ void GAFMask::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform,
     return Sprite::visit(renderer, transform, flags);
 }
 
-void GAFMask::setExternalTransform(const cocos2d::AffineTransform& transform)
-{
-    GAFSprite::setExternalTransform(transform);
-}
-
 NS_GAF_END

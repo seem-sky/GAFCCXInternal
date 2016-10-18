@@ -92,6 +92,9 @@ typedef std::unordered_map<uint32_t, ExternalObject*>                 ExternalOb
 
 typedef std::unordered_map<uint32_t, GAFSoundInfo*>         SoundInfos_t;
 
+static const uint32_t IDNONE = UINT_MAX;
+
+// Custom properties
 struct CustomProperty
 {
     std::string name;
@@ -99,7 +102,5 @@ struct CustomProperty
 };
 
 typedef std::vector<CustomProperty> CustomProperties_t;
-
-static const uint32_t IDNONE = UINT_MAX;
 
 NS_GAF_END

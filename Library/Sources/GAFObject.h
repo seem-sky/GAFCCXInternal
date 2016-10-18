@@ -5,6 +5,7 @@
 #include "GAFCollections.h"
 #include "GAFTextureAtlas.h"
 #include "GAFFilterData.h"
+#include "GAFSubobjectState.h"
 
 NS_GAF_BEGIN
 class GAFSubobjectState;
@@ -329,8 +330,6 @@ public:
     virtual void setScaleY(float scaleY) override;
     virtual void setScale(float scaleX, float scaleY) override;
     virtual void setScale(float scale) override;
-
-    virtual void setExternalTransform(const cocos2d::AffineTransform& transform) override;
 
     template <typename FilterSubtype>
     void setCustomFilter(const FilterSubtype* filter)

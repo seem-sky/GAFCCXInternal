@@ -290,9 +290,4 @@ void GAFMovieClip::draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transf
     GAFSprite::draw(renderer, transform, flags);
 }
 
-void GAFMovieClip::setExternalTransform(const cocos2d::AffineTransform& transform)
-{
-    GAFSprite::setExternalTransform(transform);
-}
-
 NS_GAF_END

@@ -3,16 +3,11 @@
 #include "GAFAsset.h"
 #include "GAFTimeline.h"
 #include "GAFTextureAtlas.h"
-#include "GAFAssetTextureManager.h"
 #include "GAFTextureAtlasElement.h"
 #include "GAFMovieClip.h"
-#include "GAFMask.h"
 #include "GAFAnimationFrame.h"
 #include "GAFSubobjectState.h"
-#include "GAFFilterData.h"
-#include "GAFTextField.h"
 
-#include "GAFShaderManager.h"
 #include <math/TransformUtils.h>
 #include "GAFObjectFactory.h"
 #include "GAFUtils.h"
@@ -811,18 +806,29 @@ cocos2d::Rect GAFObject::getBoundingBoxForCurrentFrame() const
 
 cocos2d::Mat4 const& GAFObject::getNodeToParentTransform() const
 {
-    if (m_charType == GAFCharacterType::Timeline)
-        return cocos2d::Node::getNodeToParentTransform();
-    else
-        return GAFSprite::getNodeToParentTransform();
+    if (_transformDirty)
+    {
+        if (m_charType == GAFCharacterType::Timeline)
+        {
+            cocos2d::Mat4 tmp;
+            cocos2d::CGAffineToGL(m_externalTransform, tmp.m);
+            _transform = cocos2d::Node::getNodeToParentTransform() * tmp;
+        }
+        else
+        {
+            GAFSprite::getNodeToParentTransform();
+        }
+    }
+    
+    return _transform;
 }
 
 cocos2d::AffineTransform GAFObject::getNodeToParentAffineTransform() const
 {
-    if (m_charType == GAFCharacterType::Timeline)
-        return cocos2d::Node::getNodeToParentAffineTransform();
-    else
-        return GAFSprite::getNodeToParentAffineTransform();
+    cocos2d::AffineTransform ret;
+    cocos2d::GLToCGAffine(getNodeToParentTransform().m, &ret);
+
+    return ret;
 }
 
 cocos2d::Rect GAFObject::getBoundingBox() const
@@ -921,11 +927,6 @@ void GAFObject::setScale(float scale)
 {
     m_isManualScale = true;
     Node::setScale(scale);
-}
-
-void GAFObject::setExternalTransform(const cocos2d::AffineTransform & transform)
-{
-    setAdditionalTransform(transform);
 }
 
 void GAFObject::rearrangeSubobject(cocos2d::Node* out, cocos2d::Node* child, int zIndex)
@@ -1264,7 +1265,7 @@ bool GAFObject::allNecessaryFieldsExist(const CustomPropertiesMap_t & customProp
     return false;
 }
 
-GAFObject::CustomPropertiesMap_t& GAFObject::fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, const GAFSubobjectState * state) const
+GAFObject::CustomPropertiesMap_t& GAFObject::fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, const GAFSubobjectState* state) const
 {
     for (uint32_t propIdx = 0; propIdx < timelineProperties.size(); ++propIdx)
     {

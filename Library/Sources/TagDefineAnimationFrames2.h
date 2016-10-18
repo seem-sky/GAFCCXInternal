@@ -3,22 +3,21 @@
 #include "DefinitionTagBase.h"
 
 NS_GAF_BEGIN
-
-class GAFSubobjectState;
+    class GAFLoader;
+    class GAFSubobjectState;
 
 class TagDefineAnimationFrames2 : public DefinitionTagBase
 {
-private:
-    GAFSubobjectState* extractState(GAFStream* in);
+protected:
+    virtual GAFSubobjectState* extractState(GAFStream* in, GAFTimeline* timeline) const;
     
     typedef std::unordered_map<unsigned int, GAFSubobjectState*> States_t;
     States_t m_currentStates;
-    
-    uint8_t m_version;
-    
+
+    GAFLoader*  m_loader; // weak
+
 public:
-	
-    TagDefineAnimationFrames2(uint8_t version);
+    explicit TagDefineAnimationFrames2(GAFLoader* loader);
     ~TagDefineAnimationFrames2();
     
     virtual void read(GAFStream*, GAFAsset*, GAFTimeline*) override;

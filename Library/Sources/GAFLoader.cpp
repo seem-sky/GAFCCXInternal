@@ -27,6 +27,7 @@
 #include "TagDefineSounds.h"
 #include "TagDefineExternalObjects.h"
 #include "TagDefineExternalObjects2.h"
+#include "TagDefineAnimationFrames3.h"
 
 #include <json/document.h>
 #include <json/stringbuffer.h>
@@ -72,7 +73,7 @@ void GAFLoader::_registerTagLoadersV3()
 
 void GAFLoader::_registerTagLoadersV4()
 {
-    m_tagLoaders[Tags::TagDefineAnimationFrames2] = new TagDefineAnimationFrames2(2);
+    m_tagLoaders[Tags::TagDefineAnimationFrames2] = new TagDefineAnimationFrames2(this);
     m_tagLoaders[Tags::TagDefineAnimationObjects2] = new TagDefineAnimationObjects();
     m_tagLoaders[Tags::TagDefineAnimationMasks2] = new TagDefineAnimationMasks();
     m_tagLoaders[Tags::TagDefineAtlas2] = new TagDefineAtlas();
@@ -84,7 +85,7 @@ void GAFLoader::_registerTagLoadersV4()
     m_tagLoaders[Tags::TagDefineTimeline3] = new TagDefineTimeline3(this);
     m_tagLoaders[Tags::TagDefineSounds] = new TagDefineSounds();
     m_tagLoaders[Tags::TagDefineExternalObjects] = new TagDefineExternalObjects();
-    m_tagLoaders[Tags::TagDefineAnimationFrames3] = new TagDefineAnimationFrames2(3);
+    m_tagLoaders[Tags::TagDefineAnimationFrames3] = new TagDefineAnimationFrames3(this);
     m_tagLoaders[Tags::TagDefineExternalObjects2] = new TagDefineExternalObjects2(this);
 }
 
@@ -189,6 +190,19 @@ void GAFLoader::readCustomProperties(GAFStream* in, CustomProperties_t* customPr
 
         customProperties->push_back(custom_prop);
     }
+}
+
+const CustomProperties_t& GAFLoader::getCustomProperties(uint32_t timeline) const
+{
+    auto it = m_customProperties.find(timeline);
+    assert(it != m_customProperties.end());
+
+    return it->second;
+}
+
+void GAFLoader::setCustomProperties(uint32_t timeline, CustomProperties_t cp)
+{
+    m_customProperties[timeline] = cp;
 }
 
 bool GAFLoader::loadData(const unsigned char* data, size_t len, GAFAsset* context)

@@ -67,9 +67,4 @@ cocos2d::Rect GAFTextField::getInternalBoundingBox() const
     return m_label->getBoundingBox();
 }
 
-void GAFTextField::setExternalTransform(const cocos2d::AffineTransform & transform)
-{
-    GAFSprite::setExternalTransform(transform);
-}
-
 NS_GAF_END

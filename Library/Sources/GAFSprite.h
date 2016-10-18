@@ -42,7 +42,7 @@ public:
     virtual void setTextureCoords(cocos2d::Rect rect) override;
 
     virtual void setExternalTransform(const cocos2d::AffineTransform& transform);
-    const cocos2d::AffineTransform& getExternalTransform() const;
+    virtual const cocos2d::AffineTransform& getExternalTransform() const;
 
     virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
     virtual cocos2d::AffineTransform getNodeToParentAffineTransform() const override;

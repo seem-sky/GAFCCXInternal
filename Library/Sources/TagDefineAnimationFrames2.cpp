@@ -3,8 +3,7 @@
 
 #include "GAFStream.h"
 #include "GAFAsset.h"
-#include "GAFFile.h"
-#include "GAFHeader.h"
+#include "GAFLoader.h"
 #include "GAFTimeline.h"
 
 #include "PrimitiveDeserializer.h"
@@ -15,10 +14,9 @@
 
 NS_GAF_BEGIN
 
-TagDefineAnimationFrames2::TagDefineAnimationFrames2(uint8_t version)
-: m_version(version)
+TagDefineAnimationFrames2::TagDefineAnimationFrames2(GAFLoader* loader)
+    : m_loader(loader)
 {
-    assert(version == 2 || version == 3);
 }
 
 TagDefineAnimationFrames2::~TagDefineAnimationFrames2()
@@ -61,7 +59,7 @@ void TagDefineAnimationFrames2::read(GAFStream* in, GAFAsset* asset, GAFTimeline
 
             for (unsigned int j = 0; j < numObjects; ++j)
             {
-                GAFSubobjectState* state = extractState(in);
+                GAFSubobjectState* state = extractState(in, timeline);
 
                 statesList.push_back(state);
             }
@@ -128,8 +126,9 @@ void TagDefineAnimationFrames2::read(GAFStream* in, GAFAsset* asset, GAFTimeline
     m_currentStates.clear();
 }
 
-GAFSubobjectState* TagDefineAnimationFrames2::extractState(GAFStream* in)
+GAFSubobjectState* TagDefineAnimationFrames2::extractState(GAFStream* in, GAFTimeline* timeline) const
 {
+    (void)timeline;
     GAFSubobjectState* state = new GAFSubobjectState();
 
     float ctx[7];
@@ -238,16 +237,6 @@ GAFSubobjectState* TagDefineAnimationFrames2::extractState(GAFStream* in)
     if (hasMasks)
     {
         state->maskObjectIdRef = in->readU32();
-    }
-    
-    if (m_version >= 3)
-    {
-        uint16_t customPropertiesCount = in->readU16();
-        for (uint16_t i = 0; i < customPropertiesCount; ++i)
-        {
-            uint32_t idx = in->readU32();
-            state->getCustomPropertiesValueIdxs().push_back(idx);
-        }
     }
 
     return state;
