@@ -22,6 +22,7 @@ public:
 
     void    pushObjectState(GAFSubobjectState*);
     void    pushTimelineAction(GAFTimelineAction action);
+    void    sortStatesByZIndex();
 };
 
 NS_GAF_END

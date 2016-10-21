@@ -39,4 +39,13 @@ void GAFAnimationFrame::pushTimelineAction(GAFTimelineAction action)
     m_timelineActions.push_back(action);
 }
 
+void GAFAnimationFrame::sortStatesByZIndex()
+{
+    std::sort(m_subObjectStates.begin(), m_subObjectStates.end(),
+        [](gaf::GAFSubobjectState* state1, gaf::GAFSubobjectState* state2)
+    {
+        return state1->zIndex < state2->zIndex;
+    });
+}
+
 NS_GAF_END

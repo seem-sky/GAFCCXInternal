@@ -83,6 +83,8 @@ void TagDefineAnimationFrames::read(GAFStream* in, GAFAsset* asset, GAFTimeline*
             frame->pushObjectState(it->second);
         }
 
+        frame->sortStatesByZIndex();
+
         timeline->pushAnimationFrame(frame);
     }
 }

@@ -86,6 +86,8 @@ void TagDefineAnimationFrames2::read(GAFStream* in, GAFAsset* asset, GAFTimeline
             frame->pushObjectState(it->second);
         }
 
+        frame->sortStatesByZIndex();
+
         if (hasActions)
         {   
             uint32_t actionsCount = in->readU32();
