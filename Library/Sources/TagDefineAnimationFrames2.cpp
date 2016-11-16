@@ -54,28 +54,17 @@ void TagDefineAnimationFrames2::read(GAFStream* in, GAFAsset* asset, GAFTimeline
         {
             unsigned int numObjects = in->readU32();
 
-            typedef std::list<GAFSubobjectState*> StatesList_t;
-            StatesList_t statesList;
-
             for (unsigned int j = 0; j < numObjects; ++j)
             {
-                GAFSubobjectState* state = extractState(in, timeline);
-
-                statesList.push_back(state);
-            }
-
-            for (StatesList_t::iterator it = statesList.begin(), ie = statesList.end(); it != ie; ++it)
-            {
-                GAFSubobjectState* st = *it;
-
-                GAFSubobjectState* ps = m_currentStates[st->objectIdRef];
-
-                if (ps)
+                GAFSubobjectState* current_state = extractState(in, timeline);
+                GAFSubobjectState* old_state = m_currentStates[current_state->objectIdRef];
+                
+                if (old_state)
                 {
-                    ps->release();
+                    old_state->release();
                 }
-
-                m_currentStates[st->objectIdRef] = st;
+                
+                m_currentStates[current_state->objectIdRef] = current_state;
             }
         }
 
