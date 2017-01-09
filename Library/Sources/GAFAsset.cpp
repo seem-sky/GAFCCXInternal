@@ -83,7 +83,7 @@ GAFAsset::~GAFAsset()
     CC_SAFE_RELEASE(m_libraryAsset);
     if (m_state == State::Normal)
     {
-        m_textureManager->release();
+        CC_SAFE_RELEASE(m_textureManager);
     }
 }
 
