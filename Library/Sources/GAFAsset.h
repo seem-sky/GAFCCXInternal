@@ -28,8 +28,6 @@ private:
     TextureAtlases_t        m_textureAtlases; // custom regions
     GAFTextureAtlas*        m_currentTextureAtlas;
     GAFAsset*               m_libraryAsset;
-    
-    GAFAsset();
 
     void setRootTimeline(GAFTimeline* tl);
 
@@ -100,6 +98,7 @@ public:
     void                        loadImages(float desiredAtlasScale);
     GAFSprite*                  getCustomRegion(const std::string& name);
 
+    GAFAsset();
     ~GAFAsset();
 
     /// List of GAFAnimationFrame objects	
