@@ -161,7 +161,7 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
     switch (m_direction)
     {
     case Direction::tiledByWidth:
-        maxLineSize.setSize(bb.size.width - (m_marginLeft * m_marginRight) * marginScale.x, std::numeric_limits<float>::max());
+        maxLineSize.setSize(bb.size.width - (m_marginLeft + m_marginRight) * marginScale.x, std::numeric_limits<float>::max());
         break;
     case Direction::tiledByHeight:
         maxLineSize.setSize(std::numeric_limits<float>::max(), bb.size.height - (m_marginTop + m_marginBottom) * marginScale.y);
