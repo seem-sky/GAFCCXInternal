@@ -249,7 +249,9 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
         if (m_scaleAlignedChildren)
             affineTransformSetFrom(stateMatrix, cocos2d::AffineTransformScale(stateMatrix, fittingScale.x, fittingScale.y));
 
-        cocos2d::Rect childBB = cocos2d::RectApplyAffineTransform(child->getFlashInternalBoundingBox(), stateMatrix);
+        cocos2d::Rect childBB = child->getInternalBoundingBox();
+        childBB.origin -= child->getAnchorPointInPoints();
+        childBB = cocos2d::RectApplyAffineTransform(cocosBoundsToFlash(childBB), stateMatrix);
         cocos2d::Point pivot = cocos2d::Point(stateMatrix.tx - childBB.getMinX(), stateMatrix.ty - childBB.getMinY());
 
         switch (m_direction)
