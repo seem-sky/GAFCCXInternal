@@ -82,6 +82,7 @@
     <ClCompile Include="Sources\UI\GAFBoxLayoutView.cpp" />
     <ClCompile Include="Sources\UI\GAFCanvasView.cpp" />
     <ClCompile Include="Sources\UI\GAFComponentView.cpp" />
+    <ClCompile Include="Sources\UI\GAFLabelView.cpp" />
     <ClCompile Include="Sources\UI\GAFLayoutView.cpp" />
     <ClCompile Include="Sources\UI\GAFScrollView.cpp" />
   </ItemGroup>
@@ -144,6 +145,7 @@
     <ClInclude Include="Sources\UI\GAFBoxLayoutView.h" />
     <ClInclude Include="Sources\UI\GAFCanvasView.h" />
     <ClInclude Include="Sources\UI\GAFComponentView.h" />
+    <ClInclude Include="Sources\UI\GAFLabelView.h" />
     <ClInclude Include="Sources\UI\GAFLayoutView.h" />
     <ClInclude Include="Sources\UI\GAFScrollView.h" />
     <ClInclude Include="Sources\UI\GAFUIMacros.h" />

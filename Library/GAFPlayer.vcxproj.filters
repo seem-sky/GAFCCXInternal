@@ -177,9 +177,6 @@
     <ClCompile Include="Sources\GAFQuadCommand.cpp">
       <Filter>Sources\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\GAFTextData.cpp">
-      <Filter>Sources\Render</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\GAFSoundInfo.cpp">
       <Filter>Sources\Misc</Filter>
     </ClCompile>
@@ -239,6 +236,12 @@
     </ClCompile>
     <ClCompile Include="Sources\TagDefineAnimationFrames3.cpp">
       <Filter>Sources\GAFLoader\Tags</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\UI\GAFLabelView.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\GAFTextData.cpp">
+      <Filter>Sources\Misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -401,9 +404,6 @@
     <ClInclude Include="Sources\GAFQuadCommand.h">
       <Filter>Sources\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\GAFTextData.h">
-      <Filter>Sources\Render</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\GAFResourcesInfo.h">
       <Filter>Sources\Misc</Filter>
     </ClInclude>
@@ -481,6 +481,12 @@
     </ClInclude>
     <ClInclude Include="Sources\TagDefineAnimationFrames3.h">
       <Filter>Sources\GAFLoader\Tags</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\UI\GAFLabelView.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\GAFTextData.h">
+      <Filter>Sources\Misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

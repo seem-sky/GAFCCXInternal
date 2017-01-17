@@ -9,6 +9,7 @@
 #include "UI/GAFCanvasView.h"
 #include "UI/GAFBoxLayoutView.h"
 #include "UI/GAFScrollView.h"
+#include "UI/GAFLabelView.h"
 
 NS_GAF_BEGIN
 
@@ -74,6 +75,7 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTimeline* timeline, bool
         signatures[GAFObjectClass::toString(GAFObjectClass::UI_BUTTON)] = std::bind(&GAFObject::create, std::placeholders::_1, std::placeholders::_2);
         signatures[GAFObjectClass::toString(GAFObjectClass::UI_SCROLL_VIEW)] = std::bind(&GAFScrollView::create, std::placeholders::_1, std::placeholders::_2);
         signatures[GAFObjectClass::toString(GAFObjectClass::UI_TEXT_AREA)] = std::bind(&GAFScrollView::create, std::placeholders::_1, std::placeholders::_2);
+        signatures[GAFObjectClass::toString(GAFObjectClass::UI_LABEL)] = std::bind(&GAFLabelView::create, std::placeholders::_1, std::placeholders::_2);
     });
 
     GAFObject* result;

@@ -1,9 +1,12 @@
 #include "GAFPrecompiled.h"
 #include "GAFTextField.h"
+#include "GAFTextData.h"
 
 NS_GAF_BEGIN
 
 GAFTextField::GAFTextField()
+    : m_label(nullptr)
+    , m_useTextBounds(false)
 {
     m_charType = GAFCharacterType::TextField;
 }
@@ -14,7 +17,7 @@ GAFTextField::~GAFTextField()
 }
 
 // TODO: Factory
-void GAFTextField::initWithTextData(GAFTextData const* data)
+void GAFTextField::initWithTextData(const GAFTextData* data)
 {
     bool prevPopupNotify = cocos2d::FileUtils::getInstance()->isPopupNotify(); // disabling annoing missing font notifiers
     cocos2d::FileUtils::getInstance()->setPopupNotify(false);
@@ -63,9 +66,29 @@ void GAFTextField::setText(const std::string& text)
     m_label->setString(text);
 }
 
+void GAFTextField::setUseTextBounds(bool value)
+{
+    m_useTextBounds = value;
+}
+
+bool GAFTextField::getUseTextBounds() const
+{
+    return m_useTextBounds;
+}
+
 cocos2d::Rect GAFTextField::getInternalBoundingBox() const
 {
-    return m_label->getBoundingBox();
+    cocos2d::Rect bounds;
+    if (m_useTextBounds)
+    {
+        bounds = m_label->getTextBoundingBox();
+    }
+    else
+    {
+        bounds = m_label->getBoundingBox();
+    }
+
+    return bounds;
 }
 
 NS_GAF_END
