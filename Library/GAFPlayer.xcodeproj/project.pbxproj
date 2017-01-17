@@ -103,6 +103,8 @@
 		B64C0E5A1D17DA380014C3C5 /* GAFComponentView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884E31D1195FB008E725E /* GAFComponentView.cpp */; };
 		B64C0E5B1D17DA3A0014C3C5 /* GAFLayoutView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884E51D1195FB008E725E /* GAFLayoutView.cpp */; };
 		B64C0E5C1D17DA3E0014C3C5 /* GAFScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884E71D1195FB008E725E /* GAFScrollView.cpp */; };
+		B68D49761E2E44F000C4515F /* GAFLabelView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B68D49741E2E44F000C4515F /* GAFLabelView.cpp */; };
+		B68D49771E2E44F200C4515F /* GAFLabelView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B68D49741E2E44F000C4515F /* GAFLabelView.cpp */; };
 		B693A0831D145D61007BF426 /* GafObjectFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884DA1D1195A0008E725E /* GafObjectFactory.cpp */; };
 		B6AC347F1A03CBE5008BDF89 /* GAFTextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6AC347D1A03CBE5008BDF89 /* GAFTextField.cpp */; };
 		B6AC34821A03CBF0008BDF89 /* GAFTextData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6AC34801A03CBF0008BDF89 /* GAFTextData.cpp */; };
@@ -242,6 +244,8 @@
 		B63C5A791B4A83F1001C8112 /* GAFSoundInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAFSoundInfo.h; sourceTree = "<group>"; };
 		B643F9DF19B741E0005D2E26 /* GAFAssetTextureManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GAFAssetTextureManager.cpp; sourceTree = "<group>"; };
 		B643F9E019B741E0005D2E26 /* GAFAssetTextureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAFAssetTextureManager.h; sourceTree = "<group>"; };
+		B68D49741E2E44F000C4515F /* GAFLabelView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GAFLabelView.cpp; path = UI/GAFLabelView.cpp; sourceTree = "<group>"; };
+		B68D49751E2E44F000C4515F /* GAFLabelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GAFLabelView.h; path = UI/GAFLabelView.h; sourceTree = "<group>"; };
 		B6AC347D1A03CBE5008BDF89 /* GAFTextField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GAFTextField.cpp; sourceTree = "<group>"; };
 		B6AC347E1A03CBE5008BDF89 /* GAFTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAFTextField.h; sourceTree = "<group>"; };
 		B6AC34801A03CBF0008BDF89 /* GAFTextData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GAFTextData.cpp; sourceTree = "<group>"; };
@@ -448,6 +452,8 @@
 		524884DE1D1195C7008E725E /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				B68D49741E2E44F000C4515F /* GAFLabelView.cpp */,
+				B68D49751E2E44F000C4515F /* GAFLabelView.h */,
 				524884DF1D1195FB008E725E /* GAFBoxLayoutView.cpp */,
 				524884E01D1195FB008E725E /* GAFBoxLayoutView.h */,
 				524884E11D1195FB008E725E /* GAFCanvasView.cpp */,
@@ -566,6 +572,7 @@
 				1A2FBF50192E00C800631FE9 /* GAFAsset.cpp in Sources */,
 				B6F8586B1A07D5A40022310D /* GAFTimelineAction.cpp in Sources */,
 				1A2FBF56192E00C800631FE9 /* GAFSprite.cpp in Sources */,
+				B68D49761E2E44F000C4515F /* GAFLabelView.cpp in Sources */,
 				39869DB219532453004628D9 /* TagDefineAnimationFrames2.cpp in Sources */,
 				1AB30523193CE3BF0012C01D /* GAFFilterManager.cpp in Sources */,
 				1A2FBF51192E00C800631FE9 /* GAFFile.cpp in Sources */,
@@ -623,6 +630,7 @@
 				29CC58111A36113E00B31D72 /* GAFAsset.cpp in Sources */,
 				29CC58121A36113E00B31D72 /* GAFTimelineAction.cpp in Sources */,
 				29CC58131A36113E00B31D72 /* GAFSprite.cpp in Sources */,
+				B68D49771E2E44F200C4515F /* GAFLabelView.cpp in Sources */,
 				29CC58141A36113E00B31D72 /* TagDefineAnimationFrames2.cpp in Sources */,
 				29CC58151A36113E00B31D72 /* GAFFilterManager.cpp in Sources */,
 				29CC58161A36113E00B31D72 /* GAFFile.cpp in Sources */,
