@@ -115,10 +115,11 @@ void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, co
 
         cocos2d::AffineTransform stateMatrix = state->affineTransform;
 
-        childrenToAlign.emplace_back(child, state, stateMatrix);
-
         if (state->isVisible())
+        {
+            childrenToAlign.emplace_back(child, state, stateMatrix);
             child->setLastVisibleInFrame(frameIndex + 1);
+        }
     }
 
     processChildren(out, childrenToAlign);
