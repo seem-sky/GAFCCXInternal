@@ -69,7 +69,7 @@ void GAFObject::addUpdateListener(const GAFObjectUpdateCallback & callback)
 
 GAFObject::~GAFObject()
 {
-    stop();
+    enableTick(false);
     GAF_SAFE_RELEASE_ARRAY_WITH_NULL_CHECK(MaskList_t, m_masks);
     GAF_SAFE_RELEASE_ARRAY_WITH_NULL_CHECK(DisplayList_t, m_displayList);
     CC_SAFE_RELEASE(m_asset);
