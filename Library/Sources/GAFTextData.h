@@ -2,7 +2,7 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFTextData);
+gaf_fwd_this(GAFTextData);
 
 class GAFTextData
 {

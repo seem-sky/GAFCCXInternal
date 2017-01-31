@@ -8,9 +8,9 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFAsset);
-forward_this(GAFTimeline);
-forward_this(GAFFilterData);
+gaf_fwd_this(GAFAsset);
+gaf_fwd_this(GAFTimeline);
+gaf_fwd_this(GAFFilterData);
 
 struct GAFObjectClass
 {

@@ -4,8 +4,8 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFStream);
-forward_this(GAFFile);
+gaf_fwd_this(GAFStream);
+gaf_fwd_this(GAFFile);
 
 class GAFStream
 {

@@ -4,7 +4,6 @@
 #include "GAFResourcesInfo.h"
 #include "GAFHeader.h"
 #include "GAFTimeline.h"
-#include "GAFTextureAtlas.h"
 
 #include "GAFDelegates.h"
 
@@ -15,11 +14,11 @@ class GAFObject;
 class GAFAssetTextureManager;
 class GAFTimelineAction;
 
-forward_this(GAFLoader);
-forward_this(GAFAsset);
-forward_this(GAFTimeline);
-forward_this(GAFTimelineAction);
-forward_this(GAFAssetTextureManager);
+gaf_fwd_this(GAFLoader);
+gaf_fwd_this(GAFAsset);
+gaf_fwd_this(GAFTimeline);
+gaf_fwd_this(GAFTimelineAction);
+gaf_fwd_this(GAFAssetTextureManager);
 
 class GAFAsset : public ::std::enable_shared_from_this<GAFAsset>
 {

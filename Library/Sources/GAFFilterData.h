@@ -5,7 +5,7 @@ NS_GAF_BEGIN
 
 class GAFMovieClip;
 
-forward_this(GAFFilterData);
+gaf_fwd_this(GAFFilterData);
 
 class GAFFilterData
 {

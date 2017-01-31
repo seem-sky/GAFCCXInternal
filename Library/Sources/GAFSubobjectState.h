@@ -12,7 +12,7 @@ enum GAFColorTransformIndex
     GAFCTI_A
 };
 
-forward_this(GAFSubobjectState);
+gaf_fwd_this(GAFSubobjectState);
 
 class GAFSubobjectState
 {

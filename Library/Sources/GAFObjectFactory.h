@@ -5,10 +5,10 @@
 NS_GAF_BEGIN
 
 class GAFObject;
-forward_this(GAFTimeline);
-forward_this(GAFTextData);
-forward_this(GAFTextureAtlasElement);
-forward_this(GAFAsset);
+gaf_fwd_this(GAFTimeline);
+gaf_fwd_this(GAFTextData);
+gaf_fwd_this(GAFTextureAtlasElement);
+gaf_fwd_this(GAFAsset);
 
 class GafObjectFactory
 {

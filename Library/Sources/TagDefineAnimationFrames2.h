@@ -4,8 +4,8 @@
 #include "GAFLoader.h"
 
 NS_GAF_BEGIN
-forward_this(GAFLoader);
-forward_this(GAFSubobjectState);
+gaf_fwd_this(GAFLoader);
+gaf_fwd_this(GAFSubobjectState);
 
 class TagDefineAnimationFrames2 : public DefinitionTagBase
 {

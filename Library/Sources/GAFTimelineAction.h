@@ -6,7 +6,7 @@ NS_GAF_BEGIN
 
 typedef std::vector<std::string> ActionParams_t;
 
-forward_this(GAFTimelineAction);
+gaf_fwd_this(GAFTimelineAction);
 
 class GAFTimelineAction
 {

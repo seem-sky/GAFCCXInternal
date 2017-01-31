@@ -1,19 +1,18 @@
 #pragma once
 
-#include "TagDefines.h"
 #include "GAFCollections.h"
 
 NS_GAF_BEGIN
 
-forward_this(GAFLoader);
+gaf_fwd_this(GAFLoader);
 
-forward_this(GAFAsset);
-forward_this(GAFTimeline);
+gaf_fwd_this(GAFAsset);
+gaf_fwd_this(GAFTimeline);
 
-forward_this(GAFStream);
-forward_this(DefinitionTagBase);
-forward_this(GAFHeader);
-forward_this(GAFFile);
+gaf_fwd_this(GAFStream);
+gaf_fwd_this(DefinitionTagBase);
+gaf_fwd_this(GAFHeader);
+gaf_fwd_this(GAFFile);
 
 class GAFLoader : public ::std::enable_shared_from_this<GAFLoader>
 {

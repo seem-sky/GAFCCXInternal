@@ -2,7 +2,7 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFResourcesInfo);
+gaf_fwd_this(GAFResourcesInfo);
 
 class GAFResourcesInfo
 {
@@ -17,7 +17,7 @@ public:
     ResourceId id;
 };
 
-forward_this(GAFResourcesInfoTexture);
+gaf_fwd_this(GAFResourcesInfoTexture);
 
 class GAFResourcesInfoTexture : public GAFResourcesInfo
 {
@@ -39,7 +39,7 @@ public:
     float csf;
 };
 
-forward_this(GAFResourcesInfoFont);
+gaf_fwd_this(GAFResourcesInfoFont);
 
 class GAFResourcesInfoFont : public GAFResourcesInfo
 {

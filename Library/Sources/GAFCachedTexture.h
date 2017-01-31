@@ -3,7 +3,7 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFCachedTexture);
+gaf_fwd_this(GAFCachedTexture);
 
 class GAFCachedTexture
 {

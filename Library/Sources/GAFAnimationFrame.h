@@ -5,8 +5,8 @@ NS_GAF_BEGIN
 
 class GAFTextureAtlas;
 
-forward_this(GAFSubobjectState);
-forward_this(GAFAnimationFrame);
+gaf_fwd_this(GAFSubobjectState);
+gaf_fwd_this(GAFAnimationFrame);
 
 class GAFAnimationFrame
 {

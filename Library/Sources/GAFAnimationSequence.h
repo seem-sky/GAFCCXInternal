@@ -2,7 +2,7 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFAnimationSequence);
+gaf_fwd_this(GAFAnimationSequence);
 
 class GAFAnimationSequence
 {

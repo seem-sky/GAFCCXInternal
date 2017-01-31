@@ -5,7 +5,7 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFAssetTextureManager);
+gaf_fwd_this(GAFAssetTextureManager);
 
 class GAFAssetTextureManager
 {

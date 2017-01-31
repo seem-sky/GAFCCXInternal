@@ -4,7 +4,7 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFFile);
+gaf_fwd_this(GAFFile);
 
 class GAFFile
 {

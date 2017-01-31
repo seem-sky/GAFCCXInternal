@@ -2,7 +2,7 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFStream);
+gaf_fwd_this(GAFStream);
 
 class PrimitiveDeserializer
 {

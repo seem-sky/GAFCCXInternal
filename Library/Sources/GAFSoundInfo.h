@@ -2,7 +2,7 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFSoundInfo);
+gaf_fwd_this(GAFSoundInfo);
 
 class GAFSoundInfo
 {

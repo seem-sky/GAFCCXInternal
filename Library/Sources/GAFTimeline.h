@@ -26,9 +26,9 @@ public:
     void setCustomProperties(const CustomProperties_t& customProperties) { m_customProperties = customProperties; }
 };
 
-forward_this(GAFTimeline);
-forward_this(GAFTextureAtlas);
-forward_this(GAFAnimationSequence);
+gaf_fwd_this(GAFTimeline);
+gaf_fwd_this(GAFTextureAtlas);
+gaf_fwd_this(GAFAnimationSequence);
 
 class GAFTimeline
 {

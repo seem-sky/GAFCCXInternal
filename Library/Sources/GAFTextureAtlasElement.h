@@ -4,7 +4,7 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFTextureAtlasElement);
+gaf_fwd_this(GAFTextureAtlasElement);
 
 class GAFTextureAtlasElement
 {

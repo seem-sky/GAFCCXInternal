@@ -9,14 +9,14 @@ NS_GAF_BEGIN
 
 class GAFSprite;
 class GAFObject;
-forward_this(GAFTextureAtlas);
-forward_this(GAFAnimationFrame);
-forward_this(GAFFilterData);
-forward_this(GAFTimeline);
-forward_this(ExternalObject);
-forward_this(GAFTextData);
-forward_this(GAFSoundInfo);
-forward_this(GAFAnimationSequence);
+gaf_fwd_this(GAFTextureAtlas);
+gaf_fwd_this(GAFAnimationFrame);
+gaf_fwd_this(GAFFilterData);
+gaf_fwd_this(GAFTimeline);
+gaf_fwd_this(ExternalObject);
+gaf_fwd_this(GAFTextData);
+gaf_fwd_this(GAFSoundInfo);
+gaf_fwd_this(GAFAnimationSequence);
 
 enum class GAFFilterType : uint32_t
 {
@@ -64,7 +64,7 @@ enum
     GAFFirstFrameIndex = 0
 };
 
-forward_this(GAFAnyInterface);
+gaf_fwd_this(GAFAnyInterface);
 
 class GAFAnyInterface
 {

@@ -31,7 +31,7 @@ for (__type::iterator i = __instance.begin(), e = __instance.end(); i != e; ++i)
     delete i->second; \
 } __instance.clear()
 
-#define forward_this(__class__)\
+#define gaf_fwd_this(__class__)\
 class __class__;\
 using __class__##Ptr = ::std::shared_ptr<__class__>;\
 using __class__##ConstPtr = ::std::shared_ptr<const __class__>;\

@@ -4,7 +4,7 @@
 
 NS_GAF_BEGIN
 
-forward_this(GAFLoader);
+gaf_fwd_this(GAFLoader);
 
 class TagDefineTimeline : public DefinitionTagBase
 {
