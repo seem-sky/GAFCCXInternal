@@ -12,7 +12,7 @@ using cocos2d::gettimeofday;
 
 NS_GAF_BEGIN
 
-cocos2d::Texture2D* GAFCachedTexture::operator *()
+cocos2d::Texture2D* GAFCachedTexture::operator*()
 {
     timeval now;
     gettimeofday(&now, nullptr);
@@ -47,7 +47,7 @@ GAFCachedTexture::GAFCachedTexture(Texture2D* tex)
     m_lastUsed = m_created;
 }
 
-const GAFCachedTexture& GAFCachedTexture::operator =(const GAFCachedTexture& other)
+const GAFCachedTexture& GAFCachedTexture::operator=(const GAFCachedTexture& other)
 {
     if (&other == this)
         return *this;

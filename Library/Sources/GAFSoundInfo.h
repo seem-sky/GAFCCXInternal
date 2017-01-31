@@ -2,6 +2,8 @@
 
 NS_GAF_BEGIN
 
+forward_this(GAFSoundInfo);
+
 class GAFSoundInfo
 {
 public:

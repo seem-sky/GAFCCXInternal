@@ -4,17 +4,17 @@
 
 NS_GAF_BEGIN
 
-class GAFLoader;
+forward_this(GAFLoader);
 
 class TagDefineTimeline : public DefinitionTagBase
 {
 protected:
-    GAFLoader*  m_loader; // weak
+    GAFLoaderWPtr m_loader; // weak
+
 public:
+    explicit TagDefineTimeline(GAFLoaderPtr loader);
 
-    TagDefineTimeline(GAFLoader*);
-
-    virtual void read(GAFStream*, GAFAsset*, GAFTimeline*) override;
+    virtual void read(GAFStreamPtr, GAFAssetPtr, GAFTimelinePtr) override;
 
 };
 

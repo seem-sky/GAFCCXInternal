@@ -4,21 +4,21 @@
 
 NS_GAF_BEGIN
 
-class GAFSubobjectState;
+forward_this(GAFSubobjectState);
 
 class TagDefineAnimationFrames : public DefinitionTagBase
 {
 private:
-    typedef std::map<unsigned int, GAFSubobjectState*> States_t;
+    using States_t = std::map<unsigned int, GAFSubobjectStatePtr>;
     States_t m_currentStates;
     
-    GAFSubobjectState* extractState(GAFStream* in);
+    GAFSubobjectStateUPtr extractState(GAFStreamPtr in) const;
 
 public:
     
     ~TagDefineAnimationFrames();
     
-    virtual void read(GAFStream*, GAFAsset*, GAFTimeline*) override;
+    virtual void read(GAFStreamPtr, GAFAssetPtr, GAFTimelinePtr) override;
 
 };
 

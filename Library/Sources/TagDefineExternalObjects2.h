@@ -1,18 +1,19 @@
 #pragma once
 #include "TagDefineExternalObjects.h"
+#include "GAFLoader.h"
 
 NS_GAF_BEGIN
 
-class GAFLoader;
+forward_this(GAFLoader);
 
 class TagDefineExternalObjects2 : public TagDefineExternalObjects
 {
 protected:
-    GAFLoader*  m_loader; // weak
+    GAFLoaderWPtr  m_loader; // weak
 
 public:
-    explicit TagDefineExternalObjects2(GAFLoader*);
-    virtual void read(GAFStream*, GAFAsset*, GAFTimeline*) override;
+    explicit TagDefineExternalObjects2(GAFLoaderPtr);
+    virtual void read(GAFStreamPtr, GAFAssetPtr, GAFTimelinePtr) override;
 
 };
 

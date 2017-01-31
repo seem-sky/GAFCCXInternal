@@ -12,7 +12,7 @@ gaf::GAFLabelView::~GAFLabelView()
     CC_SAFE_RELEASE(m_textField);
 }
 
-gaf::GAFLabelView* gaf::GAFLabelView::create(GAFAsset* anAsset, GAFTimeline* timeline)
+gaf::GAFLabelView* gaf::GAFLabelView::create(GAFAssetConstPtr anAsset, GAFTimelineConstPtr timeline)
 {
     GAFLabelView* ret = new GAFLabelView();
 
@@ -33,7 +33,7 @@ cocos2d::Rect gaf::GAFLabelView::getInternalBoundingBox() const
     return m_textField->getBoundingBox();
 }
 
-bool gaf::GAFLabelView::init(GAFAsset* anAnimationData, GAFTimeline* timeline)
+bool gaf::GAFLabelView::init(GAFAssetConstPtr anAnimationData, GAFTimelineConstPtr timeline)
 {
     bool ret = GAFObject::init(anAnimationData, timeline);
     if (ret)

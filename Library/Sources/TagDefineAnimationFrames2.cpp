@@ -14,20 +14,16 @@
 
 NS_GAF_BEGIN
 
-TagDefineAnimationFrames2::TagDefineAnimationFrames2(GAFLoader* loader)
+TagDefineAnimationFrames2::TagDefineAnimationFrames2(GAFLoaderPtr loader)
     : m_loader(loader)
 {
 }
 
 TagDefineAnimationFrames2::~TagDefineAnimationFrames2()
 {
-    for (States_t::iterator it = m_currentStates.begin(), ie = m_currentStates.end(); it != ie; ++it)
-    {
-        it->second->release();
-    }
 }
 
-void TagDefineAnimationFrames2::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
+void TagDefineAnimationFrames2::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     (void)asset;
     unsigned int count = in->readU32();
@@ -37,7 +33,7 @@ void TagDefineAnimationFrames2::read(GAFStream* in, GAFAsset* asset, GAFTimeline
     for (AnimationObjects_t::const_iterator i = timeline->getAnimationObjects().begin(), e = timeline->getAnimationObjects().end(); i != e; ++i)
     {
         unsigned int objectId = i->first;
-        GAFSubobjectState *state = new GAFSubobjectState();
+        auto state = ::std::make_shared<GAFSubobjectState>();
         state->initEmpty(objectId);
 
         m_currentStates[objectId] = state;
@@ -56,19 +52,13 @@ void TagDefineAnimationFrames2::read(GAFStream* in, GAFAsset* asset, GAFTimeline
 
             for (unsigned int j = 0; j < numObjects; ++j)
             {
-                GAFSubobjectState* current_state = extractState(in, timeline);
-                GAFSubobjectState* old_state = m_currentStates[current_state->objectIdRef];
-                
-                if (old_state)
-                {
-                    old_state->release();
-                }
+                GAFSubobjectStatePtr current_state = extractState(in, timeline);
                 
                 m_currentStates[current_state->objectIdRef] = current_state;
             }
         }
 
-        GAFAnimationFrame* frame = new GAFAnimationFrame();
+        auto frame = ::std::make_shared<GAFAnimationFrame>();
 
         for (States_t::iterator it = m_currentStates.begin(), ie = m_currentStates.end(); it != ie; ++it)
         {
@@ -110,17 +100,14 @@ void TagDefineAnimationFrames2::read(GAFStream* in, GAFAsset* asset, GAFTimeline
         timeline->pushAnimationFrame(frame);
     }
 
-    for (States_t::iterator it = m_currentStates.begin(), ie = m_currentStates.end(); it != ie; ++it)
-    {
-        it->second->release();
-    }
     m_currentStates.clear();
 }
 
-GAFSubobjectState* TagDefineAnimationFrames2::extractState(GAFStream* in, GAFTimeline* timeline) const
+GAFSubobjectStatePtr TagDefineAnimationFrames2::extractState(GAFStreamPtr in, GAFTimelinePtr timeline) const
 {
     (void)timeline;
-    GAFSubobjectState* state = new GAFSubobjectState();
+
+    auto state = ::std::make_shared<GAFSubobjectState>();
 
     float ctx[7];
 
@@ -169,13 +156,13 @@ GAFSubobjectState* TagDefineAnimationFrames2::extractState(GAFStream* in, GAFTim
             {
                 cocos2d::Size p;
                 PrimitiveDeserializer::deserialize(in, &p);
-                GAFBlurFilterData* blurFilter = new GAFBlurFilterData();
+                auto blurFilter = ::std::make_shared<GAFBlurFilterData>();
                 blurFilter->blurSize = p;
                 state->pushFilter(blurFilter);
             }
             else if (type == GAFFilterType::ColorMatrix)
             {
-                GAFColorMatrixFilterData* colorFilter = new GAFColorMatrixFilterData();
+                auto colorFilter = ::std::make_shared<GAFColorMatrixFilterData>();
                 for (unsigned int i = 0; i < 4; ++i)
                 {
                     for (unsigned int j = 0; j < 4; ++j)
@@ -190,7 +177,7 @@ GAFSubobjectState* TagDefineAnimationFrames2::extractState(GAFStream* in, GAFTim
             }
             else if (type == GAFFilterType::Glow)
             {
-                GAFGlowFilterData* filter = new GAFGlowFilterData();
+                auto filter = ::std::make_shared<GAFGlowFilterData>();
                 unsigned int clr = in->readU32();
 
                 PrimitiveDeserializer::translateColor(filter->color, clr);
@@ -206,7 +193,7 @@ GAFSubobjectState* TagDefineAnimationFrames2::extractState(GAFStream* in, GAFTim
             }
             else if (type == GAFFilterType::DropShadow)
             {
-                GAFDropShadowFilterData* filter = new GAFDropShadowFilterData();
+                auto filter = ::std::make_shared<GAFDropShadowFilterData>();
 
                 unsigned int clr = in->readU32();
 

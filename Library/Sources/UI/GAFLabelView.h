@@ -11,9 +11,9 @@ public:
     GAFLabelView();
     ~GAFLabelView();
 
-    static GAFLabelView* create(GAFAsset* anAsset, GAFTimeline* timeline);
+    static GAFLabelView* create(GAFAssetConstPtr anAsset, GAFTimelineConstPtr timeline);
     virtual cocos2d::Rect getInternalBoundingBox() const override;
-    virtual bool init(GAFAsset* anAnimationData, GAFTimeline* timeline) override;
+    virtual bool init(GAFAssetConstPtr anAnimationData, GAFTimelineConstPtr timeline) override;
 
 protected:
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;

@@ -1,7 +1,6 @@
 #include "GAFPrecompiled.h"
 #include "TagDefineTextField.h"
 
-#include "GAFAsset.h"
 #include "GAFStream.h"
 #include "GAFTimeline.h"
 #include "GAFTextData.h"
@@ -9,7 +8,7 @@
 
 NS_GAF_BEGIN
 
-void TagDefineTextField::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
+void TagDefineTextField::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     (void)asset;
     unsigned int count = in->readU32();
@@ -18,7 +17,7 @@ void TagDefineTextField::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timel
     {
         unsigned int objectIdRef = in->readU32();
 
-        GAFTextData* textData = new GAFTextData();
+        auto textData = ::std::make_shared<GAFTextData>();
 
         PrimitiveDeserializer::deserialize(in, &textData->m_pivot);
         textData->m_width = in->readFloat();

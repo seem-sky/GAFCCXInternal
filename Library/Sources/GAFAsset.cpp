@@ -12,7 +12,6 @@
 #include "json/document.h"
 
 NS_GAF_BEGIN
-
 //static float  _desiredCsf = 1.f;
 
 float GAFAsset::desiredAtlasScale()
@@ -25,7 +24,7 @@ void GAFAsset::setDesiredAtlasScale(float scale)
     m_desiredAtlasScale = scale;
 }
 
-GAFObject * GAFAsset::createObject()
+GAFObject* GAFAsset::createObject()
 {
     if (m_timelines.empty())
     {
@@ -35,7 +34,7 @@ GAFObject * GAFAsset::createObject()
     if (m_rootTimeline == nullptr)
     {
         CCLOG("%s", "You haven't root timeline in this asset. Please set root timeline by setRootTimeline(...)");
-        for (Timelines_t::iterator i = m_timelines.begin(), e = m_timelines.end(); i != e; i++)
+        for (Timelines_t::iterator i = m_timelines.begin(), e = m_timelines.end(); i != e; ++i)
         {
             if (!i->second->getLinkageName().empty())
             {
@@ -45,7 +44,7 @@ GAFObject * GAFAsset::createObject()
         }
     }
 
-    return GAFObject::create(this, m_rootTimeline);
+    return GAFObject::create(shared_from_this(), m_rootTimeline);
 }
 
 GAFObject* GAFAsset::createObjectAndRun(bool looped)
@@ -59,99 +58,61 @@ GAFObject* GAFAsset::createObjectAndRun(bool looped)
     return res;
 }
 
-GAFAsset::GAFAsset() 
-: m_textureLoadDelegate(nullptr)
-, m_soundDelegate(nullptr)
-, m_sceneFps(60)
-, m_sceneWidth(0)
-, m_sceneHeight(0)
-, m_rootTimeline(nullptr)
-, m_desiredAtlasScale(1.0f)
-, m_gafFileName("")
-, m_state(State::Normal)
-, m_libraryAsset(nullptr)
+GAFAsset::GAFAsset()
 {
 }
 
-GAFAsset::~GAFAsset()
-{
-    //GAF_RELEASE_MAP(Timelines_t, m_timelines);
-    GAF_SAFE_RELEASE_MAP(Timelines_t, m_timelines);
-    GAF_RELEASE_MAP(SoundInfos_t, m_soundInfos);
-    GAF_RELEASE_ARRAY(TextureAtlases_t, m_textureAtlases);
-    //CC_SAFE_RELEASE(m_rootTimeline);
-    CC_SAFE_RELEASE(m_libraryAsset);
-    if (m_state == State::Normal)
-    {
-        CC_SAFE_RELEASE(m_textureManager);
-    }
-}
-
-bool GAFAsset::isAssetVersionPlayable(const char * version)
+bool GAFAsset::isAssetVersionPlayable(const char* version)
 {
     (void)version;
     return true;
 }
 
-GAFAsset* GAFAsset::create(const std::string& gafFilePath, GAFTextureLoadDelegate_t delegate, GAFLoader* customLoader /*= nullptr*/)
+GAFAssetPtr GAFAsset::create(const std::string& gafFilePath, GAFTextureLoadDelegate_t delegate, GAFLoaderPtr customLoader /*= nullptr*/)
 {
-    GAFAsset * ret = new GAFAsset();
+    auto ret = ::std::shared_ptr<GAFAsset>(new GAFAsset);
     if (ret && ret->initWithGAFFile(gafFilePath, delegate, customLoader))
-    {
-        ret->autorelease();
         return ret;
-    }
-    CC_SAFE_RELEASE(ret);
+
     return nullptr;
 }
 
-GAFAsset* GAFAsset::create(const std::string& gafFilePath)
+GAFAssetPtr GAFAsset::create(const std::string& gafFilePath)
 {
     return create(gafFilePath, nullptr);
 }
 
-GAFAsset* GAFAsset::createWithBundle(const std::string& zipfilePath, const std::string& entryFile, GAFTextureLoadDelegate_t delegate, GAFLoader* customLoader /*= nullptr*/)
+GAFAssetPtr GAFAsset::createWithBundle(const std::string& zipfilePath, const std::string& entryFile, GAFTextureLoadDelegate_t delegate, GAFLoaderPtr customLoader /*= nullptr*/)
 {
-    GAFAsset * ret = new GAFAsset();
+    auto ret = ::std::shared_ptr<GAFAsset>(new GAFAsset);
     if (ret && ret->initWithGAFBundle(zipfilePath, entryFile, delegate, customLoader))
-    {
-        ret->autorelease();
         return ret;
-    }
-    CC_SAFE_RELEASE(ret);
+
     return nullptr;
 }
 
-GAFAsset* GAFAsset::createWithBundle(const std::string& zipfilePath, const std::string& entryFile)
+GAFAssetPtr GAFAsset::createWithBundle(const std::string& zipfilePath, const std::string& entryFile)
 {
     return createWithBundle(zipfilePath, entryFile, nullptr);
 }
 
-void GAFAsset::getResourceReferences(const std::string& gafFilePath, std::vector<GAFResourcesInfo*> &dest)
+void GAFAsset::getResourceReferences(const std::string& gafFilePath, std::vector<GAFResourcesInfoConstPtr>& dest)
 {
-    GAFAsset * asset = new GAFAsset();
+    auto asset = ::std::shared_ptr<GAFAsset>(new GAFAsset);
     asset->m_state = State::DryRun;
     if (asset && asset->initWithGAFFile(gafFilePath, nullptr))
-    {
         asset->parseReferences(dest);
-    }
-    CC_SAFE_RELEASE(asset);
-    return;
 }
 
-void GAFAsset::getResourceReferencesFromBundle(const std::string& zipfilePath, const std::string& entryFile, std::vector<GAFResourcesInfo*>& dest)
+void GAFAsset::getResourceReferencesFromBundle(const std::string& zipfilePath, const std::string& entryFile, std::vector<GAFResourcesInfoConstPtr>& dest)
 {
-    GAFAsset * asset = new GAFAsset();
+    auto asset = ::std::shared_ptr<GAFAsset>(new GAFAsset);
     asset->m_state = State::DryRun;
     if (asset && asset->initWithGAFBundle(zipfilePath, entryFile, nullptr))
-    {
         asset->parseReferences(dest);
-    }
-    CC_SAFE_RELEASE(asset);
-    return;
 }
 
-bool GAFAsset::initWithGAFBundle(const std::string& zipFilePath, const std::string& inEntryFile, GAFTextureLoadDelegate_t delegate, GAFLoader* customLoader /*= nullptr*/)
+bool GAFAsset::initWithGAFBundle(const std::string& zipFilePath, const std::string& inEntryFile, GAFTextureLoadDelegate_t delegate, GAFLoaderPtr customLoader /*= nullptr*/)
 {
     m_gafFileName = zipFilePath;
 
@@ -195,18 +156,17 @@ bool GAFAsset::initWithGAFBundle(const std::string& zipFilePath, const std::stri
     {
         if (customLoader)
         {
-            customLoader->loadData(gafData, sz, this);
+            customLoader->loadData(gafData, sz, shared_from_this());
         }
         else
         {
-            GAFLoader* loader = new GAFLoader();
-            isLoaded = loader->loadData(gafData, sz, this);
-            delete loader;
+            auto loader = GAFLoader::create();
+            isLoaded = loader->loadData(gafData, sz, shared_from_this());
         }
     }
     if (isLoaded && m_state == State::Normal)
     {
-        m_textureManager = new GAFAssetTextureManager();
+        m_textureManager = ::std::make_shared<GAFAssetTextureManager>();
         //GAFShaderManager::Initialize();
         loadTextures(entryFile, delegate, &bundle);
     }
@@ -214,21 +174,20 @@ bool GAFAsset::initWithGAFBundle(const std::string& zipFilePath, const std::stri
     return isLoaded;
 }
 
-bool GAFAsset::initWithGAFFile(const std::string& filePath, GAFTextureLoadDelegate_t delegate, GAFLoader* customLoader /*= nullptr*/)
+bool GAFAsset::initWithGAFFile(const std::string& filePath, GAFTextureLoadDelegate_t delegate, GAFLoaderPtr customLoader /*= nullptr*/)
 {
     m_gafFileName = filePath;
     std::string fullfilePath = cocos2d::FileUtils::getInstance()->fullPathForFilename(filePath);
 
-    bool isLoaded = false;
+    bool isLoaded;
     if (customLoader)
     {
-        isLoaded = customLoader->loadFile(fullfilePath, this);
+        isLoaded = customLoader->loadFile(fullfilePath, shared_from_this());
     }
     else
     {
-        GAFLoader* loader = new GAFLoader();
-        isLoaded = loader->loadFile(fullfilePath, this);
-        delete loader;
+        auto loader = GAFLoader::create();
+        isLoaded = loader->loadFile(fullfilePath, shared_from_this());
     }
 
     if (m_timelines.empty())
@@ -238,14 +197,14 @@ bool GAFAsset::initWithGAFFile(const std::string& filePath, GAFTextureLoadDelega
 
     if (isLoaded && m_state == State::Normal)
     {
-        m_textureManager = new GAFAssetTextureManager();
+        m_textureManager = ::std::make_shared<GAFAssetTextureManager>();
         loadTextures(fullfilePath, delegate);
     }
 
     return isLoaded;
 }
 
-void GAFAsset::parseReferences(std::vector<GAFResourcesInfo*>& dest)
+void GAFAsset::parseReferences(std::vector<GAFResourcesInfoConstPtr>& dest)
 {
     for (auto i = m_timelines.begin(), e = m_timelines.end(); i != e; ++i)
     {
@@ -259,16 +218,16 @@ void GAFAsset::parseReferences(std::vector<GAFResourcesInfo*>& dest)
                 for (uint32_t j = 0; j < (*i_info).m_sources.size(); ++j)
                 {
                     auto& aiSource = (*i_info).m_sources[j];
-                    
-                    GAFResourcesInfoTexture compareTexture(aiSource.source, aiSource.csf);
+
+                    const GAFResourcesInfoTexture compareTexture(aiSource.source, aiSource.csf);
                     // check duplicates
                     bool present = false;
                     for (auto i_res = dest.begin(), e_res = dest.end(); i_res != e_res; ++i_res)
                     {
                         if ((*i_res)->id == GAFResourcesInfo::ResourceId::Texture)
                         {
-                            GAFResourcesInfoTexture *presentTexture = reinterpret_cast<GAFResourcesInfoTexture*>(*i_res);
-                            
+                            auto presentTexture = ::std::static_pointer_cast<const GAFResourcesInfoTexture>(*i_res);
+
                             if (*presentTexture == compareTexture)
                             {
                                 present = true;
@@ -279,7 +238,7 @@ void GAFAsset::parseReferences(std::vector<GAFResourcesInfo*>& dest)
 
                     if (!present)
                     {
-                        dest.push_back(new GAFResourcesInfoTexture(compareTexture));
+                        dest.push_back(::std::make_shared<const GAFResourcesInfoTexture>(compareTexture));
                     }
                 }
             }
@@ -289,15 +248,14 @@ void GAFAsset::parseReferences(std::vector<GAFResourcesInfo*>& dest)
         auto textDatas = i->second->getTextsData();
         for (auto i_text = textDatas.begin(), e_text = textDatas.end(); i_text != e_text; ++i_text)
         {
-            GAFResourcesInfoFont compareFont(i_text->second->m_textFormat.m_font);
+            const GAFResourcesInfoFont compareFont(i_text->second->m_textFormat.m_font);
             // check duplicates
             bool present = false;
             for (auto i_res = dest.begin(), e_res = dest.end(); i_res != e_res; ++i_res)
             {
                 if ((*i_res)->id == GAFResourcesInfo::ResourceId::Font)
                 {
-                    GAFResourcesInfoFont *presentFont = reinterpret_cast<GAFResourcesInfoFont*>(*i_res);
-
+                    auto presentFont = ::std::static_pointer_cast<const GAFResourcesInfoFont>(*i_res);
                     if (*presentFont == compareFont)
                     {
                         present = true;
@@ -308,7 +266,7 @@ void GAFAsset::parseReferences(std::vector<GAFResourcesInfo*>& dest)
 
             if (!present)
             {
-                dest.push_back(new GAFResourcesInfoFont(compareFont));
+                dest.push_back(::std::make_shared<const GAFResourcesInfoFont>(compareFont));
             }
         }
 
@@ -318,22 +276,18 @@ void GAFAsset::parseReferences(std::vector<GAFResourcesInfo*>& dest)
 
 void GAFAsset::loadTextures(const std::string& filePath, GAFTextureLoadDelegate_t delegate, cocos2d::ZipFile* bundle /*= nullptr*/)
 {
-    for (Timelines_t::iterator i = m_timelines.begin(), e = m_timelines.end(); i != e; i++)
+    for (auto i = m_timelines.begin(), e = m_timelines.end(); i != e; ++i)
     {
         i->second->loadImages(m_desiredAtlasScale);
 
         if (i->second->getTextureAtlas())
-        {
             m_textureManager->appendInfoFromTextureAtlas(i->second->getTextureAtlas());
-        }
     }
 
     loadImages(m_desiredAtlasScale);
 
     if (getTextureAtlas())
-    {
         m_textureManager->appendInfoFromTextureAtlas(getTextureAtlas());
-    }
 
     m_textureLoadDelegate = delegate;
     m_textureManager->loadImages(filePath, m_textureLoadDelegate, bundle);
@@ -370,22 +324,22 @@ void GAFAsset::_chooseTextureAtlas(float desiredAtlasScale)
 
 GAFSprite* GAFAsset::getCustomRegion(const std::string& linkageName)
 {
-    GAFTextureAtlas* atlas = getTextureAtlas();
+    GAFTextureAtlasConstPtr atlas = getTextureAtlas();
     const GAFTextureAtlas::Elements_t& elementsMap = atlas->getElements();
-    cocos2d::SpriteFrame * spriteFrame = nullptr;
+    cocos2d::SpriteFrame* spriteFrame = nullptr;
 
     GAFTextureAtlas::Elements_t::const_iterator elIt = std::find_if(
-        elementsMap.begin(),
-        elementsMap.end(),
-        [linkageName](const std::pair<uint32_t, GAFTextureAtlasElement*>& pair) { return pair.second->linkageName == linkageName; }); // Search for atlas element by its xref
-    
-    assert(elIt != elementsMap.end());
-    const GAFTextureAtlasElement* txElemet = nullptr;
-    if (elIt != elementsMap.end())
+        elementsMap.cbegin(),
+        elementsMap.cend(),
+        [linkageName](const std::pair<uint32_t, GAFTextureAtlasElementConstPtr>& pair) { return pair.second->linkageName == linkageName; }); // Search for atlas element by its xref
+
+    assert(elIt != elementsMap.cend());
+    GAFTextureAtlasElementConstPtr txElemet = nullptr;
+    if (elIt != elementsMap.cend())
     {
         txElemet = elIt->second;
-        GAFAssetTextureManager* txMgr = getTextureManager();
-        cocos2d::Texture2D * texture = txMgr->getTextureById(txElemet->atlasIdx + 1);
+        GAFAssetTextureManagerPtr txMgr = getTextureManager();
+        cocos2d::Texture2D* texture = txMgr->getTextureById(txElemet->atlasIdx + 1);
         if (texture)
         {
             spriteFrame = cocos2d::SpriteFrame::createWithTexture(texture, txElemet->bounds);
@@ -400,10 +354,10 @@ GAFSprite* GAFAsset::getCustomRegion(const std::string& linkageName)
     if (spriteFrame)
     {
         result = new GAFSprite();
-        
+
         result->initWithSpriteFrame(spriteFrame, txElemet->rotation);
         cocos2d::Vec2 pt = cocos2d::Vec2(0 - (0 - (txElemet->pivotPoint.x / result->getContentSize().width)),
-            0 + (1 - (txElemet->pivotPoint.y / result->getContentSize().height)));
+                                         0 + (1 - (txElemet->pivotPoint.y / result->getContentSize().height)));
         result->setAnchorPoint(pt);
 
         if (txElemet->getScale() != 1.0f)
@@ -416,49 +370,45 @@ GAFSprite* GAFAsset::getCustomRegion(const std::string& linkageName)
     return result;
 }
 
-void GAFAsset::useExternalTextureAtlas(std::vector<cocos2d::Texture2D *> &textures, GAFTextureAtlas::Elements_t& elements)
+/*void GAFAsset::useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements)
 {
-    for (size_t i = 0, e = textures.size(); i < e; i++)
+    for (size_t i = 0, e = textures.size(); i < e; ++i)
     {
-        m_textureManager->swapTexture(static_cast<uint32_t>(i+1), textures[i]);
+        m_textureManager->swapTexture(static_cast<uint32_t>(i + 1), textures[i]);
     }
-    
+
     for (Timelines_t::iterator i = m_timelines.begin(), e = m_timelines.end(); i != e; ++i)
     {
         for (auto& element : elements)
         {
-            i->second->getTextureAtlas()->swapElement(element.first, element.second);
+            i->second->m_currentTextureAtlas->swapElement(element.first, element.second);
         }
     }
-}
+}*/
 
-void GAFAsset::linkLibraryAsset(GAFAsset * library)
+void GAFAsset::linkLibraryAsset(GAFAssetConstPtr library)
 {
     if (m_libraryAsset == library)
-    {
         return;
-    }
-    CC_SAFE_RELEASE(m_libraryAsset);
+
     m_libraryAsset = library;
-    CC_SAFE_RETAIN(m_libraryAsset);
 }
 
-GAFAsset * GAFAsset::getLibraryAsset()
+GAFAssetConstPtr GAFAsset::getLibraryAsset() const
 {
     return m_libraryAsset;
 }
 
-void GAFAsset::setRootTimeline(GAFTimeline *tl)
+void GAFAsset::setRootTimeline(GAFTimelineConstPtr tl)
 {
     m_rootTimeline = tl;
-    //m_rootTimeline->retain();
     m_header.pivot = tl->getPivot();
     m_header.frameSize = tl->getRect();
 }
 
 bool GAFAsset::setRootTimeline(const std::string& name)
 {
-    for (Timelines_t::iterator i = m_timelines.begin(), e = m_timelines.end(); i != e; i++)
+    for (Timelines_t::const_iterator i = m_timelines.cbegin(), e = m_timelines.cend(); i != e; ++i)
     {
         const std::string& tl_name = i->second->getLinkageName();
         if (tl_name.compare(name) == 0)
@@ -481,52 +431,52 @@ bool GAFAsset::setRootTimeline(uint32_t id)
     return false;
 }
 
-GAFTimeline* GAFAsset::getRootTimeline() const
+GAFTimelineConstPtr GAFAsset::getRootTimeline() const
 {
     return m_rootTimeline;
 }
 
-GAFTimeline* GAFAsset::getTimelineByName(const std::string& name) const
+GAFTimelineConstPtr GAFAsset::getTimelineByName(const std::string& name) const
 {
-    for (Timelines_t::value_type it : m_timelines)
+    for (const auto& pair : m_timelines)
     {
-        if (it.second->getLinkageName() == name)
-            return it.second;
+        if (pair.second->getLinkageName() == name)
+            return pair.second;
     }
 
     if (m_libraryAsset != nullptr)
     {
-        for (Timelines_t::value_type it : m_libraryAsset->m_timelines)
+        for (const auto& pair : m_libraryAsset->m_timelines)
         {
-            if (it.second->getLinkageName() == name)
-                return it.second;
+            if (pair.second->getLinkageName() == name)
+                return pair.second;
         }
     }
 
     return nullptr;
 }
 
-void GAFAsset::pushTimeline(uint32_t timelineIdRef, GAFTimeline* t)
+void GAFAsset::pushTimeline(uint32_t timelineIdRef, GAFTimelinePtr t)
 {
     m_timelines[timelineIdRef] = t;
     //t->retain();
 }
 
-void GAFAsset::pushSound(uint32_t id, GAFSoundInfo* sound)
+void GAFAsset::pushSound(uint32_t id, GAFSoundInfoConstPtr sound)
 {
     m_soundInfos[id] = sound;
 }
 
-void GAFAsset::pushTextureAtlas(GAFTextureAtlas* atlas)
+void GAFAsset::pushTextureAtlas(GAFTextureAtlasPtr atlas)
 {
     m_textureAtlases.push_back(atlas);
 }
 
-void GAFAsset::soundEvent(GAFTimelineAction *action)
+void GAFAsset::soundEvent(const GAFTimelineAction& action) const
 {
     if (!m_soundDelegate) return;
 
-    std::string soundParams = action->getParam(GAFTimelineAction::PI_EVENT_DATA);
+    std::string soundParams = action.getParam(GAFTimelineAction::PI_EVENT_DATA);
 
     uint32_t soundId;
     GAFSoundInfo::SyncEvent syncEvent;
@@ -549,7 +499,7 @@ void GAFAsset::soundEvent(GAFTimelineAction *action)
         if (repeat == 0) repeat = 1;
     }
 
-    SoundInfos_t::iterator it = m_soundInfos.find(soundId);
+    SoundInfos_t::const_iterator it = m_soundInfos.find(soundId);
     CC_ASSERT(it != m_soundInfos.end());
 
     m_soundDelegate(it->second, repeat, syncEvent);
@@ -570,19 +520,14 @@ void GAFAsset::setSoundDelegate(GAFSoundDelegate_t delegate)
     m_soundDelegate = delegate;
 }
 
-GAFAssetTextureManager* GAFAsset::getTextureManager()
+GAFAssetTextureManagerPtr GAFAsset::getTextureManager() const
 {
     return m_textureManager;
 }
 
-GAFTextureAtlas* GAFAsset::getTextureAtlas()
+GAFTextureAtlasConstPtr GAFAsset::getTextureAtlas() const
 {
     return m_currentTextureAtlas;
-}
-
-Timelines_t& GAFAsset::getTimelines()
-{
-    return m_timelines;
 }
 
 const Timelines_t& GAFAsset::getTimelines() const

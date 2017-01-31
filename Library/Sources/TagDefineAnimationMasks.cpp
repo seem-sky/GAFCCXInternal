@@ -8,7 +8,7 @@
 
 NS_GAF_BEGIN
 
-void TagDefineAnimationMasks::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
+void TagDefineAnimationMasks::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     (void)asset;
     unsigned int count = in->readU32();

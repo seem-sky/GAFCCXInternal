@@ -2,7 +2,8 @@
 
 NS_GAF_BEGIN
 
-class GAFTextureAtlasElement;
+forward_this(GAFTextureAtlas);
+forward_this(GAFTextureAtlasElement);
 
 class GAFTextureAtlas
 {
@@ -24,21 +25,21 @@ public:
 
     static bool compareAtlasesById(const AtlasInfo& ai1, const AtlasInfo& ai2);
 
-    typedef std::vector<AtlasInfo> AtlasInfos_t;
-    typedef std::map<uint32_t, GAFTextureAtlasElement*> Elements_t;
+    using AtlasInfos_t = std::vector<AtlasInfo>;
+    using Elements_t = std::map<uint32_t, GAFTextureAtlasElementConstPtr>;
 
     GAFTextureAtlas();
 private:
 
-    float           m_scale;
+    float           m_scale = 1.f;
     AtlasInfos_t    m_atlasInfos;
     Elements_t      m_elements;
 public:
     ~GAFTextureAtlas();
 
     void    pushAtlasInfo(const AtlasInfo& ai);
-    void    pushElement(uint32_t idx, GAFTextureAtlasElement* el);
-    bool    swapElement(uint32_t idx, GAFTextureAtlasElement* el);
+    void    pushElement(uint32_t idx, GAFTextureAtlasElementConstPtr el);
+    bool    swapElement(uint32_t idx, GAFTextureAtlasElementConstPtr el);
 
     void    setScale(float val);
     float   getScale() const;

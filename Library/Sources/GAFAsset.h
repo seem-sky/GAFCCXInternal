@@ -15,36 +15,36 @@ class GAFObject;
 class GAFAssetTextureManager;
 class GAFTimelineAction;
 
-class GAFLoader;
+forward_this(GAFLoader);
+forward_this(GAFAsset);
+forward_this(GAFTimeline);
+forward_this(GAFTimelineAction);
+forward_this(GAFAssetTextureManager);
 
-class GAFAsset : public cocos2d::Ref
+class GAFAsset : public ::std::enable_shared_from_this<GAFAsset>
 {
     friend class GAFObject;
 private:
     GAFHeader               m_header;
-	Timelines_t				m_timelines;
-    GAFTimeline*            m_rootTimeline;
+    Timelines_t             m_timelines;
+    GAFTimelineConstPtr     m_rootTimeline;
     SoundInfos_t            m_soundInfos;
     TextureAtlases_t        m_textureAtlases; // custom regions
-    GAFTextureAtlas*        m_currentTextureAtlas;
-    GAFAsset*               m_libraryAsset;
+    GAFTextureAtlasConstPtr m_currentTextureAtlas;
+    GAFAssetConstPtr        m_libraryAsset;
 
-    void setRootTimeline(GAFTimeline* tl);
+    
+    GAFTextureLoadDelegate_t    m_textureLoadDelegate = nullptr;
+    GAFAssetTextureManagerPtr   m_textureManager;
 
-    void parseReferences(std::vector<GAFResourcesInfo*> &dest);
-    void loadTextures(const std::string& filePath, GAFTextureLoadDelegate_t delegate, cocos2d::ZipFile* bundle = nullptr);
-    void _chooseTextureAtlas(float desiredAtlasScale);
-    GAFTextureLoadDelegate_t m_textureLoadDelegate;
-	GAFAssetTextureManager*	m_textureManager;
+    GAFSoundDelegate_t      m_soundDelegate = nullptr;
 
-    GAFSoundDelegate_t m_soundDelegate;
-
-    unsigned int            m_sceneFps;
-    unsigned int            m_sceneWidth;
-    unsigned int            m_sceneHeight;
+    uint32_t                m_sceneFps = 60;
+    uint32_t                m_sceneWidth = 0;
+    uint32_t                m_sceneHeight = 0;
     cocos2d::Color4B        m_sceneColor;
 
-    float                   m_desiredAtlasScale;
+    float                   m_desiredAtlasScale = 1.f;
 
     std::string             m_gafFileName;
 
@@ -53,56 +53,62 @@ private:
         Normal = 0,
         DryRun
     };
-    State                   m_state; // avoid to pass this parameter to public methods to prevent usage
+
+    State                   m_state = State::Normal; // avoid to pass this parameter to public methods to prevent usage
+
+    int                     _majorVersion = 0;
+    int                     _minorVersion = 0;
 
 private:
-    int _majorVersion;
-    int _minorVersion;
+    GAFAsset();
+
+    void setRootTimeline(GAFTimelineConstPtr tl);
+
+    void parseReferences(std::vector<GAFResourcesInfoConstPtr>&dest);
+    void loadTextures(const std::string& filePath, GAFTextureLoadDelegate_t delegate, cocos2d::ZipFile* bundle = nullptr);
+    void _chooseTextureAtlas(float desiredAtlasScale);
+
 public:
     /// Initializes asset with bGAF data
 
-    bool                        initWithGAFFile(const std::string& filePath, GAFTextureLoadDelegate_t delegate, GAFLoader* customLoader = nullptr);
+    bool                        initWithGAFFile(const std::string& filePath, GAFTextureLoadDelegate_t delegate, GAFLoaderPtr customLoader = nullptr);
 
-    bool                        initWithGAFBundle(const std::string& zipfilePath, const std::string& entryFile, GAFTextureLoadDelegate_t delegate, GAFLoader* customLoader = nullptr);
+    bool                        initWithGAFBundle(const std::string& zipfilePath, const std::string& entryFile, GAFTextureLoadDelegate_t delegate, GAFLoaderPtr customLoader = nullptr);
 
-	void						pushTimeline(uint32_t timelineIdRef, GAFTimeline* t);
-    void                        pushSound(uint32_t id, GAFSoundInfo* sound);
-    void                        soundEvent(GAFTimelineAction *action);
+    void                        pushTimeline(uint32_t timelineIdRef, GAFTimelinePtr t);
+    void                        pushSound(uint32_t id, GAFSoundInfoConstPtr sound);
+    void                        soundEvent(const GAFTimelineAction& action) const;
 
-    void                        pushTextureAtlas(GAFTextureAtlas* atlas);
+    void                        pushTextureAtlas(GAFTextureAtlasPtr atlas);
 
     void                        setHeader(GAFHeader& h);
     const GAFHeader&            getHeader() const;
     
     bool                        setRootTimeline(const std::string& name);
     bool                        setRootTimeline(uint32_t id);
-    GAFTimeline*                getRootTimeline() const;
-    GAFTimeline*                getTimelineByName(const std::string& name) const;
+    GAFTimelineConstPtr         getRootTimeline() const;
+    GAFTimelineConstPtr         getTimelineByName(const std::string& name) const;
 
-	const Timelines_t&			getTimelines() const;
-    Timelines_t&                getTimelines();
+    const Timelines_t&          getTimelines() const;
 
-    static GAFAsset*            createWithBundle(const std::string& zipfilePath, const std::string& entryFile, GAFTextureLoadDelegate_t delegate, GAFLoader* customLoader = nullptr);
-    static GAFAsset*            createWithBundle(const std::string& zipfilePath, const std::string& entryFile);
-    static GAFAsset*            create(const std::string& gafFilePath, GAFTextureLoadDelegate_t delegate, GAFLoader* customLoader = nullptr);
-    static GAFAsset*            create(const std::string& gafFilePath);
+    static GAFAssetPtr          createWithBundle(const std::string& zipfilePath, const std::string& entryFile, GAFTextureLoadDelegate_t delegate, GAFLoaderPtr customLoader = nullptr);
+    static GAFAssetPtr          createWithBundle(const std::string& zipfilePath, const std::string& entryFile);
+    static GAFAssetPtr          create(const std::string& gafFilePath, GAFTextureLoadDelegate_t delegate, GAFLoaderPtr customLoader = nullptr);
+    static GAFAssetPtr          create(const std::string& gafFilePath);
 
-    static void                 getResourceReferences(const std::string& gafFilePath, std::vector<GAFResourcesInfo*> &dest);
-    static void                 getResourceReferencesFromBundle(const std::string& zipfilePath, const std::string& entryFile, std::vector<GAFResourcesInfo*> &dest);
+    static void                 getResourceReferences(const std::string& gafFilePath, std::vector<GAFResourcesInfoConstPtr> &dest);
+    static void                 getResourceReferencesFromBundle(const std::string& zipfilePath, const std::string& entryFile, std::vector<GAFResourcesInfoConstPtr> &dest);
     
-    void                        useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements);
-    void                        linkLibraryAsset(GAFAsset* library);
-    GAFAsset*                   getLibraryAsset();
+    //void                        useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements);
+    void                        linkLibraryAsset(GAFAssetConstPtr library);
+    GAFAssetConstPtr            getLibraryAsset() const;
 
-    GAFTextureAtlas*            getTextureAtlas();
+    GAFTextureAtlasConstPtr     getTextureAtlas() const;
     void                        loadImages(float desiredAtlasScale);
     GAFSprite*                  getCustomRegion(const std::string& name);
 
-    GAFAsset();
-    ~GAFAsset();
-
     /// List of GAFAnimationFrame objects	
-    static bool                 isAssetVersionPlayable(const char * version);
+    static bool                 isAssetVersionPlayable(const char* version);
 
     GAFObject*                  createObject();
     GAFObject*                  createObjectAndRun(bool looped);
@@ -115,7 +121,7 @@ public:
     void                        setTextureLoadDelegate(GAFTextureLoadDelegate_t delegate);
     void                        setSoundDelegate(GAFSoundDelegate_t delagate);
 
-    GAFAssetTextureManager*     getTextureManager();
+    GAFAssetTextureManagerPtr  getTextureManager() const;
 
     const unsigned int getSceneFps() const;
     const unsigned int getSceneWidth() const;

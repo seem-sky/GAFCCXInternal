@@ -31,6 +31,17 @@ for (__type::iterator i = __instance.begin(), e = __instance.end(); i != e; ++i)
     delete i->second; \
 } __instance.clear()
 
+#define forward_this(__class__)\
+class __class__;\
+using __class__##Ptr = ::std::shared_ptr<__class__>;\
+using __class__##ConstPtr = ::std::shared_ptr<const __class__>;\
+using __class__##SPtr = ::std::shared_ptr<__class__>;\
+using __class__##ConstSPtr = ::std::shared_ptr<const __class__>;\
+using __class__##UPtr = ::std::unique_ptr<__class__>;\
+using __class__##ConstUPtr = ::std::unique_ptr<const __class__>;\
+using __class__##WPtr = ::std::weak_ptr<__class__>;\
+using __class__##ConstWPtr = ::std::weak_ptr<const __class__>
+
 
 #ifndef GAF_ENABLE_NEW_UNIFORM_SETTER
 // Fast uniform setter is available since v3.2

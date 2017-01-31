@@ -13,8 +13,8 @@ protected:
 public:
     GAFScrollView();
 
-    static GAFScrollView* create(GAFAsset* anAsset, GAFTimeline* timeline);
-    virtual bool init(GAFAsset* anAnimationData, GAFTimeline* timeline) override;
+    static GAFScrollView* create(GAFAssetConstPtr anAsset, GAFTimelineConstPtr timeline);
+    virtual bool init(GAFAssetConstPtr anAnimationData, GAFTimelineConstPtr timeline) override;
 
     inline GAFObject* getInnerContainer() const { return m_innerContainer; }
     GAFObject* getScrollBarH() const { return m_scrollBarH; }
@@ -24,7 +24,7 @@ public:
 
 protected:
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
-    virtual void processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx) override;
+    virtual void processGAFTimeline(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx) override;
 };
 
 NS_GAF_END

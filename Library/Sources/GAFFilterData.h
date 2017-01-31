@@ -5,6 +5,8 @@ NS_GAF_BEGIN
 
 class GAFMovieClip;
 
+forward_this(GAFFilterData);
+
 class GAFFilterData
 {
 protected:
@@ -13,13 +15,12 @@ public:
 
     virtual ~GAFFilterData() {}
     
-    GAFFilterType           getType() const
+    GAFFilterType getType() const
     {
         return m_type;
     }
 
-    GAFFilterData(GAFFilterType type) : m_type(type)
-    {}
+    GAFFilterData(GAFFilterType type) : m_type(type) {}
 
     virtual void apply(GAFMovieClip*){};
 };

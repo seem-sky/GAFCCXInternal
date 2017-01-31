@@ -9,7 +9,7 @@ class GAFCanvasView : public GAFLayoutView
 public:
     GAFCanvasView();
 
-    static GAFCanvasView* create(GAFAsset* anAsset, GAFTimeline* timeline);
+    static GAFCanvasView* create(GAFAssetConstPtr anAsset, GAFTimelineConstPtr timeline);
 
 protected:
 

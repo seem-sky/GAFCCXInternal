@@ -7,16 +7,12 @@
 
 NS_GAF_BEGIN
 
-GAFSubobjectState::GAFSubobjectState() :
-objectIdRef(IDNONE),
-maskObjectIdRef(IDNONE)
+GAFSubobjectState::GAFSubobjectState()
 {
-    m_refCount = 1;
 }
 
 GAFSubobjectState::~GAFSubobjectState()
 {
-    GAF_RELEASE_ARRAY(Filters_t, m_filters);
 }
 
 bool GAFSubobjectState::initEmpty(unsigned int ref)
@@ -36,7 +32,7 @@ void GAFSubobjectState::ctxMakeIdentity()
     _colorMults[GAFCTI_R] = _colorMults[GAFCTI_G] = _colorMults[GAFCTI_B] = 1;
 }
 
-void GAFSubobjectState::pushFilter(GAFFilterData* filter)
+void GAFSubobjectState::pushFilter(GAFFilterDataConstPtr filter)
 {
     m_filters.push_back(filter);
 }
@@ -44,21 +40,6 @@ void GAFSubobjectState::pushFilter(GAFFilterData* filter)
 const Filters_t& GAFSubobjectState::getFilters() const
 {
     return m_filters;
-}
-
-void GAFSubobjectState::addRef()
-{
-    m_refCount++;
-}
-
-void GAFSubobjectState::release()
-{
-    --m_refCount;
-
-    if (0 == m_refCount)
-    {
-        delete this;
-    }
 }
 
 NS_GAF_END

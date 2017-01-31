@@ -4,16 +4,14 @@
 #include "TagDefineAnimationFrames2.h"
 
 NS_GAF_BEGIN
-class GAFLoader;
-class GAFSubobjectState;
 
 class TagDefineAnimationFrames3 : public TagDefineAnimationFrames2
 {
 protected:
-    GAFSubobjectState* extractState(GAFStream* in, GAFTimeline* timeline) const override;
+    virtual GAFSubobjectStatePtr extractState(GAFStreamPtr in, GAFTimelinePtr timeline) const override;
 
 public:
-    explicit TagDefineAnimationFrames3(GAFLoader* loader);
+    explicit TagDefineAnimationFrames3(GAFLoaderPtr loader);
 };
 
 NS_GAF_END

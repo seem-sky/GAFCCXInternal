@@ -5,21 +5,28 @@
 
 NS_GAF_BEGIN
 
-class GAFAsset;
-class GAFTimeline;
+forward_this(GAFLoader);
 
-class GAFStream;
-class DefinitionTagBase;
-class GAFHeader;
-class GAFFile;
+forward_this(GAFAsset);
+forward_this(GAFTimeline);
 
-class GAFLoader
+forward_this(GAFStream);
+forward_this(DefinitionTagBase);
+forward_this(GAFHeader);
+forward_this(GAFFile);
+
+class GAFLoader : public ::std::enable_shared_from_this<GAFLoader>
 {
 public:
-    typedef std::map<uint32_t, CustomProperties_t> CustomPropertiesMap_t; // Custom properties set by timeline id
+    using CustomPropertiesMap_t = std::map<uint32_t, CustomProperties_t>; // Custom properties set by timeline id
+
+    static GAFLoaderPtr create();
+
+protected:
+    GAFLoader() = default;
 
 private:
-    GAFStream*              m_stream;
+    GAFStreamPtr            m_stream;
     CustomPropertiesMap_t   m_customProperties;
 
     void                    _readHeaderEnd(GAFHeader&);
@@ -30,27 +37,26 @@ private:
     void                    _registerTagLoadersV4();
 
 protected:
-    typedef std::map</*Tags::Enum*/ uint32_t, DefinitionTagBase*> TagLoaders_t;
+    using TagLoaders_t = std::map</*Tags::Enum*/ uint32_t, DefinitionTagBasePtr>;
     TagLoaders_t            m_tagLoaders;
 
-    virtual void            _processLoad(GAFFile* file, GAFAsset*);
+    virtual void            _processLoad(GAFFilePtr file, GAFAssetPtr context);
 
 public:
-    GAFLoader();
-    ~GAFLoader();
+    virtual ~GAFLoader() {}
 
-    bool                    loadFile(const std::string& fname, GAFAsset* context);
-    bool                    loadData(const unsigned char* data, size_t len, GAFAsset* context);
+    bool                    loadFile(const std::string& fname, GAFAssetPtr context);
+    bool                    loadData(const unsigned char* data, size_t len, GAFAssetPtr context);
     bool                    isFileLoaded() const;
 
-    GAFStream*              getStream() const;
+    GAFStreamConstPtr       getStream() const;
 
     const GAFHeader&        getHeader() const;
 
-    void                    registerTagLoader(unsigned int idx, DefinitionTagBase*);
+    void                    registerTagLoader(unsigned int idx, DefinitionTagBasePtr);
 
-    void                    loadTags(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline);
-    void                    readCustomProperties(GAFStream* in, CustomProperties_t* customProperties) const;
+    void                    loadTags(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline);
+    void                    readCustomProperties(GAFStreamPtr in, CustomProperties_t& customProperties) const;
 
     const                   CustomProperties_t& getCustomProperties(uint32_t timeline) const;
     void                    setCustomProperties(uint32_t timeline, CustomProperties_t cp);

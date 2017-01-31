@@ -4,6 +4,8 @@
 
 NS_GAF_BEGIN
 
+forward_this(GAFFile);
+
 class GAFFile
 {
 private:

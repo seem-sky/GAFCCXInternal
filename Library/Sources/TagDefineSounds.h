@@ -8,7 +8,7 @@ class TagDefineSounds : public DefinitionTagBase
 {
 public:
 
-    virtual void read(GAFStream*, GAFAsset*, GAFTimeline*) override;
+    virtual void read(GAFStreamPtr, GAFAssetPtr, GAFTimelinePtr) override;
 
 };
 

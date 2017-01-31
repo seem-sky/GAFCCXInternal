@@ -4,14 +4,16 @@
 
 NS_GAF_BEGIN
 
-class GAFFile;
+forward_this(GAFStream);
+forward_this(GAFFile);
 
 class GAFStream
 {
+    friend class GAFLoader;
 private:
-    GAFFile*            m_input;
-    unsigned char       m_currentByte;
-    unsigned char       m_unusedBits;
+    GAFFilePtr          m_input;
+    unsigned char       m_currentByte = 0;
+    unsigned char       m_unusedBits = 0;
 
     struct TagRecord
     {
@@ -20,11 +22,11 @@ private:
         Tags::Enum tagType;
     };
 
-    typedef std::stack<TagRecord> TagStack_t;
+    using TagStack_t = std::stack<TagRecord>;
     TagStack_t          m_tagStack;
 
 public:
-    GAFStream(GAFFile* input);
+    explicit GAFStream(GAFFilePtr input);
     ~GAFStream();
 
     void                 readNBytesOfT(void* dest, unsigned int);
@@ -47,7 +49,7 @@ public:
 
     void                 readString(std::string* out);
 
-    GAFFile*             getInput() const;
+    GAFFileConstPtr      getInput() const;
 
     Tags::Enum           openTag();
     void                 closeTag();

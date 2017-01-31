@@ -2,6 +2,8 @@
 
 NS_GAF_BEGIN
 
+forward_this(GAFTextData);
+
 class GAFTextData
 {
     friend class TagDefineTextField;
@@ -17,10 +19,10 @@ public:
             Center,
             Justify,
             Start,
-            End            
+            End
         };
 
-        TextAlign m_align;
+        TextAlign m_align = TextAlign::Left;
         cocos2d::TextHAlignment getTextAlignForCocos() const;
 
         float m_letterSpacing; // !! unused

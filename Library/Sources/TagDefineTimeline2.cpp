@@ -7,16 +7,14 @@
 #include "GAFTimeline.h"
 
 #include "json/document.h"
-#include "json/stringbuffer.h"
-#include "json/prettywriter.h"
 
 NS_GAF_BEGIN
 
-TagDefineTimeline2::TagDefineTimeline2(GAFLoader* loader) : TagDefineTimeline(loader)
+TagDefineTimeline2::TagDefineTimeline2(GAFLoaderPtr loader) : TagDefineTimeline(loader)
 {
 }
 
-void TagDefineTimeline2::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
+void TagDefineTimeline2::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     unsigned int id = in->readU32();
     unsigned int framesCount = in->readU32();
@@ -26,7 +24,7 @@ void TagDefineTimeline2::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timel
     PrimitiveDeserializer::deserialize(in, &aabb);
     PrimitiveDeserializer::deserialize(in, &pivot);
     
-    GAFTimeline *tl = new GAFTimeline(timeline, id, aabb, pivot, framesCount); // will be released in assset dtor
+    auto tl = ::std::make_shared<GAFTimeline>(timeline, id, aabb, pivot, framesCount);
     
     //////////////////////////////////////////////////////////////////////////
     
@@ -37,13 +35,15 @@ void TagDefineTimeline2::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timel
     in->readString(&temp);
     tl->setBaseClass(temp);
     
-    m_loader->loadTags(in, asset, tl);
+    auto ldr = m_loader.lock();
+    assert(ldr);
+
+    ldr->loadTags(in, asset, tl);
     
     asset->pushTimeline(id, tl);
+
     if (id == 0)
-    {
-        asset->setRootTimeline(0u);
-    }
+        asset->setRootTimeline(0);
 }
 
 NS_GAF_END

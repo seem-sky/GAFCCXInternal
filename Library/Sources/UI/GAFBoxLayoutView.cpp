@@ -23,7 +23,7 @@ GAFBoxLayoutView::GAFBoxLayoutView()
 {
 }
 
-GAFBoxLayoutView * GAFBoxLayoutView::create(GAFAsset * anAsset, GAFTimeline * timeline)
+GAFBoxLayoutView* GAFBoxLayoutView::create(GAFAssetConstPtr anAsset, GAFTimelineConstPtr timeline)
 {
     GAFBoxLayoutView* ret = new GAFBoxLayoutView();
 
@@ -37,7 +37,7 @@ GAFBoxLayoutView * GAFBoxLayoutView::create(GAFAsset * anAsset, GAFTimeline * ti
     return nullptr;
 }
 
-bool GAFBoxLayoutView::init(GAFAsset* anAnimationData, GAFTimeline* timeline)
+bool GAFBoxLayoutView::init(GAFAssetConstPtr anAnimationData, GAFTimelineConstPtr timeline)
 {
     bool ret = GAFLayoutView::init(anAnimationData, timeline);
 
@@ -102,11 +102,11 @@ void GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& c
     m_dynamicContentBoundsDirty = true;
 }
 
-void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, const GAFAnimationFrame* frame)
+void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, GAFAnimationFrameConstPtr frame)
 {
     ObjectsStatesPositions_t childrenToAlign;
     const GAFAnimationFrame::SubobjectStates_t& states = frame->getObjectStates();
-    for (const GAFSubobjectState* state : states)
+    for (const GAFSubobjectStateConstPtr state : states)
     {
         GAFObject* child = m_displayList[state->objectIdRef];
 
@@ -136,7 +136,7 @@ void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, co
     processChildren(out, childrenToAlign);
 }
 
-cocos2d::AffineTransform & GAFBoxLayoutView::addAdditionalTransformations(cocos2d::AffineTransform & mtx) const
+cocos2d::AffineTransform & GAFBoxLayoutView::addAdditionalTransformations(cocos2d::AffineTransform& mtx) const
 {
     if (m_scaleAlignedChildren)
     {
@@ -222,7 +222,7 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
     for (auto& childAndMtx : objects)
     {
         GAFObject* child = std::get<0>(childAndMtx);
-        const GAFSubobjectState* state = std::get<1>(childAndMtx);
+        const GAFSubobjectStateConstPtr state = std::get<1>(childAndMtx);
         cocos2d::AffineTransform& stateMatrix = std::get<2>(childAndMtx);
 
         if (state)
@@ -411,7 +411,7 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
     for (auto& childAndMtx : objects)
     {
         GAFObject* child = std::get<0>(childAndMtx);
-        const GAFSubobjectState* state = std::get<1>(childAndMtx);
+        const GAFSubobjectStateConstPtr state = std::get<1>(childAndMtx);
         cocos2d::AffineTransform& stateMatrix = std::get<2>(childAndMtx);
 
         stateMatrix.tx += contentOffset.x;

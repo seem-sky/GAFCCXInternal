@@ -5,8 +5,6 @@
 
 NS_GAF_BEGIN
 
-class GAFTextureAtlas;
-
 class ExternalObject
 {
 private:
@@ -28,8 +26,14 @@ public:
     void setCustomProperties(const CustomProperties_t& customProperties) { m_customProperties = customProperties; }
 };
 
-class GAFTimeline : public cocos2d::Ref
+forward_this(GAFTimeline);
+forward_this(GAFTextureAtlas);
+forward_this(GAFAnimationSequence);
+
+class GAFTimeline
 {
+    friend class GAFAsset;
+
 private:
     TextureAtlases_t        m_textureAtlases;
     AnimationMasks_t        m_animationMasks;
@@ -44,9 +48,9 @@ private:
     cocos2d::Rect           m_aabb;
     cocos2d::Point          m_pivot;
 
-    unsigned int            m_sceneFps;
-    unsigned int            m_sceneWidth;
-    unsigned int            m_sceneHeight;
+    uint32_t                m_sceneFps = 0;
+    uint32_t                m_sceneWidth = 0;
+    uint32_t                m_sceneHeight = 0;
     cocos2d::Color4B        m_sceneColor;
 
     uint32_t                m_framesCount;
@@ -55,26 +59,26 @@ private:
     std::string             m_baseClass;
     std::string             m_originClass;
 
-    GAFTextureAtlas*        m_currentTextureAtlas;
-    GAFTextureLoadDelegate_t m_textureLoadDelegate;
+    GAFTextureAtlasConstPtr     m_currentTextureAtlas;
+    GAFTextureLoadDelegate_t    m_textureLoadDelegate;
 
-    float                   m_usedAtlasContentScaleFactor;
+    float                   m_usedAtlasContentScaleFactor = 1.f;
 
-    GAFTimeline*            m_parent; // weak
+    GAFTimelineConstWPtr    m_parent; // weak
 
     void                    _chooseTextureAtlas(float desiredAtlasScale);
 public:
-    GAFTimeline(GAFTimeline* parent, uint32_t id, const cocos2d::Rect& aabb, cocos2d::Point& pivot, uint32_t framesCount);
+    GAFTimeline(GAFTimelineConstPtr parent, uint32_t id, const cocos2d::Rect& aabb, cocos2d::Point& pivot, uint32_t framesCount);
     virtual ~GAFTimeline();
 
-    void                        pushTextureAtlas(GAFTextureAtlas* atlas);
+    void                        pushTextureAtlas(GAFTextureAtlasConstPtr atlas);
     void                        pushAnimationMask(uint32_t objectId, uint32_t elementAtlasIdRef, GAFCharacterType charType);
     void                        pushAnimationObject(uint32_t objectId, uint32_t elementAtlasIdRef, GAFCharacterType charType);
-    void                        pushAnimationFrame(GAFAnimationFrame* frame);
+    void                        pushAnimationFrame(GAFAnimationFrameConstPtr frame);
     void                        pushAnimationSequence(const std::string& nameId, int start, int end);
     void                        pushNamedPart(uint32_t objectIdRef, const std::string& name);
-    void                        pushTextData(uint32_t objectIdRef, GAFTextData* textField);
-    void                        pushExternalObject(ExternalObject* externalObj);
+    void                        pushTextData(uint32_t objectIdRef, GAFTextDataConstPtr textField);
+    void                        pushExternalObject(ExternalObjectConstPtr externalObj);
 
     void                        setSceneFps(unsigned int);
     void                        setSceneWidth(unsigned int);
@@ -103,15 +107,15 @@ public:
     const std::string&          getOriginClass() const;
 
     /// get GAFAnimationSequence by name specified in editor
-    const GAFAnimationSequence* getSequence(const std::string& name) const;
+    GAFAnimationSequenceConstPtr getSequence(const std::string& name) const;
     /// get GAFAnimationSequence by last frame number in sequence	
-    const GAFAnimationSequence* getSequenceByLastFrame(size_t frame) const;
+    GAFAnimationSequenceConstPtr getSequenceByLastFrame(size_t frame) const;
     /// get GAFAnimationSequence by first frame number in sequence	
-    const GAFAnimationSequence* getSequenceByFirstFrame(size_t frame) const;
+    GAFAnimationSequenceConstPtr getSequenceByFirstFrame(size_t frame) const;
 
-    GAFTimeline*                getParent() const;
+    GAFTimelineConstPtr         getParent() const;
 
-    GAFTextureAtlas*            getTextureAtlas();
+    GAFTextureAtlasConstPtr     getTextureAtlas() const;
     void                        loadImages(float desiredAtlasScale);
 
     float                       usedAtlasScale() const;
@@ -127,18 +131,18 @@ private:
 
     // Custom fields functionality
 public:
-    void appendUserData(const std::string& K, GAFAnyInterface* V) { m_userData[K] = V; }
+    void appendUserData(const std::string& K, GAFAnyInterfacePtr V) { m_userData[K] = V; }
 
     template<class T> T getUserData(const std::string& K) 
     {
         CustomData_t::const_iterator it = m_userData.find(K);
         if (it == m_userData.end()) return T();
         
-        return reinterpret_cast<GAFAny<T>*>(it->second)->data;
+        return ::std::static_pointer_cast<GAFAny<T>>(it->second)->data;
     }
 
-private:    
-    typedef std::unordered_map<std::string, GAFAnyInterface*> CustomData_t;
+private:
+    using CustomData_t = std::unordered_map<std::string, GAFAnyInterfacePtr>;
     CustomData_t m_userData;
 };
 

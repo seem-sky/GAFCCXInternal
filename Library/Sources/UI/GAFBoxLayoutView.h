@@ -165,8 +165,8 @@ class GAFBoxLayoutView : public GAFLayoutView
 public:
     GAFBoxLayoutView();
 
-    static GAFBoxLayoutView* create(GAFAsset* anAsset, GAFTimeline* timeline);
-    virtual bool init(GAFAsset* anAnimationData, GAFTimeline* timeline) override;
+    static GAFBoxLayoutView* create(GAFAssetConstPtr anAsset, GAFTimelineConstPtr timeline);
+    virtual bool init(GAFAssetConstPtr anAnimationData, GAFTimelineConstPtr timeline) override;
     virtual cocos2d::Rect getInternalBoundingBox() const override;
 
     virtual void addChild(Node* child, int localZOrder, int tag) override;
@@ -175,7 +175,7 @@ public:
     virtual void removeAllChildrenWithCleanup(bool cleanup) override;
 
 protected:
-    typedef std::tuple<GAFObject*, const GAFSubobjectState*, cocos2d::AffineTransform> ObjectStatePosition_t;
+    typedef std::tuple<GAFObject*, const GAFSubobjectStateConstPtr, cocos2d::AffineTransform> ObjectStatePosition_t;
     typedef std::vector<ObjectStatePosition_t> ObjectsStatesPositions_t;
 
     Direction::Enum m_direction;
@@ -195,7 +195,7 @@ protected:
     mutable bool m_dynamicContentBoundsDirty;
 
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
-    virtual void processStates(cocos2d::Node* out, uint32_t frameIndex, const GAFAnimationFrame* frame) override;
+    virtual void processStates(cocos2d::Node* out, uint32_t frameIndex, GAFAnimationFrameConstPtr frame) override;
     virtual cocos2d::AffineTransform& addAdditionalTransformations(cocos2d::AffineTransform& mtx) const override;
 
     virtual void processChildren(cocos2d::Node* out, ObjectsStatesPositions_t& objects);

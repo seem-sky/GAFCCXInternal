@@ -1,26 +1,27 @@
 #pragma once
 
 #include "DefinitionTagBase.h"
+#include "GAFLoader.h"
 
 NS_GAF_BEGIN
-    class GAFLoader;
-    class GAFSubobjectState;
+forward_this(GAFLoader);
+forward_this(GAFSubobjectState);
 
 class TagDefineAnimationFrames2 : public DefinitionTagBase
 {
 protected:
-    virtual GAFSubobjectState* extractState(GAFStream* in, GAFTimeline* timeline) const;
+    virtual GAFSubobjectStatePtr extractState(GAFStreamPtr in, GAFTimelinePtr timeline) const;
     
-    typedef std::unordered_map<unsigned int, GAFSubobjectState*> States_t;
+    typedef std::unordered_map<unsigned int, GAFSubobjectStatePtr> States_t;
     States_t m_currentStates;
 
-    GAFLoader*  m_loader; // weak
+    GAFLoaderWPtr m_loader; // weak
 
 public:
-    explicit TagDefineAnimationFrames2(GAFLoader* loader);
+    explicit TagDefineAnimationFrames2(GAFLoaderPtr loader);
     ~TagDefineAnimationFrames2();
     
-    virtual void read(GAFStream*, GAFAsset*, GAFTimeline*) override;
+    virtual void read(GAFStreamPtr, GAFAssetPtr, GAFTimelinePtr) override;
 
 };
 

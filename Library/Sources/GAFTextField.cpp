@@ -17,7 +17,7 @@ GAFTextField::~GAFTextField()
 }
 
 // TODO: Factory
-void GAFTextField::initWithTextData(const GAFTextData* data)
+void GAFTextField::initWithTextData(const GAFTextDataConstPtr data)
 {
     bool prevPopupNotify = cocos2d::FileUtils::getInstance()->isPopupNotify(); // disabling annoing missing font notifiers
     cocos2d::FileUtils::getInstance()->setPopupNotify(false);

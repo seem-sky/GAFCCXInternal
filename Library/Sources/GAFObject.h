@@ -4,13 +4,13 @@
 #include "GAFSprite.h"
 #include "GAFCollections.h"
 #include "GAFTextureAtlas.h"
-#include "GAFFilterData.h"
 #include "GAFSubobjectState.h"
 
 NS_GAF_BEGIN
-class GAFSubobjectState;
-class GAFAsset;
-class GAFTimeline;
+
+forward_this(GAFAsset);
+forward_this(GAFTimeline);
+forward_this(GAFFilterData);
 
 struct GAFObjectClass
 {
@@ -90,11 +90,11 @@ class GAFObject : public GAFSprite
 {
 public:
 
-    typedef std::vector<GAFObject*> DisplayList_t;
-    typedef std::vector<cocos2d::ClippingNode*> MaskList_t;
-    typedef std::map<const std::string, const std::string> CustomPropertiesMap_t;
+    using DisplayList_t = std::vector<GAFObject*>;
+    using MaskList_t = std::vector<cocos2d::ClippingNode*>;
+    using CustomPropertiesMap_t = std::map<const std::string, const std::string>;
 
-    typedef std::function<void(float dt)> GAFObjectUpdateCallback;
+    using GAFObjectUpdateCallback = std::function<void(float dt)>;
 
 private:
     GAFSequenceDelegate_t                   m_sequenceDelegate;
@@ -131,8 +131,8 @@ private:
 protected:
     cocos2d::Node*                          m_container;
     GAFObject*                              m_timelineParentObject;
-    GAFAsset*                               m_asset;
-    GAFTimeline*                            m_timeline;
+    GAFAssetConstPtr                        m_asset;
+    GAFTimelineConstPtr                     m_timeline;
     DisplayList_t                           m_displayList;
     MaskList_t                              m_masks;
     GAFCharacterType                        m_charType;
@@ -143,7 +143,7 @@ protected:
     Filters_t                               m_parentFilters;
     cocos2d::Vec4                           m_parentColorTransforms[2];
 
-    GAFFilterData*                          m_customFilter;
+    GAFFilterDataConstPtr                   m_customFilter;
 
     bool                                    m_isManualColor;
     bool                                    m_isManualPosition;
@@ -162,13 +162,13 @@ protected:
     void  instantiateObject(const AnimationObjects_t& objs, const AnimationMasks_t& masks);
 
     virtual void realizeFrame(cocos2d::Node* out, uint32_t frameIndex);
-    virtual void processStates(cocos2d::Node* out, uint32_t frameIndex, const GAFAnimationFrame* frame);
+    virtual void processStates(cocos2d::Node* out, uint32_t frameIndex, GAFAnimationFrameConstPtr frame);
     virtual void rearrangeSubobject(cocos2d::Node* out, cocos2d::Node* child, int zIndex);
-    virtual void preProcessGAFObject(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx);
-    virtual void processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx);
-    virtual void processGAFImage(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx);
-    virtual void processGAFTextField(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx);
-    virtual void postProcessGAFObject(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx);
+    virtual void preProcessGAFObject(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
+    virtual void processGAFTimeline(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
+    virtual void processGAFImage(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
+    virtual void processGAFTextField(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
+    virtual void postProcessGAFObject(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
 
     virtual cocos2d::AffineTransform& processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties);
     virtual cocos2d::AffineTransform& processGAFImageStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx);
@@ -179,7 +179,7 @@ protected:
     virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties);
     virtual bool allNecessaryFieldsExist(const CustomPropertiesMap_t& customProperties) const;
 
-    virtual CustomPropertiesMap_t& fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, const GAFSubobjectState* state) const;
+    virtual CustomPropertiesMap_t& fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, GAFSubobjectStateConstPtr state) const;
 
     virtual GAFObject* encloseNewTimeline(uint32_t reference);
 
@@ -226,7 +226,7 @@ public:
     
     virtual void update(float delta) override;
 
-    void useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements);
+    //void useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements);
 
 public:
     void        processAnimation();
@@ -285,19 +285,19 @@ public:
     GAFObject();
     virtual ~GAFObject();
 
-    static GAFObject* create(GAFAsset* anAsset, GAFTimeline* timeline);
+    static GAFObject* create(GAFAssetConstPtr anAsset, GAFTimelineConstPtr timeline);
 
-    virtual bool init(GAFAsset * anAnimationData, GAFTimeline* timeline);
+    virtual bool init(GAFAssetConstPtr anAnimationData, GAFTimelineConstPtr timeline);
 
     bool hasSequences() const;
 
     bool isVisibleInCurrentFrame() const;
 
     const AnimationSequences_t& getSequences() const;
-    GAFTimeline* getTimeLine() { return m_timeline; }
+    GAFTimelineConstPtr getTimeLine() { return m_timeline; } const
     DisplayList_t& getDisplayList() { return m_displayList; }
     const DisplayList_t& getDisplayList() const { return m_displayList; }
-    GAFAsset* getAsset() { return m_asset; }
+    GAFAssetConstPtr getAsset() { return m_asset; } const
     GAFCharacterType getCharType() const { return m_charType; }
     void setLastVisibleInFrame(uint32_t frame) { m_lastVisibleInFrame = frame; }
     uint32_t getLastVisibleInFrame() const { return m_lastVisibleInFrame; }
@@ -334,11 +334,8 @@ public:
     template <typename FilterSubtype>
     void setCustomFilter(const FilterSubtype* filter)
     {
-        CC_SAFE_DELETE(m_customFilter);
         if (filter)
-        {
-            m_customFilter = new FilterSubtype(*filter);
-        }
+            m_customFilter = ::std::make_shared<const FilterSubtype>(*filter);
     }
 
     //////////////////////////////////////////////////////////////////////////

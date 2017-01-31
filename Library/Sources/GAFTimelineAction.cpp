@@ -40,7 +40,7 @@ GAFActionType GAFTimelineAction::getType()
     return m_type;
 }
 
-const std::string& GAFTimelineAction::getParam(ParameterIndex idx)
+const std::string& GAFTimelineAction::getParam(ParameterIndex idx) const
 {
     CC_ASSERT(idx < m_params.size());
     return m_params[idx];

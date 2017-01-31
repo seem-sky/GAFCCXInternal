@@ -12,7 +12,7 @@ GAFScrollView::GAFScrollView()
 {
 }
 
-GAFScrollView* GAFScrollView::create(GAFAsset* anAsset, GAFTimeline* timeline)
+GAFScrollView* GAFScrollView::create(GAFAssetConstPtr anAsset, GAFTimelineConstPtr timeline)
 {
     GAFScrollView* ret = new GAFScrollView();
 
@@ -26,7 +26,7 @@ GAFScrollView* GAFScrollView::create(GAFAsset* anAsset, GAFTimeline* timeline)
     return nullptr;
 }
 
-bool GAFScrollView::init(GAFAsset* anAnimationData, GAFTimeline* timeline)
+bool GAFScrollView::init(GAFAssetConstPtr anAnimationData, GAFTimelineConstPtr timeline)
 {
     bool ret = GAFComponentView::init(anAnimationData, timeline);
     if (ret)
@@ -58,7 +58,7 @@ void GAFScrollView::processOwnCustomProperties(const CustomPropertiesMap_t& cust
     GAFComponentView::processOwnCustomProperties(customProperties);
 }
 
-void GAFScrollView::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+void GAFScrollView::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx)
 {
     if (child == m_innerContainer)
     {

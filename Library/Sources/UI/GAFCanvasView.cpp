@@ -10,7 +10,7 @@ GAFCanvasView::GAFCanvasView()
 {
 }
 
-GAFCanvasView * GAFCanvasView::create(GAFAsset * anAsset, GAFTimeline * timeline)
+GAFCanvasView * GAFCanvasView::create(GAFAssetConstPtr anAsset, GAFTimelineConstPtr timeline)
 {
     GAFCanvasView* ret = new GAFCanvasView();
 

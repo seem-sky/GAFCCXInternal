@@ -7,12 +7,12 @@
 
 NS_GAF_BEGIN
 
-TagDefineExternalObjects2::TagDefineExternalObjects2(GAFLoader* loader) :
-    m_loader(loader)
+TagDefineExternalObjects2::TagDefineExternalObjects2(GAFLoaderPtr loader)
+    : m_loader(loader)
 {
 }
 
-void TagDefineExternalObjects2::read(GAFStream* in, GAFAsset*, GAFTimeline* timeline)
+void TagDefineExternalObjects2::read(GAFStreamPtr in, GAFAssetPtr, GAFTimelinePtr timeline)
 {
     uint32_t count = in->readU32();
 
@@ -23,10 +23,13 @@ void TagDefineExternalObjects2::read(GAFStream* in, GAFAsset*, GAFTimeline* time
         std::string name;
         in->readString(&name);
 
-        ExternalObject* externalObj = new ExternalObject(objectIdRef, name);
+        auto externalObj = ::std::make_shared<ExternalObject>(objectIdRef, name);
+
+        auto ldr = m_loader.lock();
+        assert(ldr);
 
         CustomProperties_t properties;
-        m_loader->readCustomProperties(in, &properties);
+        ldr->readCustomProperties(in, properties);
         externalObj->setCustomProperties(properties);
 
         timeline->pushExternalObject(externalObj);

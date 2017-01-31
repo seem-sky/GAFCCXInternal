@@ -1,19 +1,22 @@
 #pragma once
 
+#include <memory>
+#include <map>
 #include <unordered_map>
-#include "GAFAnimationSequence.h"
+#include "GAFMacros.h"
 
 NS_GAF_BEGIN
 
-class GAFTextureAtlas;
-class GAFAnimationFrame;
 class GAFSprite;
-class GAFFilterData;
-class GAFTimeline;
-class ExternalObject;
-class GAFTextData;
 class GAFObject;
-class GAFSoundInfo;
+forward_this(GAFTextureAtlas);
+forward_this(GAFAnimationFrame);
+forward_this(GAFFilterData);
+forward_this(GAFTimeline);
+forward_this(ExternalObject);
+forward_this(GAFTextData);
+forward_this(GAFSoundInfo);
+forward_this(GAFAnimationSequence);
 
 enum class GAFFilterType : uint32_t
 {
@@ -61,6 +64,8 @@ enum
     GAFFirstFrameIndex = 0
 };
 
+forward_this(GAFAnyInterface);
+
 class GAFAnyInterface
 {
 public:
@@ -68,29 +73,30 @@ public:
 };
 
 template <typename T>
-class GAFAny : public GAFAnyInterface {
+class GAFAny : public GAFAnyInterface
+{
 public:
     explicit GAFAny(const T& data) : data(data) {}
     T data;
 };
 
-typedef std::tuple<uint32_t, GAFCharacterType>              AnimationObjectEx_t;
-typedef std::vector<GAFTextureAtlas*>                       TextureAtlases_t;
-typedef std::unordered_map<uint32_t, AnimationObjectEx_t>   AnimationMasks_t;      // Object id -> Element Atlas Id, Type
-typedef std::unordered_map<uint32_t, AnimationObjectEx_t>   AnimationObjects_t;    // Object id -> Element Atlas Id, Type
-typedef std::vector<GAFAnimationFrame*>                     AnimationFrames_t;
+using AnimationObjectEx_t = std::tuple<uint32_t, GAFCharacterType>;
+using TextureAtlases_t = std::vector<GAFTextureAtlasConstPtr>;
+using AnimationMasks_t = std::unordered_map<uint32_t, AnimationObjectEx_t>;      // Object id -> Element Atlas Id, Type
+using AnimationObjects_t = std::unordered_map<uint32_t, AnimationObjectEx_t>;    // Object id -> Element Atlas Id, Type
+using AnimationFrames_t = std::vector<GAFAnimationFrameConstPtr>;
 
-typedef std::vector<GAFFilterData*>                         Filters_t;
-typedef std::unordered_map<uint32_t, GAFTimeline*>          Timelines_t;
-typedef std::unordered_map<uint32_t, GAFTextData*>          TextsData_t;
+using Filters_t = std::vector<GAFFilterDataConstPtr>;
+using Timelines_t = std::unordered_map<uint32_t, GAFTimelinePtr>;
+using TextsData_t = std::unordered_map<uint32_t, GAFTextDataConstPtr>;
 
-typedef std::unordered_map<uint32_t, int>                   CaptureObjects_t;      // Object id -> capture flags
+using CaptureObjects_t = std::unordered_map<uint32_t, int>;      // Object id -> capture flags
 
-typedef std::unordered_map<std::string, GAFAnimationSequence>         AnimationSequences_t;
-typedef std::multimap<std::string, uint32_t>                          NamedParts_t;
-typedef std::unordered_map<uint32_t, ExternalObject*>                 ExternalObjects_t;
+using AnimationSequences_t = std::unordered_map<std::string, GAFAnimationSequenceConstPtr>;
+using NamedParts_t = std::multimap<std::string, uint32_t>;
+using ExternalObjects_t = std::unordered_map<uint32_t, ExternalObjectConstPtr>;
 
-typedef std::unordered_map<uint32_t, GAFSoundInfo*>         SoundInfos_t;
+using SoundInfos_t = std::unordered_map<uint32_t, GAFSoundInfoConstPtr>;
 
 static const uint32_t IDNONE = UINT_MAX;
 
@@ -101,6 +107,6 @@ struct CustomProperty
     std::vector<std::string> possibleValues;
 };
 
-typedef std::vector<CustomProperty> CustomProperties_t;
+using CustomProperties_t = std::vector<CustomProperty>;
 
 NS_GAF_END

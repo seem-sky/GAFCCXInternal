@@ -7,7 +7,7 @@
 
 NS_GAF_BEGIN
 
-void TagDefineNamedParts::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
+void TagDefineNamedParts::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     (void)asset;
     unsigned int count = in->readU32();

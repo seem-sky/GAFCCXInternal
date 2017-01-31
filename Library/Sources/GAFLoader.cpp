@@ -35,6 +35,11 @@
 
 NS_GAF_BEGIN
 
+GAFLoaderPtr GAFLoader::create()
+{
+    return ::std::shared_ptr<GAFLoader>(new GAFLoader);
+}
+
 void GAFLoader::_readHeaderEnd(GAFHeader& header)
 {
     header.framesCount = m_stream->readU16();
@@ -65,51 +70,38 @@ void GAFLoader::_readHeaderEndV4(GAFHeader& header)
 
 void GAFLoader::_registerTagLoadersV3()
 {
-    m_tagLoaders[Tags::TagDefineAtlas] = new TagDefineAtlas();
-    m_tagLoaders[Tags::TagDefineAnimationMasks] = new TagDefineAnimationMasks();
-    m_tagLoaders[Tags::TagDefineAnimationObjects] = new TagDefineAnimationObjects();
-    m_tagLoaders[Tags::TagDefineAnimationFrames] = new TagDefineAnimationFrames();
+    m_tagLoaders[Tags::TagDefineAtlas] = ::std::make_shared<TagDefineAtlas>();
+    m_tagLoaders[Tags::TagDefineAnimationMasks] = ::std::make_shared<TagDefineAnimationMasks>();
+    m_tagLoaders[Tags::TagDefineAnimationObjects] = ::std::make_shared<TagDefineAnimationObjects>();
+    m_tagLoaders[Tags::TagDefineAnimationFrames] = ::std::make_shared<TagDefineAnimationFrames>();
 }
 
 void GAFLoader::_registerTagLoadersV4()
 {
-    m_tagLoaders[Tags::TagDefineAnimationFrames2] = new TagDefineAnimationFrames2(this);
-    m_tagLoaders[Tags::TagDefineAnimationObjects2] = new TagDefineAnimationObjects();
-    m_tagLoaders[Tags::TagDefineAnimationMasks2] = new TagDefineAnimationMasks();
-    m_tagLoaders[Tags::TagDefineAtlas2] = new TagDefineAtlas();
-    m_tagLoaders[Tags::TagDefineAtlas3] = new TagDefineAtlas3();
-    m_tagLoaders[Tags::TagDefineAtlas4] = new TagDefineAtlas4();
-    m_tagLoaders[Tags::TagDefineTextFields] = new TagDefineTextField();
-    m_tagLoaders[Tags::TagDefineTimeline] = new TagDefineTimeline(this);
-    m_tagLoaders[Tags::TagDefineTimeline2] = new TagDefineTimeline2(this);
-    m_tagLoaders[Tags::TagDefineTimeline3] = new TagDefineTimeline3(this);
-    m_tagLoaders[Tags::TagDefineSounds] = new TagDefineSounds();
-    m_tagLoaders[Tags::TagDefineExternalObjects] = new TagDefineExternalObjects();
-    m_tagLoaders[Tags::TagDefineAnimationFrames3] = new TagDefineAnimationFrames3(this);
-    m_tagLoaders[Tags::TagDefineExternalObjects2] = new TagDefineExternalObjects2(this);
+    m_tagLoaders[Tags::TagDefineAnimationFrames2] = ::std::make_shared<TagDefineAnimationFrames2>(shared_from_this());
+    m_tagLoaders[Tags::TagDefineAnimationObjects2] = ::std::make_shared<TagDefineAnimationObjects>();
+    m_tagLoaders[Tags::TagDefineAnimationMasks2] = ::std::make_shared<TagDefineAnimationMasks>();
+    m_tagLoaders[Tags::TagDefineAtlas2] = ::std::make_shared<TagDefineAtlas>();
+    m_tagLoaders[Tags::TagDefineAtlas3] = ::std::make_shared<TagDefineAtlas3>();
+    m_tagLoaders[Tags::TagDefineAtlas4] = ::std::make_shared<TagDefineAtlas4>();
+    m_tagLoaders[Tags::TagDefineTextFields] = ::std::make_shared<TagDefineTextField>();
+    m_tagLoaders[Tags::TagDefineTimeline] = ::std::make_shared<TagDefineTimeline>(shared_from_this());
+    m_tagLoaders[Tags::TagDefineTimeline2] = ::std::make_shared<TagDefineTimeline2>(shared_from_this());
+    m_tagLoaders[Tags::TagDefineTimeline3] = ::std::make_shared<TagDefineTimeline3>(shared_from_this());
+    m_tagLoaders[Tags::TagDefineSounds] = ::std::make_shared<TagDefineSounds>();
+    m_tagLoaders[Tags::TagDefineExternalObjects] = ::std::make_shared<TagDefineExternalObjects>();
+    m_tagLoaders[Tags::TagDefineAnimationFrames3] = ::std::make_shared<TagDefineAnimationFrames3>(shared_from_this());
+    m_tagLoaders[Tags::TagDefineExternalObjects2] = ::std::make_shared<TagDefineExternalObjects2>(shared_from_this());
 }
 
 void GAFLoader::_registerTagLoadersCommon()
 {
-    m_tagLoaders[Tags::TagDefineStage] = new TagDefineStage();
-    m_tagLoaders[Tags::TagDefineNamedParts] = new TagDefineNamedParts();
-    m_tagLoaders[Tags::TagDefineSequences] = new TagDefineSequences();
+    m_tagLoaders[Tags::TagDefineStage] = ::std::make_shared<TagDefineStage>();
+    m_tagLoaders[Tags::TagDefineNamedParts] = ::std::make_shared<TagDefineNamedParts>();
+    m_tagLoaders[Tags::TagDefineSequences] = ::std::make_shared<TagDefineSequences>();
 }
 
-GAFLoader::GAFLoader():
-m_stream(nullptr)
-{
-}
-
-GAFLoader::~GAFLoader()
-{
-    for (TagLoaders_t::iterator i = m_tagLoaders.begin(), e = m_tagLoaders.end(); i != e; ++i)
-    {
-        delete i->second;
-    }
-}
-
-void GAFLoader::loadTags(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
+void GAFLoader::loadTags(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     bool tagEndRead = false;
 
@@ -146,7 +138,7 @@ void GAFLoader::loadTags(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
     }
 }
 
-void GAFLoader::readCustomProperties(GAFStream* in, CustomProperties_t* customProperties) const
+void GAFLoader::readCustomProperties(GAFStreamPtr in, CustomProperties_t& customProperties) const
 {
     std::string jsonStr;
     in->readString(&jsonStr);
@@ -188,7 +180,7 @@ void GAFLoader::readCustomProperties(GAFStream* in, CustomProperties_t* customPr
             }
         }
 
-        customProperties->push_back(custom_prop);
+        customProperties.push_back(custom_prop);
     }
 }
 
@@ -205,9 +197,9 @@ void GAFLoader::setCustomProperties(uint32_t timeline, CustomProperties_t cp)
     m_customProperties[timeline] = cp;
 }
 
-bool GAFLoader::loadData(const unsigned char* data, size_t len, GAFAsset* context)
+bool GAFLoader::loadData(const unsigned char* data, size_t len, GAFAssetPtr context)
 {
-    GAFFile* file = new GAFFile();
+    auto file = ::std::make_shared<GAFFile>();
 
     bool retval = false;
 
@@ -218,18 +210,16 @@ bool GAFLoader::loadData(const unsigned char* data, size_t len, GAFAsset* contex
         _processLoad(file, context);
     }
 
-    delete file;
-
     return retval;
 }
 
-void GAFLoader::_processLoad(GAFFile* file, GAFAsset* context)
+void GAFLoader::_processLoad(GAFFilePtr file, GAFAssetPtr context)
 {
-    m_stream = new GAFStream(file);
+    m_stream = ::std::make_shared<GAFStream>(file);
 
-    GAFHeader& header = m_stream->getInput()->getHeader();
+    GAFHeader& header = m_stream->m_input->getHeader();
 
-    GAFTimeline *timeline = nullptr;
+    GAFTimelinePtr timeline;
     if (header.getMajorVersion() >= 4)
     {
         _readHeaderEndV4(header);
@@ -240,7 +230,7 @@ void GAFLoader::_processLoad(GAFFile* file, GAFAsset* context)
         _readHeaderEnd(header);
         _registerTagLoadersV3();
 
-        timeline = new GAFTimeline(nullptr, 0, header.frameSize, header.pivot, header.framesCount);  // will be released in assset dtor
+        timeline = ::std::make_shared<GAFTimeline>(nullptr, 0, header.frameSize, header.pivot, header.framesCount);  // will be released in assset dtor
 
         context->pushTimeline(0, timeline);
         context->setRootTimeline((uint32_t)0);
@@ -251,13 +241,11 @@ void GAFLoader::_processLoad(GAFFile* file, GAFAsset* context)
     context->setHeader(header);
 
     loadTags(m_stream, context, timeline);
-
-    delete m_stream;
 }
 
-bool GAFLoader::loadFile(const std::string& fname, GAFAsset* context)
+bool GAFLoader::loadFile(const std::string& fname, GAFAssetPtr context)
 {
-    GAFFile* file = new GAFFile();
+    auto file = ::std::make_shared<GAFFile>();
 
     bool retval = false;
 
@@ -268,8 +256,6 @@ bool GAFLoader::loadFile(const std::string& fname, GAFAsset* context)
         _processLoad(file, context);
     }
 
-    delete file;
-
     return retval;
 }
 
@@ -278,7 +264,7 @@ bool GAFLoader::isFileLoaded() const
     return m_stream && m_stream->isEndOfStream();
 }
 
-GAFStream* GAFLoader::getStream() const
+GAFStreamConstPtr GAFLoader::getStream() const
 {
     return m_stream;
 }
@@ -288,7 +274,7 @@ const GAFHeader& GAFLoader::getHeader() const
     return m_stream->getInput()->getHeader();
 }
 
-void GAFLoader::registerTagLoader(unsigned int idx, DefinitionTagBase* tagptr)
+void GAFLoader::registerTagLoader(unsigned int idx, DefinitionTagBasePtr tagptr)
 {
     m_tagLoaders[static_cast<Tags::Enum>(idx)] = tagptr;
 }

@@ -2,6 +2,8 @@
 
 NS_GAF_BEGIN
 
+forward_this(GAFResourcesInfo);
+
 class GAFResourcesInfo
 {
 public:
@@ -15,6 +17,8 @@ public:
     ResourceId id;
 };
 
+forward_this(GAFResourcesInfoTexture);
+
 class GAFResourcesInfoTexture : public GAFResourcesInfo
 {
 public:
@@ -26,7 +30,7 @@ public:
         csf = _csf;
     }
 
-    bool operator==(const GAFResourcesInfoTexture &other)
+    bool operator==(const GAFResourcesInfoTexture &other) const
     {
         return source.compare(other.source) == 0 && fabs(csf - other.csf) < std::numeric_limits<float>::epsilon();
     }
@@ -34,6 +38,8 @@ public:
     std::string source;
     float csf;
 };
+
+forward_this(GAFResourcesInfoFont);
 
 class GAFResourcesInfoFont : public GAFResourcesInfo
 {
@@ -45,7 +51,7 @@ public:
         name = _name;
     }
 
-    bool operator==(const GAFResourcesInfoFont &other)
+    bool operator==(const GAFResourcesInfoFont &other) const
     {
         return name.compare(other.name) == 0;
     }

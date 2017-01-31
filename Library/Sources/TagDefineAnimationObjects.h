@@ -7,7 +7,7 @@ NS_GAF_BEGIN
 class TagDefineAnimationObjects : public DefinitionTagBase
 {
 public:
-    virtual void read(GAFStream*, GAFAsset*, GAFTimeline*) override;
+    virtual void read(GAFStreamPtr, GAFAssetPtr, GAFTimelinePtr) override;
 };
 
 NS_GAF_END

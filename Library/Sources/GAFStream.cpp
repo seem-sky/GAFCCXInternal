@@ -4,10 +4,8 @@
 
 NS_GAF_BEGIN
 
-GAFStream::GAFStream(GAFFile* input):
-m_input(input),
-m_currentByte(0),
-m_unusedBits(0)
+GAFStream::GAFStream(GAFFilePtr input)
+    : m_input(input)
 {
     assert(input);
 }
@@ -135,7 +133,7 @@ void GAFStream::readString(std::string* out)
     m_input->readString(out);
 }
 
-GAFFile* GAFStream::getInput() const
+GAFFileConstPtr GAFStream::getInput() const
 {
     return m_input;
 }

@@ -4,12 +4,14 @@
 NS_GAF_BEGIN
 
 class GAFTextureAtlas;
-class GAFSubobjectState;
+
+forward_this(GAFSubobjectState);
+forward_this(GAFAnimationFrame);
 
 class GAFAnimationFrame
 {
 public:
-    typedef std::vector<GAFSubobjectState*> SubobjectStates_t;
+    typedef std::vector<GAFSubobjectStateConstPtr> SubobjectStates_t;
     typedef std::vector<GAFTimelineAction> TimelineActions_t;
 private:
     SubobjectStates_t       m_subObjectStates;
@@ -20,7 +22,7 @@ public:
     const SubobjectStates_t& getObjectStates() const;
     const TimelineActions_t& getTimelineActions() const;
 
-    void    pushObjectState(GAFSubobjectState*);
+    void    pushObjectState(GAFSubobjectStateConstPtr);
     void    pushTimelineAction(GAFTimelineAction action);
     void    sortStatesByZIndex();
 };

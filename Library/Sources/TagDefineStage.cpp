@@ -9,7 +9,7 @@
 
 NS_GAF_BEGIN
 
-void TagDefineStage::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
+void TagDefineStage::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     (void)timeline;
     cocos2d::Color4B color;
@@ -19,10 +19,10 @@ void TagDefineStage::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
     unsigned int width = in->readU16();  // Scene width
     unsigned int height = in->readU16();  // Scene height
     
-	asset->setSceneFps(fps);
-	asset->setSceneColor(color);
-	asset->setSceneWidth(width);
-	asset->setSceneHeight(height);
+    asset->setSceneFps(fps);
+    asset->setSceneColor(color);
+    asset->setSceneWidth(width);
+    asset->setSceneHeight(height);
 }
 
 NS_GAF_END

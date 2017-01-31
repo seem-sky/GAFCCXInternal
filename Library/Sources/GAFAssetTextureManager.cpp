@@ -14,10 +14,8 @@
 
 NS_GAF_BEGIN
 
-GAFAssetTextureManager::GAFAssetTextureManager() :
-    m_memoryConsumption(0)
+GAFAssetTextureManager::GAFAssetTextureManager()
 {
-
 }
 
 GAFAssetTextureManager::~GAFAssetTextureManager()
@@ -26,23 +24,21 @@ GAFAssetTextureManager::~GAFAssetTextureManager()
     GAF_SAFE_RELEASE_MAP(TexturesMap_t, m_textures);
 }
 
-void GAFAssetTextureManager::appendInfoFromTextureAtlas(GAFTextureAtlas* atlas)
+void GAFAssetTextureManager::appendInfoFromTextureAtlas(GAFTextureAtlasConstPtr atlas)
 {
     GAFTextureAtlas::AtlasInfos_t atlasInfos = atlas->getAtlasInfos();
-    GAFTextureAtlas::AtlasInfos_t::const_iterator i = atlasInfos.begin(), e = atlasInfos.end();
-    for (; i != e; i++)
+    GAFTextureAtlas::AtlasInfos_t::const_iterator i = atlasInfos.cbegin(), e = atlasInfos.cend();
+    for (; i != e; ++i)
     {
         if (!isAtlasInfoPresent(*i))
-        {
             m_atlasInfos.push_back(*i);
-        }
     }
 }
 
-bool GAFAssetTextureManager::isAtlasInfoPresent(const GAFTextureAtlas::AtlasInfo &ai)
+bool GAFAssetTextureManager::isAtlasInfoPresent(const GAFTextureAtlas::AtlasInfo& ai)
 {
-    GAFTextureAtlas::AtlasInfos_t::const_iterator i = m_atlasInfos.begin(), e = m_atlasInfos.end();
-    for (; i != e; i++)
+    GAFTextureAtlas::AtlasInfos_t::const_iterator i = m_atlasInfos.cbegin(), e = m_atlasInfos.cend();
+    for (; i != e; ++i)
     {
         if (i->id == ai.id)
         {
@@ -85,9 +81,7 @@ void GAFAssetTextureManager::loadImages(const std::string& dir, GAFTextureLoadDe
             std::string path = cocos2d::FileUtils::getInstance()->fullPathFromRelativeFile(source.c_str(), dir.c_str());
 
             if (delegate)
-            {
                 path = delegate(path);
-            }
 
             if (!bundle)
             {
@@ -134,15 +128,13 @@ cocos2d::Texture2D* GAFAssetTextureManager::getTextureById(uint32_t id)
 {
     TexturesMap_t::const_iterator txIt = m_textures.find(id);
     if (txIt != m_textures.end())
-    {
         return txIt->second;
-    }
 
     // check if still not created
     ImagesMap_t::const_iterator imagesIt = m_images.find(id);
     if (imagesIt != m_images.end())
     {
-        cocos2d::Texture2D * texture = new cocos2d::Texture2D();
+        cocos2d::Texture2D* texture = new cocos2d::Texture2D();
         texture->initWithImage(imagesIt->second);
         m_textures[id] = texture;
 #if CC_ENABLE_CACHE_TEXTURE_DATA

@@ -5,31 +5,33 @@
 
 NS_GAF_BEGIN
 
-class GAFAssetTextureManager : public cocos2d::Ref
+forward_this(GAFAssetTextureManager);
+
+class GAFAssetTextureManager
 {
 public:
-	GAFAssetTextureManager();
-	~GAFAssetTextureManager();
+    GAFAssetTextureManager();
+    ~GAFAssetTextureManager();
 
-	void					appendInfoFromTextureAtlas(GAFTextureAtlas* atlas);
-	void					loadImages(const std::string& dir, GAFTextureLoadDelegate_t delegate, cocos2d::ZipFile* bundle = nullptr);
-	cocos2d::Texture2D*		getTextureById(uint32_t id);
+    void                    appendInfoFromTextureAtlas(GAFTextureAtlasConstPtr atlas);
+    void                    loadImages(const std::string& dir, GAFTextureLoadDelegate_t delegate, cocos2d::ZipFile* bundle = nullptr);
+    cocos2d::Texture2D*     getTextureById(uint32_t id);
     bool                    swapTexture(uint32_t id, cocos2d::Texture2D* texture);
-    
-	uint32_t				getMemoryConsumptionStat() const;
+
+    uint32_t                getMemoryConsumptionStat() const;
 
 private:
-	typedef std::map<size_t, cocos2d::Image*> ImagesMap_t;
-	typedef std::map<size_t, cocos2d::Texture2D*> TexturesMap_t;
+    using ImagesMap_t = std::map<size_t, cocos2d::Image*>;
+    using TexturesMap_t = std::map<size_t, cocos2d::Texture2D*>;
 
-	bool isAtlasInfoPresent(const GAFTextureAtlas::AtlasInfo &ai);
+    bool isAtlasInfoPresent(const GAFTextureAtlas::AtlasInfo &ai);
 
-	GAFTextureAtlas::AtlasInfos_t m_atlasInfos;
+    GAFTextureAtlas::AtlasInfos_t m_atlasInfos;
 
-	ImagesMap_t m_images;
-	TexturesMap_t m_textures;
+    ImagesMap_t m_images;
+    TexturesMap_t m_textures;
 
-	uint32_t m_memoryConsumption;
+    uint32_t m_memoryConsumption = 0;
 };
 
 NS_GAF_END

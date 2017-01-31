@@ -5,13 +5,12 @@
 #include "GAFLoader.h"
 #include "GAFStream.h"
 #include "GAFAsset.h"
-#include "GAFHeader.h"
 #include "GAFTimeline.h"
 #include "PrimitiveDeserializer.h"
 
 NS_GAF_BEGIN
 
-void TagDefineTimeline::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
+void TagDefineTimeline::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     unsigned int id = in->readU32();
     unsigned int framesCount = in->readU32();
@@ -21,7 +20,7 @@ void TagDefineTimeline::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeli
     PrimitiveDeserializer::deserialize(in, &aabb);
     PrimitiveDeserializer::deserialize(in, &pivot);
 
-    GAFTimeline *tl = new GAFTimeline(timeline, id, aabb, pivot, framesCount); // will be released in assset dtor
+    auto tl = ::std::make_shared<GAFTimeline>(timeline, id, aabb, pivot, framesCount);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -33,19 +32,20 @@ void TagDefineTimeline::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeli
         tl->setLinkageName(linkageName);
     }
 
-    m_loader->loadTags(in, asset, tl);
+    auto ldtPtr = m_loader.lock();
+    assert(ldtPtr);
+
+    ldtPtr->loadTags(in, asset, tl);
 
     asset->pushTimeline(id, tl);
+
     if (id == 0)
-    {
-        asset->setRootTimeline((uint32_t)0);
-    }
+        asset->setRootTimeline(0);
 }
 
-TagDefineTimeline::TagDefineTimeline(GAFLoader* loader) :
-m_loader(loader)
+TagDefineTimeline::TagDefineTimeline(GAFLoaderPtr loader)
+    : m_loader(loader)
 {
-
 }
 
 NS_GAF_END

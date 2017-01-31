@@ -23,7 +23,7 @@ public:
     unsigned short  framesCount;
     cocos2d::Rect   frameSize;
     cocos2d::Vec2   pivot;
-	
+
     // Version 4
     std::vector<float>          scaleValues;
     std::vector<float>          csfValues;

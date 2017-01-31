@@ -2,6 +2,8 @@
 
 NS_GAF_BEGIN
 
+forward_this(GAFAnimationSequence);
+
 class GAFAnimationSequence
 {
 public:

@@ -4,12 +4,12 @@
 
 NS_GAF_BEGIN
 
-class GAFTextData;
+forward_this(GAFTextData);
 
 class GAFTextField : public GAFObject
 {
 protected:
-    cocos2d::Label *m_label;
+    cocos2d::Label* m_label;
 
     bool m_useTextBounds;
 
@@ -17,7 +17,7 @@ public:
     GAFTextField();
     virtual ~GAFTextField();
 
-    void initWithTextData(const GAFTextData* data);
+    void initWithTextData(const GAFTextDataConstPtr data);
 
     void setText(const std::string& text);
 

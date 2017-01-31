@@ -12,20 +12,20 @@ enum GAFColorTransformIndex
     GAFCTI_A
 };
 
+forward_this(GAFSubobjectState);
+
 class GAFSubobjectState
 {
 private:
     Filters_t       m_filters;
     float           _colorMults[4];
     float           _colorOffsets[4];
-
-    unsigned long   m_refCount;
     
     std::vector<uint32_t> m_customPropertiesValueIdxs;
 
 public:
-    unsigned int objectIdRef;
-    unsigned int maskObjectIdRef;
+    uint32_t objectIdRef = IDNONE;
+    uint32_t maskObjectIdRef = IDNONE;
 
     int zIndex;
     cocos2d::AffineTransform affineTransform;
@@ -71,13 +71,8 @@ public:
 
     void                ctxMakeIdentity();
 
-    void                pushFilter(GAFFilterData* filter);
+    void                pushFilter(GAFFilterDataConstPtr filter);
     const Filters_t&    getFilters() const;
-
-
-    void                addRef();
-    void                release();
-
 }; // GAFSubobjectState
 
 NS_GAF_END

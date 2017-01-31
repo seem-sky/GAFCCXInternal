@@ -5,13 +5,11 @@
 NS_GAF_BEGIN
 
 GAFTextureAtlas::GAFTextureAtlas()
-: m_scale(1.f)
 {
 }
 
 GAFTextureAtlas::~GAFTextureAtlas()
 {
-    GAF_RELEASE_MAP(GAFTextureAtlas::Elements_t, m_elements);
 }
 
 bool GAFTextureAtlas::compareAtlasesById(const AtlasInfo& ai1, const AtlasInfo& ai2)
@@ -34,20 +32,17 @@ void GAFTextureAtlas::pushAtlasInfo(const AtlasInfo& ai)
     m_atlasInfos.push_back(ai);
 }
 
-void GAFTextureAtlas::pushElement(uint32_t idx, GAFTextureAtlasElement* el)
+void GAFTextureAtlas::pushElement(uint32_t idx, GAFTextureAtlasElementConstPtr el)
 {
     m_elements[idx] = el;
 }
 
-bool GAFTextureAtlas::swapElement(uint32_t idx, GAFTextureAtlasElement *el)
+bool GAFTextureAtlas::swapElement(uint32_t idx, GAFTextureAtlasElementConstPtr el)
 {
     Elements_t::iterator it = m_elements.find(idx);
     if (it != m_elements.end())
-    {
-        CC_SAFE_DELETE(it->second);
         m_elements.erase(it);
-    }
-    
+
     pushElement(idx, el);
     return true;
 }
@@ -59,7 +54,7 @@ const GAFTextureAtlas::Elements_t& GAFTextureAtlas::getElements() const
 
 const GAFTextureAtlas::AtlasInfos_t& GAFTextureAtlas::getAtlasInfos() const
 {
-	return m_atlasInfos;
+    return m_atlasInfos;
 }
 
 NS_GAF_END

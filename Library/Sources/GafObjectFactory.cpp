@@ -13,14 +13,14 @@
 
 NS_GAF_BEGIN
 
-GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTextureAtlasElement* txElemet, bool isMask, uint32_t id)
+GAFObject* GafObjectFactory::create(GAFAssetConstPtr asset, GAFTextureAtlasElementConstPtr txElemet, bool isMask, uint32_t id)
 {
     GAFObject* result = nullptr;
-    GAFAssetTextureManager* txMgr = asset->getTextureManager();
-    cocos2d::Texture2D * texture = txMgr->getTextureById(txElemet->atlasIdx + 1);
+    GAFAssetTextureManagerPtr txMgr = asset->getTextureManager();
+    cocos2d::Texture2D* texture = txMgr->getTextureById(txElemet->atlasIdx + 1);
     if (texture)
     {
-        cocos2d::SpriteFrame * spriteFrame = cocos2d::SpriteFrame::createWithTexture(texture, txElemet->bounds);
+        cocos2d::SpriteFrame* spriteFrame = cocos2d::SpriteFrame::createWithTexture(texture, txElemet->bounds);
 
         if (!isMask)
             result = new GAFMovieClip();
@@ -47,7 +47,7 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTextureAtlasElement* txE
     return result;
 }
 
-GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTextData* txtData, bool isMask, uint32_t id)
+GAFObject* GafObjectFactory::create(GAFAssetConstPtr asset, GAFTextDataConstPtr txtData, bool isMask, uint32_t id)
 {
     (void)asset;
     (void)isMask;
@@ -61,7 +61,7 @@ GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTextData* txtData, bool 
     return result;
 }
 
-GAFObject* GafObjectFactory::create(GAFAsset* asset, GAFTimeline* timeline, bool isMask, uint32_t id)
+GAFObject* GafObjectFactory::create(GAFAssetConstPtr asset, GAFTimelineConstPtr timeline, bool isMask, uint32_t id)
 {
     (void)isMask;
 

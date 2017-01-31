@@ -7,7 +7,7 @@
 
 NS_GAF_BEGIN
 
-void TagDefineSequences::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
+void TagDefineSequences::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     (void)asset;
     unsigned int count = in->readU32();

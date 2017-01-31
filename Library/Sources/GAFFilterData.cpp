@@ -6,10 +6,9 @@
 
 NS_GAF_BEGIN
 
-GAFBlurFilterData::GAFBlurFilterData():
-GAFFilterData(GAFFilterType::Blur)
+GAFBlurFilterData::GAFBlurFilterData()
+    : GAFFilterData(GAFFilterType::Blur)
 {
-
 }
 
 void GAFBlurFilterData::apply(GAFMovieClip* subObject)
@@ -25,10 +24,9 @@ const float GAFColorMatrixFilterData::Grayscale::matrix[16] = {
 };
 const float GAFColorMatrixFilterData::Grayscale::matrix2[4] = { 0, 0, 0, 0 };
 
-GAFColorMatrixFilterData::GAFColorMatrixFilterData() :
-GAFFilterData(GAFFilterType::ColorMatrix)
+GAFColorMatrixFilterData::GAFColorMatrixFilterData()
+    : GAFFilterData(GAFFilterType::ColorMatrix)
 {
-
 }
 
 void GAFColorMatrixFilterData::setMatrix(const float m[16])
@@ -46,10 +44,9 @@ void GAFColorMatrixFilterData::apply(GAFMovieClip* subObject)
     subObject->setColorMarixFilterData(this);
 }
 
-GAFGlowFilterData::GAFGlowFilterData():
-GAFFilterData(GAFFilterType::Glow)
+GAFGlowFilterData::GAFGlowFilterData()
+    : GAFFilterData(GAFFilterType::Glow)
 {
-
 }
 
 void GAFGlowFilterData::apply(GAFMovieClip* subObject)
@@ -57,10 +54,9 @@ void GAFGlowFilterData::apply(GAFMovieClip* subObject)
     subObject->setGlowFilterData(this);
 }
 
-GAFDropShadowFilterData::GAFDropShadowFilterData():
-GAFFilterData(GAFFilterType::DropShadow)
+GAFDropShadowFilterData::GAFDropShadowFilterData()
+    : GAFFilterData(GAFFilterType::DropShadow)
 {
-
 }
 
 const int kShadowObjectTag = 0xFAD0;
@@ -88,9 +84,7 @@ void GAFDropShadowFilterData::reset(GAFMovieClip* subObject)
     cocos2d::Node* prevShadowObject = subObject->getChildByTag(kShadowObjectTag);
 
     if (prevShadowObject)
-    {
         subObject->removeChild(prevShadowObject, true);
-    }
 }
 
 NS_GAF_END

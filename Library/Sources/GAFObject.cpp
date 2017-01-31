@@ -3,9 +3,9 @@
 #include "GAFAsset.h"
 #include "GAFTimeline.h"
 #include "GAFTextureAtlas.h"
-#include "GAFTextureAtlasElement.h"
 #include "GAFMovieClip.h"
 #include "GAFAnimationFrame.h"
+#include "GAFAnimationSequence.h"
 #include "GAFSubobjectState.h"
 
 #include <math/TransformUtils.h>
@@ -72,12 +72,9 @@ GAFObject::~GAFObject()
     enableTick(false);
     GAF_SAFE_RELEASE_ARRAY_WITH_NULL_CHECK(MaskList_t, m_masks);
     GAF_SAFE_RELEASE_ARRAY_WITH_NULL_CHECK(DisplayList_t, m_displayList);
-    CC_SAFE_RELEASE(m_asset);
-    CC_SAFE_RELEASE(m_timeline);
-    CC_SAFE_DELETE(m_customFilter);
 }
 
-GAFObject * GAFObject::create(GAFAsset * anAsset, GAFTimeline* timeline)
+GAFObject* GAFObject::create(GAFAssetConstPtr anAsset, GAFTimelineConstPtr timeline)
 {
     GAFObject* ret = new GAFObject();
 
@@ -91,29 +88,20 @@ GAFObject * GAFObject::create(GAFAsset * anAsset, GAFTimeline* timeline)
     return nullptr;
 }
 
-bool GAFObject::init(GAFAsset * anAnimationData, GAFTimeline* timeline)
+bool GAFObject::init(GAFAssetConstPtr anAnimationData, GAFTimelineConstPtr timeline)
 {
     CC_ASSERT(anAnimationData && "anAssetData data should not be nil");
     CC_ASSERT(timeline && "Timeline data should not be nil");
 
     if (!anAnimationData || !timeline)
-    {
         return false;
-    }
 
     if (m_asset != anAnimationData)
-    {
-        CC_SAFE_RELEASE(m_asset);
         m_asset = anAnimationData;
-        CC_SAFE_RETAIN(m_asset);
-    }
 
     if (m_timeline != timeline)
-    {
-        CC_SAFE_RELEASE(m_timeline);
         m_timeline = timeline;
-        CC_SAFE_RETAIN(m_timeline);
-    }
+
     m_container = cocos2d::Node::create();
     addChild(m_container);
     m_container->setContentSize(getContentSize());
@@ -150,19 +138,19 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         assert(m_asset->getLibraryAsset());
         ExternalObjects_t::const_iterator externalTl = m_timeline->getExternalObjects().find(reference);
         assert(externalTl != m_timeline->getExternalObjects().end());
-        GAFTimeline* externalTimeline = m_asset->getLibraryAsset()->getTimelineByName(externalTl->second->getName());
+        GAFTimelineConstPtr externalTimeline = m_asset->getLibraryAsset()->getTimelineByName(externalTl->second->getName());
         result = GafObjectFactory::create(m_asset->getLibraryAsset(), externalTimeline, isMask, id);
         result->setCustomProperties(externalTl->second->getCustomProperties());
     }
     else if (type == GAFCharacterType::Timeline)
     {
-        Timelines_t& timelines = m_asset->getTimelines();
+        const Timelines_t& timelines = m_asset->getTimelines();
 
         CC_ASSERT(reference != IDNONE && "Invalid object reference.");
 
-        Timelines_t::iterator tl = timelines.find(reference);
+        Timelines_t::const_iterator tl = timelines.find(reference);
 
-        CC_ASSERT(tl != timelines.end() && "Invalid object reference.");
+        CC_ASSERT(tl != timelines.cend() && "Invalid object reference.");
 
         result = GafObjectFactory::create(m_asset, tl->second, isMask, id);
         result->setCustomProperties(tl->second->getCustomProperties());
@@ -179,10 +167,10 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
     }
     else if (type == GAFCharacterType::Texture)
     {
-        GAFTextureAtlas* atlas = m_timeline->getTextureAtlas();
+        auto atlas = m_timeline->getTextureAtlas();
         const GAFTextureAtlas::Elements_t& elementsMap = atlas->getElements();
         GAFTextureAtlas::Elements_t::const_iterator elIt = elementsMap.find(reference); // Search for atlas element by its xref
-        GAFTextureAtlasElement* txElemet = nullptr;
+        GAFTextureAtlasElementConstPtr txElemet;
         if (elIt != elementsMap.end())
         {
             txElemet = elIt->second;
@@ -258,13 +246,13 @@ void GAFObject::instantiateObject(const AnimationObjects_t& objs, const Animatio
 
 GAFObject* GAFObject::encloseNewTimeline(uint32_t reference)
 {
-    Timelines_t& timelines = m_asset->getTimelines();
+    const Timelines_t& timelines = m_asset->getTimelines();
 
     CC_ASSERT(reference != IDNONE && "Invalid object reference.");
 
-    Timelines_t::iterator tl = timelines.find(reference);
+    Timelines_t::const_iterator tl = timelines.find(reference);
 
-    CC_ASSERT(tl != timelines.end() && "Invalid object reference.");
+    CC_ASSERT(tl != timelines.cend() && "Invalid object reference.");
 
     GAFObject* newObject = new GAFObject();
     newObject->init(m_asset, tl->second);
@@ -279,10 +267,10 @@ void GAFObject::update(float delta)
         m_updateEventListener(delta);
 }
 
-void GAFObject::useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements)
+/*void GAFObject::useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements)
 {
     m_asset->useExternalTextureAtlas(textures, elements);
-}
+}*/
 
 void GAFObject::processAnimation()
 {
@@ -298,9 +286,8 @@ void GAFObject::setAnimationRunning(bool value, bool recursive)
         for (auto obj : m_displayList)
         {
             if (obj == nullptr)
-            {
                 continue;
-            }
+
             obj->setAnimationRunning(value, recursive);
         }
     }
@@ -544,15 +531,12 @@ bool GAFObject::gotoAndPlay(uint32_t frameNumber)
 uint32_t GAFObject::getStartFrame(const std::string& frameLabel)
 {
     if (!m_asset)
-    {
         return IDNONE;
-    }
 
-    const GAFAnimationSequence * seq = m_timeline->getSequence(frameLabel);
+    auto seq = m_timeline->getSequence(frameLabel);
     if (seq)
-    {
         return seq->startFrameNo;
-    }
+
     return IDNONE;
 
 }
@@ -560,28 +544,22 @@ uint32_t GAFObject::getStartFrame(const std::string& frameLabel)
 uint32_t GAFObject::getEndFrame(const std::string& frameLabel)
 {
     if (!m_asset)
-    {
         return IDNONE;
-    }
-    const GAFAnimationSequence * seq = m_timeline->getSequence(frameLabel);
+
+    auto seq = m_timeline->getSequence(frameLabel);
     if (seq)
-    {
         return seq->endFrameNo;
-    }
+
     return IDNONE;
 }
 
 bool GAFObject::playSequence(const std::string& name, bool looped, bool resume /*= true*/)
 {
     if (!m_asset || !m_timeline)
-    {
         return false;
-    }
 
     if (name.empty())
-    {
         return false;
-    }
 
     uint32_t s = getStartFrame(name);
     uint32_t e = getEndFrame(name);
@@ -600,13 +578,9 @@ bool GAFObject::playSequence(const std::string& name, bool looped, bool resume /
     setLooped(looped, false);
 
     if (resume)
-    {
         resumeAnimation();
-    }
     else
-    {
         stop();
-    }
 
     return true;
 }
@@ -629,20 +603,14 @@ void GAFObject::step()
 
     if (m_sequenceDelegate && m_timeline)
     {
-        const GAFAnimationSequence * seq = nullptr;
+        GAFAnimationSequenceConstPtr seq;
         if (!m_isReversed)
-        {
             seq = m_timeline->getSequenceByLastFrame(m_currentFrame);
-        }
         else
-        {
             seq = m_timeline->getSequenceByFirstFrame(m_currentFrame + 1);
-        }
 
         if (seq)
-        {
             m_sequenceDelegate(this, seq->name);
-        }
     }
 
     if (isCurrentFrameLastInSequence())
@@ -730,14 +698,10 @@ static cocos2d::Rect GAFCCRectUnion(const cocos2d::Rect& src1, const cocos2d::Re
     float otherBottomY = src2.origin.y;
 
     if (otherRightX < otherLeftX)
-    {
         std::swap(otherRightX, otherLeftX); // Other rect has negative width
-    }
 
     if (otherTopY < otherBottomY)
-    {
         std::swap(otherTopY, otherBottomY); // Other rect has negative height
-    }
 
     float combinedLeftX = std::min(thisLeftX, otherLeftX);
     float combinedRightX = std::max(thisRightX, otherRightX);
@@ -754,16 +718,14 @@ cocos2d::Rect GAFObject::getInternalBoundingBoxForCurrentFrame() const
     const AnimationFrames_t& animationFrames = m_timeline->getAnimationFrames();
 
     if (animationFrames.size() <= m_currentFrame)
-    {
         return result;
-    }
 
-    GAFAnimationFrame* currentFrame = animationFrames[m_currentFrame];
+    auto currentFrame = animationFrames[m_currentFrame];
 
     const GAFAnimationFrame::SubobjectStates_t& states = currentFrame->getObjectStates();
 
     bool isFirstObj = true;
-    for (const GAFSubobjectState* state : states)
+    for (auto state : states)
     {
         GAFObject* subObject = m_displayList[state->objectIdRef];
 
@@ -947,7 +909,7 @@ void GAFObject::rearrangeSubobject(cocos2d::Node* out, cocos2d::Node* child, int
     }
 }
 
-void GAFObject::preProcessGAFObject(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+void GAFObject::preProcessGAFObject(cocos2d::Node* out, GAFObject* child, const GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx)
 {
     (void)out;
     (void)mtx;
@@ -959,7 +921,7 @@ void GAFObject::preProcessGAFObject(cocos2d::Node* out, GAFObject* child, const 
     child->m_isInResetState = state->colorMults()[GAFColorTransformIndex::GAFCTI_A] < 0.f;
 }
 
-void GAFObject::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+void GAFObject::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx)
 {
     if (!child->m_isInResetState)
     {
@@ -1012,7 +974,7 @@ void GAFObject::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const G
     }
 }
 
-void GAFObject::processGAFImage(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+void GAFObject::processGAFImage(cocos2d::Node* out, GAFObject* child, const GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx)
 {
     cocos2d::Vec2 prevAP = child->getAnchorPoint();
     cocos2d::Size  prevCS = child->getContentSize();
@@ -1116,7 +1078,7 @@ void GAFObject::processGAFImage(cocos2d::Node* out, GAFObject* child, const GAFS
     }
 }
 
-void GAFObject::processGAFTextField(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+void GAFObject::processGAFTextField(cocos2d::Node* out, GAFObject* child, const GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx)
 {
     //GAFTextField *tf = static_cast<GAFTextField*>(subObject);
     rearrangeSubobject(out, child, state->zIndex);
@@ -1125,7 +1087,7 @@ void GAFObject::processGAFTextField(cocos2d::Node* out, GAFObject* child, const 
     child->setExternalTransform(mtx);
 }
 
-void GAFObject::postProcessGAFObject(cocos2d::Node* out, GAFObject* child, const GAFSubobjectState* state, cocos2d::AffineTransform& mtx)
+void GAFObject::postProcessGAFObject(cocos2d::Node* out, GAFObject* child, const GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx)
 {
     (void)out;
     (void)child;
@@ -1265,7 +1227,7 @@ bool GAFObject::allNecessaryFieldsExist(const CustomPropertiesMap_t & customProp
     return false;
 }
 
-GAFObject::CustomPropertiesMap_t& GAFObject::fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, const GAFSubobjectState* state) const
+GAFObject::CustomPropertiesMap_t& GAFObject::fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, GAFSubobjectStateConstPtr state) const
 {
     for (uint32_t propIdx = 0; propIdx < timelineProperties.size(); ++propIdx)
     {
@@ -1289,7 +1251,7 @@ void GAFObject::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
         return;
     }
 
-    GAFAnimationFrame *currentFrame = animationFrames[frameIndex];
+    auto currentFrame = animationFrames[frameIndex];
 
     processStates(out, frameIndex, currentFrame);
 
@@ -1315,7 +1277,7 @@ void GAFObject::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
             std::string type = action.getParam(GAFTimelineAction::PI_EVENT_TYPE);
             if (type.compare(GAFSoundInfo::SoundEvent) == 0)
             {
-                m_asset->soundEvent(&action);
+                m_asset->soundEvent(action);
             }
             else
             {
@@ -1331,10 +1293,10 @@ void GAFObject::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
     }
 }
 
-void GAFObject::processStates(cocos2d::Node* out, uint32_t frameIndex, const GAFAnimationFrame* frame)
+void GAFObject::processStates(cocos2d::Node* out, uint32_t frameIndex, GAFAnimationFrameConstPtr frame)
 {
     const GAFAnimationFrame::SubobjectStates_t& states = frame->getObjectStates();
-    for (const GAFSubobjectState* state : states)
+    for (auto state : states)
     {
         GAFObject* subObject = m_displayList[state->objectIdRef];
 
@@ -1399,8 +1361,6 @@ GAFObject* GAFObject::getObjectByName(const std::string& name)
         elems.push_back(item);
     }
 
-    GAFObject* retval = nullptr;
-
     if (!elems.empty())
     {
         const NamedParts_t& np = m_timeline->getNamedParts();
@@ -1408,7 +1368,7 @@ GAFObject* GAFObject::getObjectByName(const std::string& name)
 
         if (it != np.end())
         {
-            retval = m_displayList[it->second];
+            GAFObject* retval = m_displayList[it->second];
 
             if (elems.size() == 1)
             {

@@ -9,9 +9,9 @@ class GAFLoader;
 class TagDefineTimeline3 : public TagDefineTimeline
 {
 public:
-    TagDefineTimeline3(GAFLoader* loader);
+    explicit TagDefineTimeline3(GAFLoaderPtr loader);
 
-    virtual void read(GAFStream*, GAFAsset*, GAFTimeline*) override;
+    virtual void read(GAFStreamPtr, GAFAssetPtr, GAFTimelinePtr) override;
 };
 
 NS_GAF_END

@@ -4,6 +4,8 @@
 
 NS_GAF_BEGIN
 
+forward_this(GAFTextureAtlasElement);
+
 class GAFTextureAtlasElement
 {
 public:
@@ -16,7 +18,7 @@ public:
     unsigned int       atlasIdx;
     unsigned int       elementAtlasIdx;
 
-    GAFRotation        rotation;
+    GAFRotation        rotation = GAFRotation::NONE;
 
     cocos2d::Rect      scale9GridRect;
 
@@ -30,9 +32,9 @@ public:
     const float getScaleY() const { return scaleY; }
 
 private:
-    float              scale;
-    float              scaleX;
-    float              scaleY;
+    float              scale = 1.f;
+    float              scaleX = 1.f;
+    float              scaleY = 1.f;
 }; // GAFTextureAtlasElement
 
 NS_GAF_END

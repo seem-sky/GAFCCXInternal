@@ -8,7 +8,7 @@
 
 NS_GAF_BEGIN
 
-void TagDefineSounds::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline)
+void TagDefineSounds::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     (void)timeline;
 
@@ -16,7 +16,7 @@ void TagDefineSounds::read(GAFStream* in, GAFAsset* asset, GAFTimeline* timeline
 
     for (uint16_t i = 0; i < count; ++i)
     {
-        GAFSoundInfo* soundInfo = new GAFSoundInfo;
+        auto soundInfo = ::std::make_shared<GAFSoundInfo>();
 
         soundInfo->id = in->readU16();
         in->readString(&soundInfo->linkage);

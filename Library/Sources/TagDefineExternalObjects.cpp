@@ -2,12 +2,11 @@
 #include "TagDefineExternalObjects.h"
 
 #include "GAFStream.h"
-#include "GAFAsset.h"
 #include "GAFTimeline.h"
 
 NS_GAF_BEGIN
 
-void TagDefineExternalObjects::read(GAFStream* in, GAFAsset*, GAFTimeline* timeline)
+void TagDefineExternalObjects::read(GAFStreamPtr in, GAFAssetPtr, GAFTimelinePtr timeline)
 {
     uint32_t count = in->readU32();
 
@@ -18,7 +17,7 @@ void TagDefineExternalObjects::read(GAFStream* in, GAFAsset*, GAFTimeline* timel
         std::string name;
         in->readString(&name);
 
-        ExternalObject* externalObj = new ExternalObject(objectIdRef, name);
+        auto externalObj = ::std::make_shared<ExternalObject>(objectIdRef, name);
 
         timeline->pushExternalObject(externalObj);
     }

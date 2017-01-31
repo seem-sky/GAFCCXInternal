@@ -6,23 +6,25 @@ NS_GAF_BEGIN
 
 typedef std::vector<std::string> ActionParams_t;
 
+forward_this(GAFTimelineAction);
+
 class GAFTimelineAction
 {
 public:
     GAFTimelineAction();
 
-	enum ParameterIndex
-	{
-		PI_FRAME = 0,
-		PI_EVENT_TYPE = 0,
-		PI_EVENT_BUBBLES,
-		PI_EVENT_CANCELABLE,
-		PI_EVENT_DATA
-	};
+    enum ParameterIndex
+    {
+        PI_FRAME = 0,
+        PI_EVENT_TYPE = 0,
+        PI_EVENT_BUBBLES,
+        PI_EVENT_CANCELABLE,
+        PI_EVENT_DATA
+    };
 
     void setAction(GAFActionType type, const ActionParams_t& params, const std::string& scope);
     GAFActionType getType();
-	const std::string& getParam(ParameterIndex idx);
+    const std::string& getParam(ParameterIndex idx) const;
 
 private:
     GAFActionType m_type;

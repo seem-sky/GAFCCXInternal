@@ -2,7 +2,7 @@
 #include "GAFTimeline.h"
 #include "GAFTextureAtlas.h"
 #include "GAFAnimationFrame.h"
-#include "GAFTextData.h"
+#include "GAFAnimationSequence.h"
 
 NS_GAF_BEGIN
 
@@ -16,70 +16,60 @@ ExternalObject::ExternalObject(uint32_t objectIdRef, const std::string& name)
 {
 }
 
-GAFTimeline::GAFTimeline(GAFTimeline* parent, uint32_t id, const cocos2d::Rect& aabb, cocos2d::Point& pivot, uint32_t framesCount)
+GAFTimeline::GAFTimeline(GAFTimelineConstPtr parent, uint32_t id, const cocos2d::Rect& aabb, cocos2d::Point& pivot, uint32_t framesCount)
     : m_id(id)
     , m_aabb(aabb)
     , m_pivot(pivot)
-    , m_sceneFps(0)
-    , m_sceneWidth(0)
-    , m_sceneHeight(0)
     , m_framesCount(framesCount)
-    , m_currentTextureAtlas(nullptr)
-    , m_usedAtlasContentScaleFactor(1.f)
     , m_parent(parent)
 {
 }
 
 GAFTimeline::~GAFTimeline()
 {
-    GAF_RELEASE_ARRAY(TextureAtlases_t, m_textureAtlases);
-    GAF_RELEASE_ARRAY(AnimationFrames_t, m_animationFrames);
-    GAF_RELEASE_MAP(TextsData_t, m_textsData);
-    GAF_RELEASE_MAP(CustomData_t, m_userData);
-    GAF_RELEASE_MAP(ExternalObjects_t, m_externalObjects);
 }
 
-void GAFTimeline::pushTextureAtlas(GAFTextureAtlas* atlas)
+void GAFTimeline::pushTextureAtlas(GAFTextureAtlasConstPtr atlas)
 {
     m_textureAtlases.push_back(atlas);
 }
 
-void GAFTimeline::pushAnimationMask(unsigned int objectId, unsigned int elementAtlasIdRef, GAFCharacterType charType)
+void GAFTimeline::pushAnimationMask(uint32_t objectId, uint32_t elementAtlasIdRef, GAFCharacterType charType)
 {
-    m_animationMasks[objectId] = std::make_tuple(elementAtlasIdRef, charType);
+    m_animationMasks[objectId] = ::std::make_tuple(elementAtlasIdRef, charType);
 }
 
 void GAFTimeline::pushAnimationObject(uint32_t objectId, uint32_t elementAtlasIdRef, GAFCharacterType charType)
 {
-    m_animationObjects[objectId] = std::make_tuple(elementAtlasIdRef, charType);
+    m_animationObjects[objectId] = ::std::make_tuple(elementAtlasIdRef, charType);
 }
 
-void GAFTimeline::pushAnimationFrame(GAFAnimationFrame* frame)
+void GAFTimeline::pushAnimationFrame(GAFAnimationFrameConstPtr frame)
 {
     m_animationFrames.push_back(frame);
 }
 
 void GAFTimeline::pushAnimationSequence(const std::string& nameId, int start, int end)
 {
-    GAFAnimationSequence seq;
-    seq.name = nameId;
-    seq.startFrameNo = start;
-    seq.endFrameNo = end;
+    auto seq = ::std::make_shared<GAFAnimationSequence>();
+    seq->name = nameId;
+    seq->startFrameNo = start;
+    seq->endFrameNo = end;
 
     m_animationSequences[nameId] = seq;
 }
 
-void GAFTimeline::pushNamedPart(unsigned int objectIdRef, const std::string& name)
+void GAFTimeline::pushNamedPart(uint32_t objectIdRef, const std::string& name)
 {
     m_namedParts.insert(std::pair<std::string, uint32_t>(name, objectIdRef));
 }
 
-void GAFTimeline::pushTextData(uint32_t objectIdRef, GAFTextData* textField)
+void GAFTimeline::pushTextData(uint32_t objectIdRef, GAFTextDataConstPtr textField)
 {
     m_textsData[objectIdRef] = textField;
 }
 
-void GAFTimeline::pushExternalObject(ExternalObject* externalObj)
+void GAFTimeline::pushExternalObject(ExternalObjectConstPtr externalObj)
 {
     m_externalObjects[externalObj->getObjectIdRef()] = externalObj;
 }
@@ -154,19 +144,31 @@ const CustomProperties_t& GAFTimeline::getCustomProperties() const
     return m_customProperties;
 }
 
-const GAFAnimationSequence* GAFTimeline::getSequence(const std::string& name) const
+GAFAnimationSequenceConstPtr GAFTimeline::getSequence(const std::string& name) const
 {
     AnimationSequences_t::const_iterator it = m_animationSequences.find(name);
 
-    if (it != m_animationSequences.end())
+    if (it != m_animationSequences.cend())
+        return it->second;
+
+    return nullptr;
+}
+
+GAFAnimationSequenceConstPtr GAFTimeline::getSequenceByLastFrame(size_t frame) const
+{
+    if (m_animationSequences.empty())
+        return nullptr;
+
+    for (AnimationSequences_t::const_iterator i = m_animationSequences.cbegin(), e = m_animationSequences.cend(); i != e; ++i)
     {
-        return &it->second;
+        if (i->second->endFrameNo == frame + 1)
+            return i->second;
     }
 
     return nullptr;
 }
 
-const GAFAnimationSequence * GAFTimeline::getSequenceByLastFrame(size_t frame) const
+GAFAnimationSequenceConstPtr GAFTimeline::getSequenceByFirstFrame(size_t frame) const
 {
     if (m_animationSequences.empty())
     {
@@ -175,34 +177,16 @@ const GAFAnimationSequence * GAFTimeline::getSequenceByLastFrame(size_t frame) c
 
     for (AnimationSequences_t::const_iterator i = m_animationSequences.begin(), e = m_animationSequences.end(); i != e; ++i)
     {
-        if (i->second.endFrameNo == frame + 1)
+        if (i->second->startFrameNo == frame)
         {
-            return &i->second;
+            return i->second;
         }
     }
 
     return nullptr;
 }
 
-const GAFAnimationSequence * GAFTimeline::getSequenceByFirstFrame(size_t frame) const
-{
-    if (m_animationSequences.empty())
-    {
-        return nullptr;
-    }
-
-    for (AnimationSequences_t::const_iterator i = m_animationSequences.begin(), e = m_animationSequences.end(); i != e; ++i)
-    {
-        if (i->second.startFrameNo == frame)
-        {
-            return &i->second;
-        }
-    }
-
-    return nullptr;
-}
-
-GAFTextureAtlas* GAFTimeline::getTextureAtlas()
+GAFTextureAtlasConstPtr GAFTimeline::getTextureAtlas() const
 {
     return m_currentTextureAtlas;
 }
@@ -252,9 +236,9 @@ const std::string& GAFTimeline::getOriginClass() const
     return m_originClass;
 }
 
-GAFTimeline* GAFTimeline::getParent() const
+GAFTimelineConstPtr GAFTimeline::getParent() const
 {
-    return m_parent;
+    return m_parent.lock();
 }
 
 void GAFTimeline::loadImages(float desiredAtlasScale)
