@@ -20,6 +20,7 @@ GAFBoxLayoutView::GAFBoxLayoutView()
     , m_verticalAlign(VerticalAlign::center)
     , m_dynamicContentBounds(cocos2d::Rect::ZERO)
     , m_dynamicContentBoundsDirty(false)
+    , m_layoutDirty(true)
 {
 }
 
@@ -59,86 +60,174 @@ void GAFBoxLayoutView::addChild(Node* child, int localZOrder, int tag)
 {
     GAFLayoutView::addChild(child, localZOrder, tag);
 
-    m_dynamicContentBoundsDirty = true;
+    m_layoutDirty = m_dynamicContentBoundsDirty = true;
 }
 
 void GAFBoxLayoutView::addChild(Node* child, int localZOrder, const std::string& name)
 {
     GAFLayoutView::addChild(child, localZOrder, name);
 
-    m_dynamicContentBoundsDirty = true;
+    m_layoutDirty = m_dynamicContentBoundsDirty = true;
 }
 
 void GAFBoxLayoutView::removeChild(Node * child, bool cleanup)
 {
     GAFLayoutView::removeChild(child, cleanup);
 
-    m_dynamicContentBoundsDirty = true;
+    m_layoutDirty = m_dynamicContentBoundsDirty = true;
 }
 
 void GAFBoxLayoutView::removeAllChildrenWithCleanup(bool cleanup)
 {
     GAFLayoutView::removeAllChildrenWithCleanup(cleanup);
 
-    m_dynamicContentBoundsDirty = true;
+    m_layoutDirty = m_dynamicContentBoundsDirty = true;
 }
 
-void GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
+bool GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
 {
-    GAFLayoutView::processOwnCustomProperties(customProperties);
-    m_direction = Direction::toEnum(customProperties.at("direction"));
-    m_horizontalAlign = HorizontalAlign::toEnum(customProperties.at("horizontalAlign"));
-    m_verticalAlign = VerticalAlign::toEnum(customProperties.at("verticalAlign"));
+    bool cpChanged = GAFLayoutView::processOwnCustomProperties(customProperties);
 
-    m_gap = std::stof(customProperties.at("gap"));
-    m_marginTop = std::stof(customProperties.at("marginTop"));
-    m_marginRight = std::stof(customProperties.at("marginRight"));
-    m_marginBottom = std::stof(customProperties.at("marginBottom"));
-    m_marginLeft = std::stof(customProperties.at("marginLeft"));
+    auto direction = Direction::toEnum(customProperties.at("direction"));
+    auto horizontalAlign = HorizontalAlign::toEnum(customProperties.at("horizontalAlign"));
+    auto verticalAlign = VerticalAlign::toEnum(customProperties.at("verticalAlign"));
+    auto gap = std::stof(customProperties.at("gap"));
+    auto marginTop = std::stof(customProperties.at("marginTop"));
+    auto marginRight = std::stof(customProperties.at("marginRight"));
+    auto marginBottom = std::stof(customProperties.at("marginBottom"));
+    auto marginLeft = std::stof(customProperties.at("marginLeft"));
 
-    m_gapMode = MarginGapMode::toEnum(customProperties.at("gapMode"));
-    m_marginMode = MarginGapMode::toEnum(customProperties.at("marginMode"));
+    auto gapMode = MarginGapMode::toEnum(customProperties.at("gapMode"));
+    auto marginMode = MarginGapMode::toEnum(customProperties.at("marginMode"));
 
-    m_dynamicContentBoundsDirty = true;
+    if (m_direction != direction)
+    {
+        m_direction = direction;
+        cpChanged = true;
+    }
+
+    if (m_horizontalAlign != horizontalAlign)
+    {
+        m_horizontalAlign = horizontalAlign;
+        cpChanged = true;
+    }
+
+    if (m_verticalAlign != verticalAlign)
+    {
+        m_verticalAlign = verticalAlign;
+        cpChanged = true;
+    }
+
+    if (m_gap != gap)
+    {
+        m_gap = gap;
+        cpChanged = true;
+    }
+
+    if (m_marginTop != marginTop)
+    {
+        m_marginTop = marginTop;
+        cpChanged = true;
+    }
+
+    if (m_marginRight != marginRight)
+    {
+        m_marginRight = marginRight;
+        cpChanged = true;
+    }
+
+    if (m_marginBottom != marginBottom)
+    {
+        m_marginBottom = marginBottom;
+        cpChanged = true;
+    }
+
+    if (m_marginLeft != marginLeft)
+    {
+        m_marginLeft = marginLeft;
+        cpChanged = true;
+    }
+
+    if (m_gapMode != gapMode)
+    {
+        m_gapMode = gapMode;
+        cpChanged = true;
+    }
+
+    if (m_marginMode != marginMode)
+    {
+        m_marginMode = marginMode;
+        cpChanged = true;
+    }
+
+    if (cpChanged)
+        m_layoutDirty = m_dynamicContentBoundsDirty = true;
+
+    return cpChanged;
 }
 
 void GAFBoxLayoutView::processStates(cocos2d::Node* out, uint32_t frameIndex, GAFAnimationFrameConstPtr frame)
 {
-    ObjectsStatesPositions_t childrenToAlign;
+    m_layoutDirty = true; // allways update chindren position
+
     const GAFAnimationFrame::SubobjectStates_t& states = frame->getObjectStates();
-    for (const GAFSubobjectStateConstPtr state : states)
+    ObjectsStatesPositions_t childrenToAlign;
+    for (GAFSubobjectStateConstPtr state : states)
     {
         GAFObject* child = m_displayList[state->objectIdRef];
 
-        if (!child)
-            continue;
-
-        cocos2d::AffineTransform stateMatrix = state->affineTransform;
-
-        if (state->isVisible())
+        if (child && state->isVisible())
         {
+            cocos2d::AffineTransform stateMatrix = state->affineTransform;
             childrenToAlign.emplace_back(child, state, stateMatrix);
+
             child->setLastVisibleInFrame(frameIndex + 1);
         }
     }
 
-    processChildren(out, childrenToAlign);
+    processEmbededChildren(out, childrenToAlign);
     childrenToAlign.clear();
 
     for (auto child : _children)
     {
         GAFObject* subObject = dynamic_cast<GAFObject*>(child);
-        if (!subObject) continue;
 
-        childrenToAlign.emplace_back(subObject, nullptr, cocos2d::AffineTransformMakeIdentity());
+        if (subObject && subObject->isVisible())
+            childrenToAlign.emplace_back(subObject, nullptr, cocos2d::AffineTransformMakeIdentity());
     }
 
-    processChildren(out, childrenToAlign);
+    processDynamicChildren(out, childrenToAlign);
+
+    m_layoutDirty = false;
 }
 
-cocos2d::AffineTransform & GAFBoxLayoutView::addAdditionalTransformations(cocos2d::AffineTransform& mtx) const
+cocos2d::AffineTransform& GAFBoxLayoutView::processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties)
 {
-    if (m_scaleAlignedChildren)
+    if (m_layoutDirty)
+        return GAFLayoutView::processGAFTimelineStateTransform(child, mtx, customProperties);
+
+    return mtx;
+}
+
+cocos2d::AffineTransform& GAFBoxLayoutView::processGAFImageStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx)
+{
+    if (m_layoutDirty)
+        return GAFLayoutView::processGAFImageStateTransform(child, mtx);
+
+    return mtx;
+}
+
+cocos2d::AffineTransform& GAFBoxLayoutView::processGAFTextFieldStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx)
+{
+    if (m_layoutDirty)
+        return GAFLayoutView::processGAFTextFieldStateTransform(child, mtx);
+
+    return mtx;
+}
+
+cocos2d::AffineTransform& GAFBoxLayoutView::addAdditionalTransformations(cocos2d::AffineTransform& mtx) const
+{
+    if (m_scaleAlignedChildren && m_layoutDirty)
     {
         cocos2d::AffineTransform scaleMtx = cocos2d::AffineTransformMakeIdentity();
         cocos2d::Vec2 fittingScale(getFittingScale());
@@ -149,7 +238,78 @@ cocos2d::AffineTransform & GAFBoxLayoutView::addAdditionalTransformations(cocos2
     return mtx;
 }
 
-void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPositions_t& objects)
+void GAFBoxLayoutView::processEmbededChildren(cocos2d::Node* out, ObjectsStatesPositions_t& objects)
+{
+    bool tempLayoutDirty = m_layoutDirty;
+
+    m_layoutDirty = true;
+    for (auto& childAndMtx : objects)
+    {
+        GAFObject* child = std::get<0>(childAndMtx);
+        const GAFSubobjectStateConstPtr state = std::get<1>(childAndMtx);
+        cocos2d::AffineTransform& stateMatrix = std::get<2>(childAndMtx);
+
+        assert(state);
+        preProcessGAFObject(out, child, state, stateMatrix);
+    }
+
+    calculatePositions(objects);
+
+    for (auto& childAndMtx : objects)
+    {
+        GAFObject* child = std::get<0>(childAndMtx);
+        const GAFSubobjectStateConstPtr state = std::get<1>(childAndMtx);
+        cocos2d::AffineTransform& stateMatrix = std::get<2>(childAndMtx);
+
+        if (child->getCharType() == GAFCharacterType::Timeline)
+        {
+            processGAFTimeline(out, child, state, stateMatrix);
+        }
+        else if (child->getCharType() == GAFCharacterType::Texture)
+        {
+            processGAFImage(out, child, state, stateMatrix);
+        }
+        else if (child->getCharType() == GAFCharacterType::TextField)
+        {
+            processGAFTextField(out, child, state, stateMatrix);
+        }
+    }
+
+    m_layoutDirty = tempLayoutDirty;
+}
+
+void GAFBoxLayoutView::processDynamicChildren(cocos2d::Node* out, ObjectsStatesPositions_t& objects)
+{
+    if (m_layoutDirty)
+        calculatePositions(objects);
+
+    for (auto& childAndMtx : objects)
+    {
+        GAFObject* child = std::get<0>(childAndMtx);
+        cocos2d::AffineTransform& stateMatrix = std::get<2>(childAndMtx);
+        if (!m_layoutDirty)
+            stateMatrix = child->getExternalTransform();
+
+        if (child->getCharType() == GAFCharacterType::Timeline)
+        {
+            CustomPropertiesMap_t props;
+
+            processGAFTimelineStateTransform(child, stateMatrix, props);
+        }
+        else if (child->getCharType() == GAFCharacterType::Texture)
+        {
+            processGAFImageStateTransform(child, stateMatrix);
+        }
+        else if (child->getCharType() == GAFCharacterType::TextField)
+        {
+            processGAFTextFieldStateTransform(child, stateMatrix);
+        }
+
+        child->setExternalTransform(stateMatrix);
+    }
+}
+
+void GAFBoxLayoutView::calculatePositions(ObjectsStatesPositions_t& objects) const
 {
     const cocos2d::Rect bb = getFlashInternalBoundingBox();
     cocos2d::Rect childrenBB = cocos2d::Rect::ZERO;
@@ -222,30 +382,9 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
     for (auto& childAndMtx : objects)
     {
         GAFObject* child = std::get<0>(childAndMtx);
-        const GAFSubobjectStateConstPtr state = std::get<1>(childAndMtx);
         cocos2d::AffineTransform& stateMatrix = std::get<2>(childAndMtx);
 
-        if (state)
-            preProcessGAFObject(out, child, state, stateMatrix);
-
         auto lastChild = (child == std::get<0>(*std::prev(objects.cend())));
-        bool skipChild = (state ? !state->isVisible() : !child->isVisible());
-        if (skipChild)
-        {
-            if (lastChild)
-            {
-                // second loop, align row
-                bool isHorizontalLine = (m_direction == Direction::horizontal || m_direction == Direction::tiledByWidth);
-
-                alignLine(lineChildren, calculateLineOffset(isHorizontalLine));
-                lineChildren.clear();
-
-                contentSize.width = std::max(contentSize.width, currLineSize.width);
-                contentSize.height = currPos.y + currLineSize.height;
-            }
-
-            continue;
-        }
 
         if (m_scaleAlignedChildren)
             affineTransformSetFrom(stateMatrix, cocos2d::AffineTransformScale(stateMatrix, fittingScale.x, fittingScale.y));
@@ -410,48 +549,10 @@ void GAFBoxLayoutView::processChildren(cocos2d::Node* out, ObjectsStatesPosition
 
     for (auto& childAndMtx : objects)
     {
-        GAFObject* child = std::get<0>(childAndMtx);
-        const GAFSubobjectStateConstPtr state = std::get<1>(childAndMtx);
         cocos2d::AffineTransform& stateMatrix = std::get<2>(childAndMtx);
 
         stateMatrix.tx += contentOffset.x;
         stateMatrix.ty += contentOffset.y;
-
-        if (state)
-        {
-            if (child->getCharType() == GAFCharacterType::Timeline)
-            {
-                processGAFTimeline(out, child, state, stateMatrix);
-            }
-            else if (child->getCharType() == GAFCharacterType::Texture)
-            {
-                processGAFImage(out, child, state, stateMatrix);
-            }
-            else if (child->getCharType() == GAFCharacterType::TextField)
-            {
-                processGAFTextField(out, child, state, stateMatrix);
-            }
-        }
-        else
-        {
-            if (child->getCharType() == GAFCharacterType::Timeline)
-            {
-                CustomPropertiesMap_t props;
-
-                processGAFTimelineStateTransform(child, stateMatrix, props);
-            }
-            else if (child->getCharType() == GAFCharacterType::Texture)
-            {
-                processGAFImageStateTransform(child, stateMatrix);
-            }
-            else if (child->getCharType() == GAFCharacterType::TextField)
-            {
-                processGAFTextFieldStateTransform(child, stateMatrix);
-            }
-
-            child->setExternalTransform(stateMatrix);
-        }
-        
     }
 }
 

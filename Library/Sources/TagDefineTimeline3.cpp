@@ -26,7 +26,7 @@ void TagDefineTimeline3::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr
     PrimitiveDeserializer::deserialize(in, &aabb);
     PrimitiveDeserializer::deserialize(in, &pivot);
 
-    auto tl = ::std::make_shared<GAFTimeline>(timeline, id, aabb, pivot, framesCount);
+    auto tl = std::make_shared<GAFTimeline>(timeline, id, aabb, pivot, framesCount);
 
     //////////////////////////////////////////////////////////////////////////
 

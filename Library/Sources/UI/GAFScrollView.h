@@ -23,7 +23,7 @@ public:
     virtual void onEnter() override;
 
 protected:
-    virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
+    virtual bool processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
     virtual void processGAFTimeline(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx) override;
 };
 

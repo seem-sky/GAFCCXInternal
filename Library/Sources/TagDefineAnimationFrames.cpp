@@ -28,7 +28,7 @@ void TagDefineAnimationFrames::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimel
     for (AnimationObjects_t::const_iterator i = timeline->getAnimationObjects().cbegin(), e = timeline->getAnimationObjects().cend(); i != e; ++i)
     {
         unsigned int objectId = i->first;
-        auto state = ::std::make_shared<GAFSubobjectState>();
+        auto state = std::make_shared<GAFSubobjectState>();
         state->initEmpty(objectId);
 
         m_currentStates[objectId] = state;
@@ -65,7 +65,7 @@ void TagDefineAnimationFrames::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimel
                 frameNumber = in->readU32();
         }
 
-        GAFAnimationFramePtr frame = ::std::make_shared<GAFAnimationFrame>();
+        GAFAnimationFramePtr frame = std::make_shared<GAFAnimationFrame>();
 
         for (States_t::const_iterator it = m_currentStates.cbegin(), ie = m_currentStates.cend(); it != ie; ++it)
         {
@@ -80,7 +80,7 @@ void TagDefineAnimationFrames::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimel
 
 GAFSubobjectStateUPtr TagDefineAnimationFrames::extractState(GAFStreamPtr in) const
 {
-    auto state = ::std::make_unique<GAFSubobjectState>();
+    auto state = std::make_unique<GAFSubobjectState>();
 
     float ctx[7];
 
@@ -129,13 +129,13 @@ GAFSubobjectStateUPtr TagDefineAnimationFrames::extractState(GAFStreamPtr in) co
             {
                 cocos2d::Size p;
                 PrimitiveDeserializer::deserialize(in, &p);
-                auto filter = ::std::make_shared<GAFBlurFilterData>();
+                auto filter = std::make_shared<GAFBlurFilterData>();
                 filter->blurSize = p;
                 state->pushFilter(filter);
             }
             else if (type == GAFFilterType::ColorMatrix)
             {
-                auto filter = ::std::make_shared<GAFColorMatrixFilterData>();
+                auto filter = std::make_shared<GAFColorMatrixFilterData>();
                 for (auto i = 0; i < 4; ++i)
                 {
                     for (auto j = 0; j < 4; ++j)
@@ -150,7 +150,7 @@ GAFSubobjectStateUPtr TagDefineAnimationFrames::extractState(GAFStreamPtr in) co
             }
             else if (type == GAFFilterType::Glow)
             {
-                auto filter = ::std::make_shared<GAFGlowFilterData>();
+                auto filter = std::make_shared<GAFGlowFilterData>();
                 unsigned int clr = in->readU32();
 
                 PrimitiveDeserializer::translateColor(filter->color, clr);
@@ -166,7 +166,7 @@ GAFSubobjectStateUPtr TagDefineAnimationFrames::extractState(GAFStreamPtr in) co
             }
             else if (type == GAFFilterType::DropShadow)
             {
-                auto filter = ::std::make_shared<GAFDropShadowFilterData>();
+                auto filter = std::make_shared<GAFDropShadowFilterData>();
                 unsigned int clr = in->readU32();
 
                 PrimitiveDeserializer::translateColor(filter->color, clr);

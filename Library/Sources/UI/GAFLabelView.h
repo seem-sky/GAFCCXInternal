@@ -16,7 +16,7 @@ public:
     virtual bool init(GAFAssetConstPtr anAnimationData, GAFTimelineConstPtr timeline) override;
 
 protected:
-    virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
+    virtual bool processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
 
     GAFTextField* m_textField;
 };

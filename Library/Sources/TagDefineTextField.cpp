@@ -17,7 +17,7 @@ void TagDefineTextField::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr
     {
         unsigned int objectIdRef = in->readU32();
 
-        auto textData = ::std::make_shared<GAFTextData>();
+        auto textData = std::make_shared<GAFTextData>();
 
         PrimitiveDeserializer::deserialize(in, &textData->m_pivot);
         textData->m_width = in->readFloat();

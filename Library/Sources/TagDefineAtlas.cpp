@@ -15,7 +15,7 @@ NS_GAF_BEGIN
 void TagDefineAtlas::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline)
 {
     (void)asset;
-    auto txAtlas = ::std::make_shared<GAFTextureAtlas>();
+    auto txAtlas = std::make_shared<GAFTextureAtlas>();
 
     txAtlas->setScale(in->readFloat());
 
@@ -46,7 +46,7 @@ void TagDefineAtlas::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr tim
 
     for (unsigned int i = 0; i < elementsCount; ++i)
     {
-        auto element = ::std::make_shared<GAFTextureAtlasElement>();
+        auto element = std::make_shared<GAFTextureAtlasElement>();
 
         PrimitiveDeserializer::deserialize(in, &element->pivotPoint);
         cocos2d::Vec2 origin;

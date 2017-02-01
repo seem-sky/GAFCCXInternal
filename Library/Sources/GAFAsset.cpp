@@ -70,7 +70,7 @@ bool GAFAsset::isAssetVersionPlayable(const char* version)
 
 GAFAssetPtr GAFAsset::create(const std::string& gafFilePath, GAFTextureLoadDelegate_t delegate, GAFLoaderPtr customLoader /*= nullptr*/)
 {
-    auto ret = ::std::shared_ptr<GAFAsset>(new GAFAsset);
+    auto ret = std::shared_ptr<GAFAsset>(new GAFAsset);
     if (ret && ret->initWithGAFFile(gafFilePath, delegate, customLoader))
         return ret;
 
@@ -84,7 +84,7 @@ GAFAssetPtr GAFAsset::create(const std::string& gafFilePath)
 
 GAFAssetPtr GAFAsset::createWithBundle(const std::string& zipfilePath, const std::string& entryFile, GAFTextureLoadDelegate_t delegate, GAFLoaderPtr customLoader /*= nullptr*/)
 {
-    auto ret = ::std::shared_ptr<GAFAsset>(new GAFAsset);
+    auto ret = std::shared_ptr<GAFAsset>(new GAFAsset);
     if (ret && ret->initWithGAFBundle(zipfilePath, entryFile, delegate, customLoader))
         return ret;
 
@@ -98,7 +98,7 @@ GAFAssetPtr GAFAsset::createWithBundle(const std::string& zipfilePath, const std
 
 void GAFAsset::getResourceReferences(const std::string& gafFilePath, std::vector<GAFResourcesInfoConstPtr>& dest)
 {
-    auto asset = ::std::shared_ptr<GAFAsset>(new GAFAsset);
+    auto asset = std::shared_ptr<GAFAsset>(new GAFAsset);
     asset->m_state = State::DryRun;
     if (asset && asset->initWithGAFFile(gafFilePath, nullptr))
         asset->parseReferences(dest);
@@ -106,7 +106,7 @@ void GAFAsset::getResourceReferences(const std::string& gafFilePath, std::vector
 
 void GAFAsset::getResourceReferencesFromBundle(const std::string& zipfilePath, const std::string& entryFile, std::vector<GAFResourcesInfoConstPtr>& dest)
 {
-    auto asset = ::std::shared_ptr<GAFAsset>(new GAFAsset);
+    auto asset = std::shared_ptr<GAFAsset>(new GAFAsset);
     asset->m_state = State::DryRun;
     if (asset && asset->initWithGAFBundle(zipfilePath, entryFile, nullptr))
         asset->parseReferences(dest);
@@ -166,7 +166,7 @@ bool GAFAsset::initWithGAFBundle(const std::string& zipFilePath, const std::stri
     }
     if (isLoaded && m_state == State::Normal)
     {
-        m_textureManager = ::std::make_shared<GAFAssetTextureManager>();
+        m_textureManager = std::make_shared<GAFAssetTextureManager>();
         //GAFShaderManager::Initialize();
         loadTextures(entryFile, delegate, &bundle);
     }
@@ -197,7 +197,7 @@ bool GAFAsset::initWithGAFFile(const std::string& filePath, GAFTextureLoadDelega
 
     if (isLoaded && m_state == State::Normal)
     {
-        m_textureManager = ::std::make_shared<GAFAssetTextureManager>();
+        m_textureManager = std::make_shared<GAFAssetTextureManager>();
         loadTextures(fullfilePath, delegate);
     }
 
@@ -226,7 +226,7 @@ void GAFAsset::parseReferences(std::vector<GAFResourcesInfoConstPtr>& dest)
                     {
                         if ((*i_res)->id == GAFResourcesInfo::ResourceId::Texture)
                         {
-                            auto presentTexture = ::std::static_pointer_cast<const GAFResourcesInfoTexture>(*i_res);
+                            auto presentTexture = std::static_pointer_cast<const GAFResourcesInfoTexture>(*i_res);
 
                             if (*presentTexture == compareTexture)
                             {
@@ -238,7 +238,7 @@ void GAFAsset::parseReferences(std::vector<GAFResourcesInfoConstPtr>& dest)
 
                     if (!present)
                     {
-                        dest.push_back(::std::make_shared<const GAFResourcesInfoTexture>(compareTexture));
+                        dest.push_back(std::make_shared<const GAFResourcesInfoTexture>(compareTexture));
                     }
                 }
             }
@@ -255,7 +255,7 @@ void GAFAsset::parseReferences(std::vector<GAFResourcesInfoConstPtr>& dest)
             {
                 if ((*i_res)->id == GAFResourcesInfo::ResourceId::Font)
                 {
-                    auto presentFont = ::std::static_pointer_cast<const GAFResourcesInfoFont>(*i_res);
+                    auto presentFont = std::static_pointer_cast<const GAFResourcesInfoFont>(*i_res);
                     if (*presentFont == compareFont)
                     {
                         present = true;
@@ -266,7 +266,7 @@ void GAFAsset::parseReferences(std::vector<GAFResourcesInfoConstPtr>& dest)
 
             if (!present)
             {
-                dest.push_back(::std::make_shared<const GAFResourcesInfoFont>(compareFont));
+                dest.push_back(std::make_shared<const GAFResourcesInfoFont>(compareFont));
             }
         }
 

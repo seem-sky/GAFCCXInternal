@@ -14,7 +14,7 @@ gaf_fwd_this(DefinitionTagBase);
 gaf_fwd_this(GAFHeader);
 gaf_fwd_this(GAFFile);
 
-class GAFLoader : public ::std::enable_shared_from_this<GAFLoader>
+class GAFLoader : public std::enable_shared_from_this<GAFLoader>
 {
 public:
     using CustomPropertiesMap_t = std::map<uint32_t, CustomProperties_t>; // Custom properties set by timeline id

@@ -267,11 +267,6 @@ void GAFObject::update(float delta)
         m_updateEventListener(delta);
 }
 
-/*void GAFObject::useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements)
-{
-    m_asset->useExternalTextureAtlas(textures, elements);
-}*/
-
 void GAFObject::processAnimation()
 {
     realizeFrame(m_container, m_currentFrame);
@@ -915,10 +910,28 @@ void GAFObject::preProcessGAFObject(cocos2d::Node* out, GAFObject* child, const 
     (void)mtx;
 
     if (state->colorMults()[GAFColorTransformIndex::GAFCTI_A] >= 0.f && child->m_isInResetState)
-    {
         child->m_currentFrame = child->m_currentSequenceStart;
-    }
+
     child->m_isInResetState = state->colorMults()[GAFColorTransformIndex::GAFCTI_A] < 0.f;
+}
+
+void GAFObject::processGAFObject(cocos2d::Node * out, GAFObject * child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform & mtx)
+{
+    if (!state->isVisible())
+        return;
+
+    if (child->m_charType == GAFCharacterType::Timeline)
+    {
+        processGAFTimeline(out, child, state, mtx);
+    }
+    else if (child->m_charType == GAFCharacterType::Texture)
+    {
+        processGAFImage(out, child, state, mtx);
+    }
+    else if (child->m_charType == GAFCharacterType::TextField)
+    {
+        processGAFTextField(out, child, state, mtx);
+    }
 }
 
 void GAFObject::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx)
@@ -928,6 +941,7 @@ void GAFObject::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const G
         CustomPropertiesMap_t props;
         fillCustomPropertiesMap(props, child->getCustomProperties(), state);
 
+        child->processOwnCustomProperties(props);
         processGAFTimelineStateTransform(child, mtx, props);
         child->setExternalTransform(mtx);
 
@@ -1097,8 +1111,6 @@ void GAFObject::postProcessGAFObject(cocos2d::Node* out, GAFObject* child, const
 
 cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties)
 {
-    child->processOwnCustomProperties(customProperties);
-
     if (child->m_isManualPosition || child->m_isManualScale)
     {
         //affineTransformSetFrom(mtx, cocos2d::AffineTransform::IDENTITY);
@@ -1137,17 +1149,6 @@ cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject*
 cocos2d::AffineTransform& GAFObject::processGAFImageStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx)
 {
     affineTransformSetFrom(mtx, AffineTransformFlashToCocos(mtx));
-
-    /*if (isFlippedX() || isFlippedY())
-    {
-        float flipMulX = isFlippedX() ? -1.f : 1.f;
-        float flipOffsetX = isFlippedX() ? getContentSize().width - m_asset->getHeader().frameSize.getMinX() : 0;
-        float flipMulY = isFlippedY() ? -1.f : 1.f;
-        float flipOffsetY = isFlippedY() ? -getContentSize().height + m_asset->getHeader().frameSize.getMinY() : 0;
-
-        cocos2d::AffineTransform flipCenterTransform = cocos2d::AffineTransformMake(flipMulX, 0, 0, flipMulY, flipOffsetX, flipOffsetY);
-        affineTransformSetFrom(mtx, AffineTransformConcat(mtx, flipCenterTransform));
-    }*/
 
     float curScaleX = child->getScaleX();
     if (fabs(curScaleX - 1.0) > std::numeric_limits<float>::epsilon())
@@ -1215,9 +1216,11 @@ cocos2d::AffineTransform& GAFObject::addAdditionalTransformations(cocos2d::Affin
     return mtx;
 }
 
-void GAFObject::processOwnCustomProperties(const CustomPropertiesMap_t & customProperties)
+bool GAFObject::processOwnCustomProperties(const CustomPropertiesMap_t & customProperties)
 {
     (void)customProperties;
+
+    return false;
 }
 
 bool GAFObject::allNecessaryFieldsExist(const CustomPropertiesMap_t & customProperties) const
@@ -1304,28 +1307,15 @@ void GAFObject::processStates(cocos2d::Node* out, uint32_t frameIndex, GAFAnimat
             continue;
 
         cocos2d::AffineTransform stateMatrix = state->affineTransform;
+
         preProcessGAFObject(out, subObject, state, stateMatrix);
 
-        if (!state->isVisible())
-            continue;
+        processGAFObject(out, subObject, state, stateMatrix);
 
-        if (subObject->m_charType == GAFCharacterType::Timeline)
-        {
-            processGAFTimeline(out, subObject, state, stateMatrix);
-        }
-        else if (subObject->m_charType == GAFCharacterType::Texture)
-        {
-            processGAFImage(out, subObject, state, stateMatrix);
-        }
-        else if (subObject->m_charType == GAFCharacterType::TextField)
-        {
-            processGAFTextField(out, subObject, state, stateMatrix);
-        }
+        postProcessGAFObject(out, subObject, state, stateMatrix);
 
         if (state->isVisible())
-        {
             subObject->m_lastVisibleInFrame = frameIndex + 1;
-        }
     }
 }
 

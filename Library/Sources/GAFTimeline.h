@@ -138,7 +138,7 @@ public:
         CustomData_t::const_iterator it = m_userData.find(K);
         if (it == m_userData.end()) return T();
         
-        return ::std::static_pointer_cast<GAFAny<T>>(it->second)->data;
+        return std::static_pointer_cast<GAFAny<T>>(it->second)->data;
     }
 
 private:

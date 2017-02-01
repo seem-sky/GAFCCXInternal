@@ -118,7 +118,7 @@ private:
 
     bool                                    m_isInResetState;
 
-    std::string                             m_objectName;
+    std::string                           m_objectName;
 
 private:
     void constructObject();
@@ -165,6 +165,7 @@ protected:
     virtual void processStates(cocos2d::Node* out, uint32_t frameIndex, GAFAnimationFrameConstPtr frame);
     virtual void rearrangeSubobject(cocos2d::Node* out, cocos2d::Node* child, int zIndex);
     virtual void preProcessGAFObject(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
+    virtual void processGAFObject(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
     virtual void processGAFTimeline(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
     virtual void processGAFImage(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
     virtual void processGAFTextField(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
@@ -176,7 +177,9 @@ protected:
 
     virtual cocos2d::AffineTransform& changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const;
     virtual cocos2d::AffineTransform& addAdditionalTransformations(cocos2d::AffineTransform& mtx) const;
-    virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties);
+
+    // returns true if custom properties were changed
+    virtual bool processOwnCustomProperties(const CustomPropertiesMap_t& customProperties);
     virtual bool allNecessaryFieldsExist(const CustomPropertiesMap_t& customProperties) const;
 
     virtual CustomPropertiesMap_t& fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, GAFSubobjectStateConstPtr state) const;
@@ -184,6 +187,7 @@ protected:
     virtual GAFObject* encloseNewTimeline(uint32_t reference);
 
     void        step();
+    static void step(GAFObject* obj) { obj->step(); } // call step from derived class through a pointer
     bool        isCurrentFrameLastInSequence() const;
     uint32_t    nextFrame();
 
@@ -225,8 +229,6 @@ public:
     };
     
     virtual void update(float delta) override;
-
-    //void useExternalTextureAtlas(std::vector<cocos2d::Texture2D*>& textures, GAFTextureAtlas::Elements_t& elements);
 
 public:
     void        processAnimation();
@@ -335,7 +337,7 @@ public:
     void setCustomFilter(const FilterSubtype* filter)
     {
         if (filter)
-            m_customFilter = ::std::make_shared<const FilterSubtype>(*filter);
+            m_customFilter = std::make_shared<const FilterSubtype>(*filter);
     }
 
     //////////////////////////////////////////////////////////////////////////

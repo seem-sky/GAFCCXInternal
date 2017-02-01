@@ -72,7 +72,7 @@ protected:
     virtual cocos2d::Vec2 getFittingScale() const;
 
     virtual bool allNecessaryFieldsExist(const CustomPropertiesMap_t& customProperties) const override;
-    virtual void processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
+    virtual bool processOwnCustomProperties(const CustomPropertiesMap_t& customProperties) override;
 };
 
 NS_GAF_END

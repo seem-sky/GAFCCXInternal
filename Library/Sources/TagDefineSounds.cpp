@@ -16,7 +16,7 @@ void TagDefineSounds::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr ti
 
     for (uint16_t i = 0; i < count; ++i)
     {
-        auto soundInfo = ::std::make_shared<GAFSoundInfo>();
+        auto soundInfo = std::make_shared<GAFSoundInfo>();
 
         soundInfo->id = in->readU16();
         in->readString(&soundInfo->linkage);

@@ -47,8 +47,10 @@ bool gaf::GAFLabelView::init(GAFAssetConstPtr anAnimationData, GAFTimelineConstP
     return ret;
 }
 
-void gaf::GAFLabelView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
+bool gaf::GAFLabelView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
 {
+    bool cpChanged = GAFObject::processOwnCustomProperties(customProperties);
+
     CCASSERT(m_textField, "Error. No textfield found in this GAFLabelView");
 
     bool hasUseTextBoundsCP = customProperties.find("useTextBounds") != customProperties.end();
@@ -56,5 +58,11 @@ void gaf::GAFLabelView::processOwnCustomProperties(const CustomPropertiesMap_t& 
 
     bool useTextBounds = hasUseTextBoundsCP ? to_bool(customProperties.at("useTextBounds")) : false;
 
-    m_textField->setUseTextBounds(useTextBounds);
+    if (m_textField->getUseTextBounds() != useTextBounds)
+    {
+        m_textField->setUseTextBounds(useTextBounds);
+        cpChanged = true;
+    }
+
+    return cpChanged;
 }

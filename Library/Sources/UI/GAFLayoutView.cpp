@@ -102,10 +102,25 @@ bool GAFLayoutView::allNecessaryFieldsExist(const CustomPropertiesMap_t & custom
     return allFieldsExist;
 }
 
-void GAFLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
+bool GAFLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
 {
-    m_fittingMode = FittingMode::toEnum(customProperties.at("fittingMode"));
-    m_scaleAlignedChildren = to_bool(customProperties.at("scaleAlignedChildren"));
+    bool cpChanged = false;
+    auto fittingMode = FittingMode::toEnum(customProperties.at("fittingMode"));
+    auto scaleAlignedChildren = to_bool(customProperties.at("scaleAlignedChildren"));
+
+    if (m_fittingMode != fittingMode)
+    {
+        m_fittingMode = fittingMode;
+        cpChanged = true;
+    }
+    
+    if (m_scaleAlignedChildren != scaleAlignedChildren)
+    {
+        m_scaleAlignedChildren = scaleAlignedChildren;
+        cpChanged = true;
+    }
+
+    return cpChanged;
 }
 
 NS_GAF_END

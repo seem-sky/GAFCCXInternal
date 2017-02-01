@@ -23,7 +23,7 @@ void TagDefineExternalObjects2::read(GAFStreamPtr in, GAFAssetPtr, GAFTimelinePt
         std::string name;
         in->readString(&name);
 
-        auto externalObj = ::std::make_shared<ExternalObject>(objectIdRef, name);
+        auto externalObj = std::make_shared<ExternalObject>(objectIdRef, name);
 
         auto ldr = m_loader.lock();
         assert(ldr);

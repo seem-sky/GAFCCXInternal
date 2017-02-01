@@ -17,7 +17,7 @@ void TagDefineExternalObjects::read(GAFStreamPtr in, GAFAssetPtr, GAFTimelinePtr
         std::string name;
         in->readString(&name);
 
-        auto externalObj = ::std::make_shared<ExternalObject>(objectIdRef, name);
+        auto externalObj = std::make_shared<ExternalObject>(objectIdRef, name);
 
         timeline->pushExternalObject(externalObj);
     }

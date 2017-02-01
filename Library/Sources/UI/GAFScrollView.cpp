@@ -53,9 +53,9 @@ void GAFScrollView::onEnter()
     if (m_scrollBarV) m_scrollBarV->scheduleUpdate();
 }
 
-void GAFScrollView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
+bool GAFScrollView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
 {
-    GAFComponentView::processOwnCustomProperties(customProperties);
+    return GAFComponentView::processOwnCustomProperties(customProperties);
 }
 
 void GAFScrollView::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx)
