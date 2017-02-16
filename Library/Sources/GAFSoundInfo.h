@@ -45,6 +45,7 @@ public:
     SampleSize sampleSize;
     bool stereo;
     uint32_t sampleCount;
+    mutable std::string externalPath; // optional
 
     void setFormat(uint8_t value) { format = static_cast<Format>(value); }
     void setRate(uint8_t value) { rate = static_cast<Rate>(value); }

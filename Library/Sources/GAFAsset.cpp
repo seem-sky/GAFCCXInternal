@@ -464,6 +464,7 @@ void GAFAsset::pushTimeline(uint32_t timelineIdRef, GAFTimelinePtr t)
 
 void GAFAsset::pushSound(uint32_t id, GAFSoundInfoConstPtr sound)
 {
+    sound->externalPath = m_gafFileName;
     m_soundInfos[id] = sound;
 }
 
