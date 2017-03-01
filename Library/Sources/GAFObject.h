@@ -119,6 +119,7 @@ private:
     bool                                    m_isInResetState;
 
     std::string                           m_objectName;
+    int32_t m_previousFrameIndex;
 
 private:
     void constructObject();

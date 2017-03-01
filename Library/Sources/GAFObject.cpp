@@ -52,6 +52,7 @@ GAFObject::GAFObject()
     , m_isManualPosition(false)
     , m_isManualScale(false)
     , m_objectName("")
+    , m_previousFrameIndex(-1)
 {
 #if GAF_ENABLE_SHADER_MANAGER_AUTOMATIC_INITIALIZATION
     GAFShaderManager::Initialize();
@@ -1239,7 +1240,6 @@ GAFObject::CustomPropertiesMap_t& GAFObject::fillCustomPropertiesMap(CustomPrope
         std::string currentValue = timelineProperties[propIdx].possibleValues[valueIdx];
 
         map.emplace(std::make_pair(currentProperty, currentValue));
-        //CCLOG(currentProperty + ": " + currentValue);
     }
 
     return map;
@@ -1278,11 +1278,11 @@ void GAFObject::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
         case GAFActionType::DispatchEvent:
         {
             std::string type = action.getParam(GAFTimelineAction::PI_EVENT_TYPE);
-            if (type.compare(GAFSoundInfo::SoundEvent) == 0)
+            if (type.compare(GAFSoundInfo::SoundEvent) == 0 && m_previousFrameIndex != frameIndex)
             {
                 m_asset->soundEvent(action);
             }
-            else
+            else if (m_previousFrameIndex != frameIndex)
             {
                 _eventDispatcher->dispatchCustomEvent(action.getParam(GAFTimelineAction::PI_EVENT_TYPE), &action);
             }
@@ -1294,6 +1294,7 @@ void GAFObject::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)
             break;
         }
     }
+    m_previousFrameIndex = frameIndex;
 }
 
 void GAFObject::processStates(cocos2d::Node* out, uint32_t frameIndex, GAFAnimationFrameConstPtr frame)
