@@ -340,10 +340,6 @@ void GAFObject::processAnimations(float dt)
     if (m_skipFpsCheck)
     {
         step();
-        if (m_framePlayedDelegate)
-        {
-            m_framePlayedDelegate(this, m_currentFrame);
-        }
     }
     else
     {
@@ -353,11 +349,6 @@ void GAFObject::processAnimations(float dt)
         {
             m_timeDelta -= frameTime;
             step();
-
-            if (m_framePlayedDelegate)
-            {
-                m_framePlayedDelegate(this, m_currentFrame);
-            }
         }
     }
 }
@@ -629,6 +620,11 @@ void GAFObject::step()
 
     m_showingFrame = m_currentFrame;
     m_currentFrame = nextFrame();
+
+    if (m_framePlayedDelegate)
+    {
+        m_framePlayedDelegate(this, m_currentFrame);
+    }
 }
 
 bool GAFObject::isCurrentFrameLastInSequence() const
