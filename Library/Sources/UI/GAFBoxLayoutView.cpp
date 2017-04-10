@@ -84,6 +84,13 @@ void GAFBoxLayoutView::removeAllChildrenWithCleanup(bool cleanup)
     m_layoutDirty = m_dynamicContentBoundsDirty = true;
 }
 
+void GAFBoxLayoutView::setExternalTransform(const cocos2d::AffineTransform& transform)
+{
+    GAFLayoutView::setExternalTransform(transform);
+
+    m_layoutDirty = m_dynamicContentBoundsDirty = _transformDirty;
+}
+
 bool GAFBoxLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
 {
     bool cpChanged = GAFLayoutView::processOwnCustomProperties(customProperties);
