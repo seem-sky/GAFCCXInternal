@@ -148,6 +148,22 @@ cocos2d::Texture2D* GAFAssetTextureManager::getTextureById(uint32_t id)
     return nullptr;
 }
 
+void GAFAssetTextureManager::preloadAllTextures()
+{
+    for (const auto& imageData : m_images)
+    {
+        size_t id = imageData.first;
+        cocos2d::Texture2D* texture = new cocos2d::Texture2D();
+        texture->initWithImage(imageData.second);
+        m_textures[id] = texture;
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+        cocos2d::VolatileTextureMgr::addImage(texture, imageData.second);
+#endif
+        imageData.second->release();
+    }
+    m_images.clear();
+}
+
 bool GAFAssetTextureManager::swapTexture(uint32_t id, cocos2d::Texture2D *texture)
 {
     TexturesMap_t::const_iterator txIt = m_textures.find(id);
