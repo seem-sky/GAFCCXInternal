@@ -521,6 +521,21 @@ void GAFAsset::setSoundDelegate(GAFSoundDelegate_t delegate)
     m_soundDelegate = delegate;
 }
 
+void GAFAsset::setPreloadSoundDelegate(GAFPreloadSoundDelegate_t delegate)
+{
+    m_preloadSoundDelegate = delegate;
+}
+
+void GAFAsset::preloadSounds()
+{
+    if (m_preloadSoundDelegate == nullptr) return;
+    for (const auto& soundInfo : m_soundInfos)
+    {
+        const std::string& soundPath = soundInfo.second->source;
+        m_preloadSoundDelegate(soundPath);
+    }
+}
+
 GAFAssetTextureManagerPtr GAFAsset::getTextureManager() const
 {
     return m_textureManager;

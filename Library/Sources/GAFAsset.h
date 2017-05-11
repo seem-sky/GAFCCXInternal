@@ -37,6 +37,7 @@ private:
     GAFAssetTextureManagerPtr   m_textureManager;
 
     GAFSoundDelegate_t      m_soundDelegate = nullptr;
+    GAFPreloadSoundDelegate_t m_preloadSoundDelegate = nullptr;
 
     uint32_t                m_sceneFps = 60;
     uint32_t                m_sceneWidth = 0;
@@ -118,7 +119,9 @@ public:
     void                        setDesiredAtlasScale(float scale);
 
     void                        setTextureLoadDelegate(GAFTextureLoadDelegate_t delegate);
-    void                        setSoundDelegate(GAFSoundDelegate_t delagate);
+    void                        setSoundDelegate(GAFSoundDelegate_t delegate);
+    void                        setPreloadSoundDelegate(GAFPreloadSoundDelegate_t delegate);
+    void                        preloadSounds();
 
     GAFAssetTextureManagerPtr  getTextureManager() const;
 

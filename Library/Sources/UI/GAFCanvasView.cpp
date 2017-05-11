@@ -37,6 +37,7 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
     bool alignTop = to_bool(customProperties.at("alignTop"));
     bool alignBottom = to_bool(customProperties.at("alignBottom"));
 
+    cocos2d::Vec2 internalScale = getInternalScale();
     cocos2d::Vec2 fittingScale(getFittingScale());
 
     bool anyOfAlignSet = alignLeft || alignRight || alignTop || alignBottom;
@@ -47,7 +48,9 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
         float childAdditionalScaleY = 1.0f;
 
         float leftDistance = childActualBounds.origin.x - unscaledInternalBounds.origin.x;
-        if (usePercents)
+        if (!alignLeft)
+            leftDistance *= internalScale.x;
+        else if (usePercents)
             leftDistance = leftDistance / unscaledInternalBounds.size.width * actualInternalBounds.size.width;
         else if (useProportional)
             leftDistance *= fittingScale.x;
@@ -88,7 +91,9 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
         if (alignBottom)
         {
             float bottomDistance = unscaledInternalBounds.origin.y + unscaledInternalBounds.size.height - (childActualBounds.origin.y + childActualBounds.size.height);
-            if (usePercents)
+            if (!alignTop)
+                topDistance *= internalScale.y;
+            else if (usePercents)
                 bottomDistance = bottomDistance / unscaledInternalBounds.size.height * actualInternalBounds.size.height;
             else if (useProportional)
                 bottomDistance *= fittingScale.y;

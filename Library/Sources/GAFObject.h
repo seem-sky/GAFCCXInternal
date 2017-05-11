@@ -297,10 +297,10 @@ public:
     bool isVisibleInCurrentFrame() const;
 
     const AnimationSequences_t& getSequences() const;
-    GAFTimelineConstPtr getTimeLine() { return m_timeline; } const
+    GAFTimelineConstPtr getTimeLine() const { return m_timeline; }
     DisplayList_t& getDisplayList() { return m_displayList; }
     const DisplayList_t& getDisplayList() const { return m_displayList; }
-    GAFAssetConstPtr getAsset() { return m_asset; } const
+    GAFAssetConstPtr getAsset() const { return m_asset; }
     GAFCharacterType getCharType() const { return m_charType; }
     void setLastVisibleInFrame(uint32_t frame) { m_lastVisibleInFrame = frame; }
     uint32_t getLastVisibleInFrame() const { return m_lastVisibleInFrame; }

@@ -173,6 +173,7 @@ NS_GAF_BEGIN
         virtual void removeChild(Node* child, bool cleanup = true) override;
         virtual void removeAllChildrenWithCleanup(bool cleanup) override;
 
+        virtual void setExternalTransform(const cocos2d::AffineTransform& transform) override;
     protected:
         using ObjectStatePosition_t = std::tuple<GAFObject*, const GAFSubobjectStateConstPtr, cocos2d::AffineTransform>;
         using ObjectsStatesPositions_t = std::vector<ObjectStatePosition_t>;

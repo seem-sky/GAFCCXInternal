@@ -38,7 +38,7 @@ GAFObject::GAFObject()
     , m_isReversed(false)
     , m_timeDelta(0.0)
     , m_fps(0)
-    , m_skipFpsCheck(true)
+    , m_skipFpsCheck(false)
     , m_asset(nullptr)
     , m_timeline(nullptr)
     , m_currentFrame(GAFFirstFrameIndex)
@@ -340,10 +340,6 @@ void GAFObject::processAnimations(float dt)
     if (m_skipFpsCheck)
     {
         step();
-        if (m_framePlayedDelegate)
-        {
-            m_framePlayedDelegate(this, m_currentFrame);
-        }
     }
     else
     {
@@ -353,11 +349,6 @@ void GAFObject::processAnimations(float dt)
         {
             m_timeDelta -= frameTime;
             step();
-
-            if (m_framePlayedDelegate)
-            {
-                m_framePlayedDelegate(this, m_currentFrame);
-            }
         }
     }
 }
@@ -629,6 +620,11 @@ void GAFObject::step()
 
     m_showingFrame = m_currentFrame;
     m_currentFrame = nextFrame();
+
+    if (m_framePlayedDelegate)
+    {
+        m_framePlayedDelegate(this, m_currentFrame);
+    }
 }
 
 bool GAFObject::isCurrentFrameLastInSequence() const
