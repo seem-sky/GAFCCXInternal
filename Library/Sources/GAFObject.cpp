@@ -53,6 +53,8 @@ GAFObject::GAFObject()
     , m_isManualScale(false)
     , m_objectName("")
     , m_previousFrameIndex(-1)
+    , m_visibility(false)
+    , m_visibilityCallback(nullptr)
 {
 #if GAF_ENABLE_SHADER_MANAGER_AUTOMATIC_INITIALIZATION
     GAFShaderManager::Initialize();
@@ -1477,12 +1479,11 @@ const GAFObject* GAFObject::getObjectByNameForCurrentFrame(const std::string& na
     return const_cast<GAFObject*>(this)->getObjectByNameForCurrentFrame(name);
 }
 
-bool GAFObject::isVisibleInCurrentFrame() const
+bool GAFObject::isVisibleInCurrentFrame()
 {
-    // If sprite is a part of timeline object - check it for visibility in current frame
-    if (m_timelineParentObject && (m_timelineParentObject->getCurrentFrameIndex() + 1 != m_lastVisibleInFrame))
-        return false;
-    return true;
+    bool value = !(m_timelineParentObject && (m_timelineParentObject->getCurrentFrameIndex() + 1 != m_lastVisibleInFrame));
+    GAFObject::changeVisibility(value);
+    return value;
 }
 
 #if COCOS2D_VERSION < 0x00030200
@@ -1511,6 +1512,23 @@ void GAFObject::enableTick(bool val)
 
         m_animationsSelectorScheduled = false;
     }
+}
+
+void GAFObject::changeVisibility(bool value)
+{
+    if(m_visibility != value)
+    {
+        m_visibility = value;
+        if(m_visibilityCallback)
+        {
+            m_visibilityCallback(value);
+        }
+    }
+}
+
+void GAFObject::setVisibilityCallback(const GAFVisibilityCallback_t &callback)
+{
+    m_visibilityCallback = callback;
 }
 
 NS_GAF_END

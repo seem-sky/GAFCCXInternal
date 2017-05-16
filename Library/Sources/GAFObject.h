@@ -95,6 +95,7 @@ public:
     using CustomPropertiesMap_t = std::map<const std::string, const std::string>;
 
     using GAFObjectUpdateCallback = std::function<void(float dt)>;
+    using GAFVisibilityCallback_t = std::function<void(bool)>;
 
 private:
     GAFSequenceDelegate_t                   m_sequenceDelegate;
@@ -117,6 +118,8 @@ private:
     bool                                    m_animationsSelectorScheduled;
 
     bool                                    m_isInResetState;
+    bool                                    m_visibility;
+    GAFVisibilityCallback_t                 m_visibilityCallback;
 
     std::string                           m_objectName;
     int32_t m_previousFrameIndex;
@@ -191,6 +194,8 @@ protected:
     static void step(GAFObject* obj) { obj->step(); } // call step from derived class through a pointer
     bool        isCurrentFrameLastInSequence() const;
     uint32_t    nextFrame();
+    
+    void changeVisibility(bool value);
 
 public:
     void addUpdateListener(const GAFObjectUpdateCallback& callback);
@@ -230,6 +235,8 @@ public:
     };
     
     virtual void update(float delta) override;
+    
+    void setVisibilityCallback(const GAFVisibilityCallback_t& callback);
 
 public:
     void        processAnimation();
@@ -294,7 +301,7 @@ public:
 
     bool hasSequences() const;
 
-    bool isVisibleInCurrentFrame() const;
+    bool isVisibleInCurrentFrame();
 
     const AnimationSequences_t& getSequences() const;
     GAFTimelineConstPtr getTimeLine() const { return m_timeline; }
