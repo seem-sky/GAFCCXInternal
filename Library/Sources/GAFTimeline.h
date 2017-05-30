@@ -58,7 +58,7 @@ public:
 template<typename T>
 void GAFStencil::setBits(size_t bitIdx, T bits)
 {
-    const size_t bitsNum = sizeof(T) * 8;
+    const size_t bitsNum = sizeof(T) * CHAR_BIT;
     const size_t requestedSize = bitIdx + bitsNum;
     if (requestedSize > m_bitset.size())
         m_bitset.resize(requestedSize);
