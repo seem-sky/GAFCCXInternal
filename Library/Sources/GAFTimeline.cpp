@@ -206,6 +206,16 @@ void GAFTimeline::setOriginClass(const std::string &originClass)
     m_originClass = originClass;
 }
 
+GAFStencilConstPtr GAFTimeline::getStencil() const
+{
+    return m_stencil;
+}
+
+void GAFTimeline::setStencil(const GAFStencilConstPtr gafStencil)
+{
+    m_stencil = gafStencil;
+}
+
 uint32_t GAFTimeline::getFramesCount() const
 {
     return m_framesCount;

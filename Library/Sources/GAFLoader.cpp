@@ -32,6 +32,7 @@
 #include <json/document.h>
 #include <json/stringbuffer.h>
 #include <json/prettywriter.h>
+#include "TagDefineStencil.h"
 
 NS_GAF_BEGIN
 
@@ -92,6 +93,7 @@ void GAFLoader::_registerTagLoadersV4()
     m_tagLoaders[Tags::TagDefineExternalObjects] = std::make_shared<TagDefineExternalObjects>();
     m_tagLoaders[Tags::TagDefineAnimationFrames3] = std::make_shared<TagDefineAnimationFrames3>(shared_from_this());
     m_tagLoaders[Tags::TagDefineExternalObjects2] = std::make_shared<TagDefineExternalObjects2>(shared_from_this());
+    m_tagLoaders[Tags::TagDefineStencil] = std::make_shared<TagDefineStencil>();
 }
 
 void GAFLoader::_registerTagLoadersCommon()

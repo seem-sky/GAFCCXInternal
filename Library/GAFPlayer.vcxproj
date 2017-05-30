@@ -75,6 +75,7 @@
     <ClCompile Include="Sources\TagDefineSequences.cpp" />
     <ClCompile Include="Sources\TagDefineSounds.cpp" />
     <ClCompile Include="Sources\TagDefineStage.cpp" />
+    <ClCompile Include="Sources\TagDefineStencil.cpp" />
     <ClCompile Include="Sources\TagDefineTextField.cpp" />
     <ClCompile Include="Sources\TagDefineTimeline.cpp" />
     <ClCompile Include="Sources\TagDefineTimeline2.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="Sources\TagDefineSequences.h" />
     <ClInclude Include="Sources\TagDefineSounds.h" />
     <ClInclude Include="Sources\TagDefineStage.h" />
+    <ClInclude Include="Sources\TagDefineStencil.h" />
     <ClInclude Include="Sources\TagDefineTextField.h" />
     <ClInclude Include="Sources\TagDefineTimeline.h" />
     <ClInclude Include="Sources\TagDefineTimeline2.h" />

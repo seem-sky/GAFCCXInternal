@@ -26,6 +26,48 @@ public:
     void setCustomProperties(const CustomProperties_t& customProperties) { m_customProperties = customProperties; }
 };
 
+gaf_fwd_this(GAFStencil);
+
+class GAFStencil
+{
+public:
+    using bitset_t = std::vector<bool>;
+
+private:
+    float m_scale = 1.f;
+    uint32_t m_width = 0;
+    uint32_t m_height = 0;
+    bitset_t m_bitset;
+
+public:
+    float getScale() const { return m_scale; }
+    void setScale(float scale) { m_scale = scale; }
+
+    uint32_t getWidth() const { return m_width; }
+    void setWidth(uint32_t width) { m_width = width; }
+
+    uint32_t getHeight() const { return m_height; }
+    void setHeight(uint32_t height) { m_height = height; }
+
+    const bitset_t& getBitset() const { return m_bitset; }
+
+    template<typename T>
+    void setBits(size_t bitIdx, T bits);
+};
+
+template<typename T>
+void GAFStencil::setBits(size_t bitIdx, T bits)
+{
+    const size_t bitsNum = sizeof(T) * 8;
+    const size_t requestedSize = bitIdx + bitsNum;
+    if (requestedSize > m_bitset.size())
+        m_bitset.resize(requestedSize);
+
+    size_t offset = bitsNum - 1;
+    for (size_t i = bitIdx; i < requestedSize; ++i, --offset)
+        m_bitset[i] = bits >> offset & 0x1;
+}
+
 gaf_fwd_this(GAFTimeline);
 gaf_fwd_this(GAFTextureAtlas);
 gaf_fwd_this(GAFAnimationSequence);
@@ -43,7 +85,9 @@ private:
     NamedParts_t            m_namedParts;
     TextsData_t             m_textsData;
     ExternalObjects_t       m_externalObjects;
+    GAFStencilConstPtr      m_stencil;
 
+private:
     uint32_t                m_id;
     cocos2d::Rect           m_aabb;
     cocos2d::Point          m_pivot;
@@ -88,6 +132,9 @@ public:
     void                        setLinkageName(const std::string& linkageName);
     void                        setBaseClass(const std::string& baseClass);
     void                        setOriginClass(const std::string& originClass);
+
+    GAFStencilConstPtr          getStencil() const;
+    void                        setStencil(const GAFStencilConstPtr gafStencil);
 
     const AnimationObjects_t&   getAnimationObjects() const;
     const AnimationMasks_t&     getAnimationMasks() const;
