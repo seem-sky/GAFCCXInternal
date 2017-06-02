@@ -23,6 +23,8 @@ gaf_fwd_this(GAFAssetTextureManager);
 class GAFAsset : public std::enable_shared_from_this<GAFAsset>
 {
     friend class GAFObject;
+    friend class GAFLoader;
+
 private:
     GAFHeader               m_header;
     Timelines_t             m_timelines;

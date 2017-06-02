@@ -100,13 +100,4 @@ using SoundInfos_t = std::unordered_map<uint32_t, GAFSoundInfoConstPtr>;
 
 static const uint32_t IDNONE = UINT_MAX;
 
-// Custom properties
-struct CustomProperty
-{
-    std::string name;
-    std::vector<std::string> possibleValues;
-};
-
-using CustomProperties_t = std::vector<CustomProperty>;
-
 NS_GAF_END

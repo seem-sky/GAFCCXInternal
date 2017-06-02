@@ -143,7 +143,6 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         assert(externalTl != m_timeline->getExternalObjects().end());
         GAFTimelineConstPtr externalTimeline = m_asset->getLibraryAsset()->getTimelineByName(externalTl->second->getName());
         result = GafObjectFactory::create(m_asset->getLibraryAsset(), externalTimeline, isMask, id);
-        result->setCustomProperties(externalTl->second->getCustomProperties());
     }
     else if (type == GAFCharacterType::Timeline)
     {
@@ -156,7 +155,6 @@ GAFObject* GAFObject::_instantiateObject(uint32_t id, GAFCharacterType type, uin
         CC_ASSERT(tl != timelines.cend() && "Invalid object reference.");
 
         result = GafObjectFactory::create(m_asset, tl->second, isMask, id);
-        result->setCustomProperties(tl->second->getCustomProperties());
 
         //result = encloseNewTimeline(reference);
     }
@@ -937,11 +935,8 @@ void GAFObject::processGAFTimeline(cocos2d::Node* out, GAFObject* child, const G
 {
     if (!child->m_isInResetState)
     {
-        CustomPropertiesMap_t props;
-        fillCustomPropertiesMap(props, child->getCustomProperties(), state);
-
-        child->processOwnCustomProperties(props);
-        processGAFTimelineStateTransform(child, mtx, props);
+        child->processOwnCustomProperties(state->getCustomProperties());
+        processGAFTimelineStateTransform(child, mtx, state->getCustomProperties());
         child->setExternalTransform(mtx);
 
         child->m_parentFilters.clear();
@@ -1108,7 +1103,7 @@ void GAFObject::postProcessGAFObject(cocos2d::Node* out, GAFObject* child, const
     (void)mtx;
 }
 
-cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties)
+cocos2d::AffineTransform& GAFObject::processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, cp::GAFCustomPropertiesConstPtr customProperties)
 {
     if (child->m_isManualPosition || child->m_isManualScale)
     {
@@ -1202,7 +1197,7 @@ cocos2d::AffineTransform& GAFObject::processGAFTextFieldStateTransform(GAFObject
     return mtx;
 }
 
-cocos2d::AffineTransform& GAFObject::changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
+cocos2d::AffineTransform& GAFObject::changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, cp::GAFCustomPropertiesConstPtr customProperties) const
 {
     (void)child;
     (void)customProperties;
@@ -1215,32 +1210,18 @@ cocos2d::AffineTransform& GAFObject::addAdditionalTransformations(cocos2d::Affin
     return mtx;
 }
 
-bool GAFObject::processOwnCustomProperties(const CustomPropertiesMap_t & customProperties)
+bool GAFObject::processOwnCustomProperties(cp::GAFCustomPropertiesConstPtr customProperties)
 {
     (void)customProperties;
 
     return false;
 }
 
-bool GAFObject::allNecessaryFieldsExist(const CustomPropertiesMap_t & customProperties) const
+bool GAFObject::allNecessaryFieldsExist(cp::GAFCustomPropertiesConstPtr customProperties) const
 {
     (void)customProperties;
 
     return false;
-}
-
-GAFObject::CustomPropertiesMap_t& GAFObject::fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, GAFSubobjectStateConstPtr state) const
-{
-    for (uint32_t propIdx = 0; propIdx < timelineProperties.size(); ++propIdx)
-    {
-        std::string currentProperty = timelineProperties[propIdx].name;
-        uint32_t valueIdx = state->getCustomPropertiesValueIdxs()[propIdx];
-        std::string currentValue = timelineProperties[propIdx].possibleValues[valueIdx];
-
-        map.emplace(std::make_pair(currentProperty, currentValue));
-    }
-
-    return map;
 }
 
 void GAFObject::realizeFrame(cocos2d::Node* out, uint32_t frameIndex)

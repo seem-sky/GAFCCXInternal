@@ -1,6 +1,7 @@
 #include "GAFPrecompiled.h"
 #include "GAFLabelView.h"
 #include "GAFUtils.h"
+#include "GAFCustomProperties.h"
 
 gaf::GAFLabelView::GAFLabelView()
     : m_textField(nullptr)
@@ -47,16 +48,16 @@ bool gaf::GAFLabelView::init(GAFAssetConstPtr anAnimationData, GAFTimelineConstP
     return ret;
 }
 
-bool gaf::GAFLabelView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
+bool gaf::GAFLabelView::processOwnCustomProperties(gaf::cp::GAFCustomPropertiesConstPtr customProperties)
 {
     bool cpChanged = GAFObject::processOwnCustomProperties(customProperties);
 
     CCASSERT(m_textField, "Error. No textfield found in this GAFLabelView");
 
-    bool hasUseTextBoundsCP = customProperties.find("useTextBounds") != customProperties.end();
+    bool hasUseTextBoundsCP = customProperties->has<cp::CPEnum::useTextBounds>();
     CCASSERT(!hasUseTextBoundsCP, "Warning. Used old version of GAFUILabel.");
 
-    bool useTextBounds = hasUseTextBoundsCP ? to_bool(customProperties.at("useTextBounds")) : false;
+    bool useTextBounds = hasUseTextBoundsCP ? customProperties->get<cp::CPEnum::useTextBounds>() : false;
 
     if (m_textField->getUseTextBounds() != useTextBounds)
     {

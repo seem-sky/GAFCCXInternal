@@ -14,14 +14,22 @@ enum GAFColorTransformIndex
 
 gaf_fwd_this(GAFSubobjectState);
 
+namespace cp
+{
+    gaf_fwd_this(GAFCustomProperties);
+}
+
+
 class GAFSubobjectState
 {
+    friend class GAFLoader;
+
 private:
     Filters_t       m_filters;
-    float           _colorMults[4];
-    float           _colorOffsets[4];
-    
-    std::vector<uint32_t> m_customPropertiesValueIdxs;
+    float           m_colorMults[4];
+    float           m_colorOffsets[4];
+
+    cp::GAFCustomPropertiesPtr m_customProperties;
 
 public:
     uint32_t objectIdRef = IDNONE;
@@ -30,43 +38,38 @@ public:
     int zIndex;
     cocos2d::AffineTransform affineTransform;
 
-    bool initEmpty(unsigned int objectIdRef);
-
-    ~GAFSubobjectState();
     GAFSubobjectState();
+    ~GAFSubobjectState();
+
+    bool initEmpty(unsigned int objectIdRef);
 
     inline float * colorMults()
     {
-        return &_colorMults[0];
+        return &m_colorMults[0];
     }
     inline float * colorOffsets()
     {
-        return &_colorOffsets[0];
+        return &m_colorOffsets[0];
     }
 
     inline const float * colorMults() const 
     {
-        return &_colorMults[0];
+        return &m_colorMults[0];
     }
 
     inline const float * colorOffsets() const 
     {
-        return &_colorOffsets[0];
+        return &m_colorOffsets[0];
     }
 
     inline bool isVisible() const
     {
-        return (_colorMults[GAFCTI_A] > std::numeric_limits<float>::epsilon()) || (_colorOffsets[GAFCTI_A] > std::numeric_limits<float>::epsilon());
+        return (m_colorMults[GAFCTI_A] > std::numeric_limits<float>::epsilon()) || (m_colorOffsets[GAFCTI_A] > std::numeric_limits<float>::epsilon());
     }
     
-    const std::vector<uint32_t>& getCustomPropertiesValueIdxs() const
+    cp::GAFCustomPropertiesConstPtr getCustomProperties() const
     {
-        return m_customPropertiesValueIdxs;
-    }
-    
-    std::vector<uint32_t>& getCustomPropertiesValueIdxs()
-    {
-        return m_customPropertiesValueIdxs;
+        return m_customProperties;
     }
 
     void                ctxMakeIdentity();

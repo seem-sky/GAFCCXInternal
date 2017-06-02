@@ -246,6 +246,9 @@
     <ClCompile Include="Sources\TagDefineStencil.cpp">
       <Filter>Sources\GAFLoader\Tags</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\GAFCustomProperties.cpp">
+      <Filter>Sources\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\ShadersPrecompiled\GAFPrecompiledShaders.h">
@@ -493,6 +496,9 @@
     </ClInclude>
     <ClInclude Include="Sources\TagDefineStencil.h">
       <Filter>Sources\GAFLoader\Tags</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\GAFCustomProperties.h">
+      <Filter>Sources\Animation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

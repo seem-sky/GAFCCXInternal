@@ -53,7 +53,7 @@ void GAFScrollView::onEnter()
     if (m_scrollBarV) m_scrollBarV->scheduleUpdate();
 }
 
-bool GAFScrollView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
+bool GAFScrollView::processOwnCustomProperties(cp::GAFCustomPropertiesConstPtr customProperties)
 {
     return GAFComponentView::processOwnCustomProperties(customProperties);
 }

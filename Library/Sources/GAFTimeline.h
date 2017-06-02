@@ -10,7 +10,6 @@ class ExternalObject
 private:
     uint32_t           m_objectIdRef;
     std::string        m_name;
-    CustomProperties_t m_customProperties;
 
 public:
     ExternalObject();
@@ -21,9 +20,6 @@ public:
 
     const std::string& getName() const { return m_name; }
     void setName(const std::string& name) { m_name = name; }
-
-    const CustomProperties_t& getCustomProperties() const { return m_customProperties; }
-    void setCustomProperties(const CustomProperties_t& customProperties) { m_customProperties = customProperties; }
 };
 
 gaf_fwd_this(GAFStencil);
@@ -75,6 +71,7 @@ gaf_fwd_this(GAFAnimationSequence);
 class GAFTimeline
 {
     friend class GAFAsset;
+    friend class GAFLoader;
 
 private:
     TextureAtlases_t        m_textureAtlases;
@@ -115,6 +112,7 @@ public:
     GAFTimeline(GAFTimelineConstPtr parent, uint32_t id, const cocos2d::Rect& aabb, cocos2d::Point& pivot, uint32_t framesCount);
     virtual ~GAFTimeline();
 
+    uint32_t                    id() const;
     void                        pushTextureAtlas(GAFTextureAtlasConstPtr atlas);
     void                        pushAnimationMask(uint32_t objectId, uint32_t elementAtlasIdRef, GAFCharacterType charType);
     void                        pushAnimationObject(uint32_t objectId, uint32_t elementAtlasIdRef, GAFCharacterType charType);
@@ -166,15 +164,6 @@ public:
     void                        loadImages(float desiredAtlasScale);
 
     float                       usedAtlasScale() const;
-
-    // Custom flash properties;
-public:
-    void setCustomProperties(const CustomProperties_t& properties);
-    const CustomProperties_t& getCustomProperties() const;
-    
-private:
-    CustomProperties_t m_customProperties;
-    
 
     // Custom fields functionality
 public:

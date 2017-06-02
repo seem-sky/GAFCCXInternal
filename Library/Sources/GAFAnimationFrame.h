@@ -10,6 +10,8 @@ gaf_fwd_this(GAFAnimationFrame);
 
 class GAFAnimationFrame
 {
+    friend class GAFLoader;
+
 public:
     typedef std::vector<GAFSubobjectStateConstPtr> SubobjectStates_t;
     typedef std::vector<GAFTimelineAction> TimelineActions_t;

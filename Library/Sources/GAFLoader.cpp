@@ -7,6 +7,7 @@
 #include "GAFStream.h"
 #include "GAFFile.h"
 #include "GAFTimeline.h"
+#include "GAFAnimationFrame.h"
 
 #include "PrimitiveDeserializer.h"
 
@@ -28,11 +29,8 @@
 #include "TagDefineExternalObjects.h"
 #include "TagDefineExternalObjects2.h"
 #include "TagDefineAnimationFrames3.h"
-
-#include <json/document.h>
-#include <json/stringbuffer.h>
-#include <json/prettywriter.h>
 #include "TagDefineStencil.h"
+#include "GAFCustomProperties.h"
 
 NS_GAF_BEGIN
 
@@ -140,63 +138,22 @@ void GAFLoader::loadTags(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr time
     }
 }
 
-void GAFLoader::readCustomProperties(GAFStreamPtr in, CustomProperties_t& customProperties) const
-{
-    std::string jsonStr;
-    in->readString(&jsonStr);
-
-    //JSON // (format: {"cps" /* custom properties */: [{"n" /* name */: "propName1", "vs" /* values */: [val1, val2, val3, ...]}, [{"n": "propName2", "vs": [val1, val2, val3, ...]}, ...]})
-    if (jsonStr.empty())
-        return;
-
-    rapidjson::Document doc;
-    doc.Parse<0>(jsonStr.c_str());
-
-    const rapidjson::Value& root = doc["cps"];
-    assert(root.IsArray());
-
-    for (rapidjson::SizeType i = 0; i < root.Size(); ++i)
-    {
-        const rapidjson::Value& prop_value = root[i];
-        assert(prop_value.MemberCount() == 1);
-
-        CustomProperty custom_prop;
-
-        rapidjson::Value::ConstMemberIterator firstMember = prop_value.MemberBegin();
-        custom_prop.name = firstMember->name.GetString();
-        const rapidjson::Value& firstMemberValue = firstMember->value;
-        assert(firstMemberValue.IsArray());
-        for (rapidjson::SizeType j = 0; j < firstMemberValue.Size(); ++j)
-        {
-            if (firstMemberValue[j].IsString())
-            {
-                std::string value = firstMemberValue[j].GetString();
-                custom_prop.possibleValues.push_back(value);
-            }
-            else
-            {
-                rapidjson::StringBuffer valueBuffer;
-                rapidjson::PrettyWriter<rapidjson::StringBuffer> wr(valueBuffer);
-                firstMemberValue[j].Accept(wr);
-                custom_prop.possibleValues.push_back(valueBuffer.GetString());
-            }
-        }
-
-        customProperties.push_back(custom_prop);
-    }
-}
-
-const CustomProperties_t& GAFLoader::getCustomProperties(uint32_t timeline) const
+const std::string& GAFLoader::getCustomProperties(uint32_t timeline) const
 {
     auto it = m_customProperties.find(timeline);
-    assert(it != m_customProperties.end());
+    assert(it != m_customProperties.cend());
 
     return it->second;
 }
 
-void GAFLoader::setCustomProperties(uint32_t timeline, CustomProperties_t cp)
+void GAFLoader::setCustomProperties(uint32_t timeline, std::string&& cp)
 {
-    m_customProperties[timeline] = cp;
+    m_customProperties[timeline] = std::move(cp);
+}
+
+void GAFLoader::setCustomPropertiesIndices(GAFSubobjectStatePtr state, std::vector<size_t>&& cpi)
+{
+    m_customPropertiesIndices[state] = std::move(cpi);
 }
 
 bool GAFLoader::loadData(const unsigned char* data, size_t len, GAFAssetPtr context)
@@ -243,6 +200,104 @@ void GAFLoader::_processLoad(GAFFilePtr file, GAFAssetPtr context)
     context->setHeader(header);
 
     loadTags(m_stream, context, timeline);
+
+    _postProcessAsset(context);
+}
+
+void GAFLoader::_postProcessAsset(GAFAssetPtr asset)
+{
+    for (auto t : asset->m_timelines)
+    {
+        for (auto f : t.second->m_animationFrames)
+        {
+            for (auto s : f->m_subObjectStates)
+            {
+                auto animObjectIt = t.second->getAnimationObjects().find(s->objectIdRef);
+                if (animObjectIt == t.second->getAnimationObjects().cend())
+                {
+                    animObjectIt = t.second->getAnimationMasks().find(s->objectIdRef);
+                    assert(animObjectIt != t.second->getAnimationMasks().cend());
+                }
+
+                const auto& animObjectKV = animObjectIt->second;
+                auto it = m_customProperties.find(std::get<0>(animObjectKV));
+                if (it == m_customProperties.cend())
+                    continue;
+
+                const auto& cpsStr = it->second;
+                assert(!cpsStr.empty());
+
+                auto stateIt = m_customPropertiesIndices.find(std::const_pointer_cast<GAFSubobjectState>(s));
+                if (stateIt == m_customPropertiesIndices.cend())
+                    continue;
+
+                const auto& indices = stateIt->second;
+
+                rapidjson::Document doc;
+                doc.Parse<0>(cpsStr.c_str());
+
+                const rapidjson::Value& root = doc["cps"];
+                assert(root.IsArray());
+
+                auto cps = std::make_shared<cp::GAFCustomProperties>();
+
+                for (rapidjson::SizeType i = 0; i < root.Size(); ++i)
+                {
+                    const rapidjson::Value& prop_value = root[i];
+                    assert(prop_value.MemberCount() == 1);
+
+                    rapidjson::Value::ConstMemberIterator firstMember = prop_value.MemberBegin();
+                    std::string propName = firstMember->name.GetString();
+                    const rapidjson::Value& values = firstMember->value;
+                    assert(values.IsArray());
+
+                    const uint32_t idx = indices[i];
+                    const auto& value = values[idx];
+
+                    if (propName == cp::kCPAlignMode)
+                        cps->set<cp::CPEnum::alignMode>(cp::toEnum<cp::AlignMode>(value.GetString()));
+                    else if (propName == cp::kCPAlignTop)
+                        cps->set<cp::CPEnum::alignTop>(value.GetBool());
+                    else if (propName == cp::kCPAlignRight)
+                        cps->set<cp::CPEnum::alignRight>(value.GetBool());
+                    else if (propName == cp::kCPAlignBottom)
+                        cps->set<cp::CPEnum::alignBottom>(value.GetBool());
+                    else if (propName == cp::kCPAlignLeft)
+                        cps->set<cp::CPEnum::alignLeft>(value.GetBool());
+                    else if (propName == cp::kCPScaleAlignedChildren)
+                        cps->set<cp::CPEnum::scaleAlignedChildren>(value.GetBool());
+                    else if (propName == cp::kCPFittingMode)
+                        cps->set<cp::CPEnum::fittingMode>(cp::toEnum<cp::FittingMode>(value.GetString()));
+                    else if (propName == cp::kCPMarginTop)
+                        cps->set<cp::CPEnum::marginTop>(value.GetInt());
+                    else if (propName == cp::kCPMarginRight)
+                        cps->set<cp::CPEnum::marginRight>(value.GetInt());
+                    else if (propName == cp::kCPMarginBottom)
+                        cps->set<cp::CPEnum::marginBottom>(value.GetInt());
+                    else if (propName == cp::kCPMarginLeft)
+                        cps->set<cp::CPEnum::marginLeft>(value.GetInt());
+                    else if (propName == cp::kCPMarginMode)
+                        cps->set<cp::CPEnum::marginMode>(cp::toEnum<cp::MarginMode>(value.GetString()));
+                    else if (propName == cp::kCPGap)
+                        cps->set<cp::CPEnum::gap>(value.GetInt());
+                    else if (propName == cp::kCPGapMode)
+                        cps->set<cp::CPEnum::gapMode>(cp::toEnum<cp::GapMode>(value.GetString()));
+                    else if (propName == cp::kCPDirection)
+                        cps->set<cp::CPEnum::direction>(cp::toEnum<cp::Direction>(value.GetString()));
+                    else if (propName == cp::kCPVerticalAlign)
+                        cps->set<cp::CPEnum::verticalAlign>(cp::toEnum<cp::VerticalAlign>(value.GetString()));
+                    else if (propName == cp::kCPHorizontalAlign)
+                        cps->set<cp::CPEnum::horizontalAlign>(cp::toEnum<cp::HorizontalAlign>(value.GetString()));
+                    else if (propName == cp::kCPUseTextBounds)
+                        cps->set<cp::CPEnum::useTextBounds>(value.GetBool());
+                    else
+                        assert(false);
+                }
+
+                stateIt->first->m_customProperties = cps;
+            }
+        }
+    }
 }
 
 bool GAFLoader::loadFile(const std::string& fname, GAFAssetPtr context)

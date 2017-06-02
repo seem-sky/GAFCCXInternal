@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="Sources\GAFAssetTextureManager.cpp" />
     <ClCompile Include="Sources\GAFCachedTexture.cpp" />
+    <ClCompile Include="Sources\GAFCustomProperties.cpp" />
     <ClCompile Include="Sources\GAFFile.cpp" />
     <ClCompile Include="Sources\GAFAnimationFrame.cpp" />
     <ClCompile Include="Sources\GAFAnimationSequence.cpp" />
@@ -93,6 +94,7 @@
     <ClInclude Include="Sources\GAFAssetTextureManager.h" />
     <ClInclude Include="Sources\GAFCachedTexture.h" />
     <ClInclude Include="Sources\GAFCollections.h" />
+    <ClInclude Include="Sources\GAFCustomProperties.h" />
     <ClInclude Include="Sources\GAFDelegates.h" />
     <ClInclude Include="Sources\GAFFile.h" />
     <ClInclude Include="Sources\GAFFilterManager.h" />

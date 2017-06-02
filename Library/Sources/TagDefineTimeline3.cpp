@@ -6,10 +6,6 @@
 #include "GAFAsset.h"
 #include "GAFTimeline.h"
 
-#include "json/document.h"
-#include "json/stringbuffer.h"
-#include "json/prettywriter.h"
-
 NS_GAF_BEGIN
 
 TagDefineTimeline3::TagDefineTimeline3(GAFLoaderPtr loader) : TagDefineTimeline(loader)
@@ -40,9 +36,10 @@ void TagDefineTimeline3::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr
     auto ldr = m_loader.lock();
     assert(ldr);
 
-    CustomProperties_t properties;
-    ldr->readCustomProperties(in, properties);
-    tl->setCustomProperties(properties);
+    std::string jsonStr;
+    in->readString(&jsonStr);
+    if (!jsonStr.empty())
+        ldr->setCustomProperties(id, std::move(jsonStr));
 
     ldr->loadTags(in, asset, tl);
 

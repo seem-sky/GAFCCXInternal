@@ -3,7 +3,6 @@
 #include "GAFDelegates.h"
 #include "GAFSprite.h"
 #include "GAFCollections.h"
-#include "GAFTextureAtlas.h"
 #include "GAFSubobjectState.h"
 
 NS_GAF_BEGIN
@@ -11,6 +10,12 @@ NS_GAF_BEGIN
 gaf_fwd_this(GAFAsset);
 gaf_fwd_this(GAFTimeline);
 gaf_fwd_this(GAFFilterData);
+
+namespace cp
+{
+    gaf_fwd_this(GAFCustomProperties);
+}
+
 
 struct GAFObjectClass
 {
@@ -92,7 +97,6 @@ public:
 
     using DisplayList_t = std::vector<GAFObject*>;
     using MaskList_t = std::vector<cocos2d::ClippingNode*>;
-    using CustomPropertiesMap_t = std::map<const std::string, const std::string>;
 
     using GAFObjectUpdateCallback = std::function<void(float dt)>;
     using GAFVisibilityCallback_t = std::function<void(bool)>;
@@ -155,8 +159,6 @@ protected:
 
     GAFObjectUpdateCallback                 m_updateEventListener;
 
-    CustomProperties_t                      m_customProperties;
-
     cocos2d::AffineTransform AffineTransformFlashToCocos(const cocos2d::AffineTransform& aTransform) const;
 
     void  setTimelineParentObject(GAFObject* obj) { m_timelineParentObject = obj; }
@@ -175,18 +177,16 @@ protected:
     virtual void processGAFTextField(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
     virtual void postProcessGAFObject(cocos2d::Node* out, GAFObject* child, GAFSubobjectStateConstPtr state, cocos2d::AffineTransform& mtx);
 
-    virtual cocos2d::AffineTransform& processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties);
+    virtual cocos2d::AffineTransform& processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, cp::GAFCustomPropertiesConstPtr customProperties);
     virtual cocos2d::AffineTransform& processGAFImageStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx);
     virtual cocos2d::AffineTransform& processGAFTextFieldStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx);
 
-    virtual cocos2d::AffineTransform& changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const;
+    virtual cocos2d::AffineTransform& changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, cp::GAFCustomPropertiesConstPtr customProperties) const;
     virtual cocos2d::AffineTransform& addAdditionalTransformations(cocos2d::AffineTransform& mtx) const;
 
     // returns true if custom properties were changed
-    virtual bool processOwnCustomProperties(const CustomPropertiesMap_t& customProperties);
-    virtual bool allNecessaryFieldsExist(const CustomPropertiesMap_t& customProperties) const;
-
-    virtual CustomPropertiesMap_t& fillCustomPropertiesMap(CustomPropertiesMap_t& map, const CustomProperties_t& timelineProperties, GAFSubobjectStateConstPtr state) const;
+    virtual bool processOwnCustomProperties(cp::GAFCustomPropertiesConstPtr customProperties);
+    virtual bool allNecessaryFieldsExist(cp::GAFCustomPropertiesConstPtr customProperties) const;
 
     virtual GAFObject* encloseNewTimeline(uint32_t reference);
 
@@ -311,9 +311,6 @@ public:
     GAFCharacterType getCharType() const { return m_charType; }
     void setLastVisibleInFrame(uint32_t frame) { m_lastVisibleInFrame = frame; }
     uint32_t getLastVisibleInFrame() const { return m_lastVisibleInFrame; }
-
-    void setCustomProperties(const CustomProperties_t& customProperties) { m_customProperties = customProperties; }
-    const CustomProperties_t& getCustomProperties() const { return m_customProperties; }
 
     virtual const cocos2d::Mat4& getNodeToParentTransform() const override;
     virtual cocos2d::AffineTransform getNodeToParentAffineTransform() const override;

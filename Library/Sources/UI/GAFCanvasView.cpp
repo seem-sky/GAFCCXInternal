@@ -24,18 +24,18 @@ GAFCanvasView * GAFCanvasView::create(GAFAssetConstPtr anAsset, GAFTimelineConst
     return nullptr;
 }
 
-cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties) const
+cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomProperties(GAFObject* child, cocos2d::AffineTransform& mtx, cp::GAFCustomPropertiesConstPtr customProperties) const
 {
     auto unscaledInternalBounds = getFlashInitialInternalBoundingBox();
     auto actualInternalBounds = getFlashInternalBoundingBox();
     auto childActualBounds = RectApplyAffineTransform(child->getFlashInitialInternalBoundingBox(), mtx);
 
-    bool usePercents = customProperties.at("alignMode") == "percents";
-    bool useProportional = customProperties.at("alignMode") == "proportional";
-    bool alignLeft = to_bool(customProperties.at("alignLeft"));
-    bool alignRight = to_bool(customProperties.at("alignRight"));
-    bool alignTop = to_bool(customProperties.at("alignTop"));
-    bool alignBottom = to_bool(customProperties.at("alignBottom"));
+    bool usePercents = customProperties->get<cp::CPEnum::alignMode>() == cp::AlignMode::percents;
+    bool useProportional = customProperties->get<cp::CPEnum::alignMode>() == cp::AlignMode::proportional;
+    bool alignLeft = customProperties->get<cp::CPEnum::alignLeft>();
+    bool alignRight = customProperties->get<cp::CPEnum::alignRight>();
+    bool alignTop = customProperties->get<cp::CPEnum::alignTop>();
+    bool alignBottom = customProperties->get<cp::CPEnum::alignBottom>();
 
     cocos2d::Vec2 internalScale = getInternalScale();
     cocos2d::Vec2 fittingScale(getFittingScale());
@@ -131,7 +131,7 @@ cocos2d::AffineTransform& GAFCanvasView::changeTransformAccordingToCustomPropert
     return mtx;
 }
 
-cocos2d::AffineTransform & GAFCanvasView::processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, const CustomPropertiesMap_t& customProperties)
+cocos2d::AffineTransform & GAFCanvasView::processGAFTimelineStateTransform(GAFObject* child, cocos2d::AffineTransform& mtx, cp::GAFCustomPropertiesConstPtr customProperties)
 {
     GAFObject::processGAFTimelineStateTransform(child, mtx, customProperties);
     return mtx;

@@ -6,7 +6,7 @@ NS_GAF_BEGIN
 
 GAFLayoutView::GAFLayoutView()
     : m_internalScale(1.0f, 1.0f)
-    , m_fittingMode(FittingMode::none)
+    , m_fittingMode(cp::FittingMode::none)
     , m_scaleAlignedChildren(true)
 {
 }
@@ -60,19 +60,19 @@ cocos2d::Vec2 GAFLayoutView::getFittingScale() const
     auto internalScale = getInternalScale();
     switch (m_fittingMode)
     {
-    case FittingMode::none:
+    case cp::FittingMode::none:
         fittingScale.set(internalScale);
         break;
-    case FittingMode::minimum:
+    case cp::FittingMode::minimum:
         fittingScale.x = fittingScale.y = (std::abs(internalScale.x) < std::abs(internalScale.y)) ? internalScale.x : internalScale.y;
         break;
-    case FittingMode::maximum:
+    case cp::FittingMode::maximum:
         fittingScale.x = fittingScale.y = (std::abs(internalScale.x) > std::abs(internalScale.y)) ? internalScale.x : internalScale.y;
         break;
-    case FittingMode::horizontal:
+    case cp::FittingMode::horizontal:
         fittingScale.x = fittingScale.y = internalScale.x;
         break;
-    case FittingMode::vertical:
+    case cp::FittingMode::vertical:
         fittingScale.x = fittingScale.y = internalScale.x;
         break;
     default:
@@ -90,23 +90,23 @@ cocos2d::Rect GAFLayoutView::getInternalBoundingBox() const
     return RectApplyAffineTransform(unscaledInternalBounds, scaleMtx);
 }
 
-bool GAFLayoutView::allNecessaryFieldsExist(const CustomPropertiesMap_t & customProperties) const
+bool GAFLayoutView::allNecessaryFieldsExist(cp::GAFCustomPropertiesConstPtr customProperties) const
 {
-    bool allFieldsExist =
-        (customProperties.find("alignLeft") != customProperties.end())
-        && (customProperties.find("alignRight") != customProperties.end())
-        && (customProperties.find("alignTop") != customProperties.end())
-        && (customProperties.find("alignBottom") != customProperties.end())
-        && (customProperties.find("alignMode") != customProperties.end());
+    bool allFieldsExist = customProperties
+        && customProperties->has<cp::CPEnum::alignTop>()
+        && customProperties->has<cp::CPEnum::alignRight>()
+        && customProperties->has<cp::CPEnum::alignBottom>()
+        && customProperties->has<cp::CPEnum::alignLeft>()
+        && customProperties->has<cp::CPEnum::alignMode>();
 
     return allFieldsExist;
 }
 
-bool GAFLayoutView::processOwnCustomProperties(const CustomPropertiesMap_t& customProperties)
+bool GAFLayoutView::processOwnCustomProperties(cp::GAFCustomPropertiesConstPtr customProperties)
 {
     bool cpChanged = false;
-    auto fittingMode = FittingMode::toEnum(customProperties.at("fittingMode"));
-    auto scaleAlignedChildren = to_bool(customProperties.at("scaleAlignedChildren"));
+    auto fittingMode = customProperties->get<cp::CPEnum::fittingMode>();
+    auto scaleAlignedChildren = customProperties->get<cp::CPEnum::scaleAlignedChildren>();
 
     if (m_fittingMode != fittingMode)
     {

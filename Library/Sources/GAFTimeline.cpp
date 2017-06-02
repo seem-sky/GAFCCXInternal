@@ -29,6 +29,11 @@ GAFTimeline::~GAFTimeline()
 {
 }
 
+uint32_t GAFTimeline::id() const
+{
+    return m_id;
+}
+
 void GAFTimeline::pushTextureAtlas(GAFTextureAtlasConstPtr atlas)
 {
     m_textureAtlases.push_back(atlas);
@@ -132,16 +137,6 @@ const TextureAtlases_t& GAFTimeline::getTextureAtlases() const
 const ExternalObjects_t& GAFTimeline::getExternalObjects() const
 {
     return m_externalObjects;
-}
-
-void GAFTimeline::setCustomProperties(const CustomProperties_t& properties)
-{
-    m_customProperties = properties;
-}
-
-const CustomProperties_t& GAFTimeline::getCustomProperties() const
-{
-    return m_customProperties;
 }
 
 GAFAnimationSequenceConstPtr GAFTimeline::getSequence(const std::string& name) const
