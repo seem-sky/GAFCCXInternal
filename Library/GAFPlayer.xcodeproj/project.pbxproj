@@ -88,6 +88,8 @@
 		524884EE1D1195FB008E725E /* GAFScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 524884E71D1195FB008E725E /* GAFScrollView.cpp */; };
 		B60920631CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */; };
 		B60920BC1CCE8376000C25C9 /* TagDefineExternalObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */; };
+		B60D2ABC1EE192E700EEDBA2 /* GAFCustomProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60D2ABA1EE192E700EEDBA2 /* GAFCustomProperties.cpp */; };
+		B60D2ABD1EE192E700EEDBA2 /* GAFCustomProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B60D2ABA1EE192E700EEDBA2 /* GAFCustomProperties.cpp */; };
 		B61B57541D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B61B57521D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp */; };
 		B61B57551D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B61B57521D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp */; };
 		B63C5A741B4A83E2001C8112 /* TagDefineAtlas3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63C5A701B4A83E2001C8112 /* TagDefineAtlas3.cpp */; };
@@ -236,6 +238,8 @@
 		524884E91D1195FB008E725E /* GAFUIMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GAFUIMacros.h; path = UI/GAFUIMacros.h; sourceTree = "<group>"; };
 		B60920611CCE7AC1000C25C9 /* TagDefineExternalObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineExternalObjects.cpp; sourceTree = "<group>"; };
 		B60920621CCE7AC1000C25C9 /* TagDefineExternalObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineExternalObjects.h; sourceTree = "<group>"; };
+		B60D2ABA1EE192E700EEDBA2 /* GAFCustomProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GAFCustomProperties.cpp; sourceTree = "<group>"; };
+		B60D2ABB1EE192E700EEDBA2 /* GAFCustomProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GAFCustomProperties.h; sourceTree = "<group>"; };
 		B61B57521D22CAFC0099A0E4 /* TagDefineExternalObjects2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineExternalObjects2.cpp; sourceTree = "<group>"; };
 		B61B57531D22CAFC0099A0E4 /* TagDefineExternalObjects2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagDefineExternalObjects2.h; sourceTree = "<group>"; };
 		B63C5A701B4A83E2001C8112 /* TagDefineAtlas3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagDefineAtlas3.cpp; sourceTree = "<group>"; };
@@ -327,6 +331,8 @@
 				B6F8586A1A07D5A40022310D /* GAFTimelineAction.h */,
 				B6AC34801A03CBF0008BDF89 /* GAFTextData.cpp */,
 				B6AC34811A03CBF0008BDF89 /* GAFTextData.h */,
+				B60D2ABA1EE192E700EEDBA2 /* GAFCustomProperties.cpp */,
+				B60D2ABB1EE192E700EEDBA2 /* GAFCustomProperties.h */,
 				290E5CA419CF5A4F007A072D /* GAFObject */,
 				B643F9DF19B741E0005D2E26 /* GAFAssetTextureManager.cpp */,
 				B643F9E019B741E0005D2E26 /* GAFAssetTextureManager.h */,
@@ -576,6 +582,7 @@
 				524884EB1D1195FB008E725E /* GAFCanvasView.cpp in Sources */,
 				B6AC34851A03CBF9008BDF89 /* TagDefineTextField.cpp in Sources */,
 				1A2FBF50192E00C800631FE9 /* GAFAsset.cpp in Sources */,
+				B60D2ABC1EE192E700EEDBA2 /* GAFCustomProperties.cpp in Sources */,
 				B6F8586B1A07D5A40022310D /* GAFTimelineAction.cpp in Sources */,
 				1A2FBF56192E00C800631FE9 /* GAFSprite.cpp in Sources */,
 				B68D49761E2E44F000C4515F /* GAFLabelView.cpp in Sources */,
@@ -635,6 +642,7 @@
 				29CC580F1A36113E00B31D72 /* GAFPrecompiled.cpp in Sources */,
 				29CC58101A36113E00B31D72 /* TagDefineTextField.cpp in Sources */,
 				29CC58111A36113E00B31D72 /* GAFAsset.cpp in Sources */,
+				B60D2ABD1EE192E700EEDBA2 /* GAFCustomProperties.cpp in Sources */,
 				29CC58121A36113E00B31D72 /* GAFTimelineAction.cpp in Sources */,
 				29CC58131A36113E00B31D72 /* GAFSprite.cpp in Sources */,
 				B68D49771E2E44F200C4515F /* GAFLabelView.cpp in Sources */,
