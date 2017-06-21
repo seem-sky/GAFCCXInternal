@@ -138,17 +138,21 @@ void GAFLoader::loadTags(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr time
     }
 }
 
-const std::string& GAFLoader::getCustomProperties(uint32_t timeline) const
+const std::string& GAFLoader::getCustomProperties(GAFCharacterType type, uint32_t timeline) const
 {
-    auto it = m_customProperties.find(timeline);
-    assert(it != m_customProperties.cend());
+    auto itType = m_customProperties.find(type);
+    assert(itType != m_customProperties.cend());
+
+    const auto& cpMap = itType->second;
+    auto it = cpMap.find(timeline);
+    assert(it != cpMap.cend());
 
     return it->second;
 }
 
-void GAFLoader::setCustomProperties(uint32_t timeline, std::string&& cp)
+void GAFLoader::setCustomProperties(GAFCharacterType type, uint32_t timeline, std::string&& cp)
 {
-    m_customProperties[timeline] = std::move(cp);
+    m_customProperties[type][timeline] = std::move(cp);
 }
 
 void GAFLoader::setCustomPropertiesIndices(GAFSubobjectStatePtr state, std::vector<size_t>&& cpi)
@@ -220,8 +224,14 @@ void GAFLoader::_postProcessAsset(GAFAssetPtr asset)
                 }
 
                 const auto& animObjectKV = animObjectIt->second;
-                auto it = m_customProperties.find(std::get<0>(animObjectKV));
-                if (it == m_customProperties.cend())
+
+                auto itType = m_customProperties.find(animObjectKV.second);
+                if (itType == m_customProperties.cend())
+                    continue;
+
+                const auto& cpMap = itType->second;
+                auto it = cpMap.find(animObjectKV.first);
+                if (it == cpMap.cend())
                     continue;
 
                 const auto& cpsStr = it->second;

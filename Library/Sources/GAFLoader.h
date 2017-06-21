@@ -20,7 +20,7 @@ gaf_fwd_this(GAFFile);
 class GAFLoader : public std::enable_shared_from_this<GAFLoader>
 {
 public:
-    using CustomPropertiesMap_t = std::map<uint32_t, std::string>; // Custom properties set by timeline id
+    using CustomPropertiesMap_t = std::map<GAFCharacterType, std::map<uint32_t, std::string>>; // Custom properties set by timeline id
     using CustomPropertiesIndices_t = std::map<GAFSubobjectStatePtr, std::vector<size_t>>;
 
     static GAFLoaderPtr create();
@@ -30,7 +30,7 @@ protected:
 
 private:
     GAFStreamPtr            m_stream;
-    CustomPropertiesMap_t   m_customProperties;
+    CustomPropertiesMap_t   m_customProperties{ { GAFCharacterType::Timeline, {} }, { GAFCharacterType::External, {} } };
     CustomPropertiesIndices_t m_customPropertiesIndices;
 
     void                    _readHeaderEnd(GAFHeader&);
@@ -62,8 +62,8 @@ public:
 
     void                    loadTags(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr timeline);
 
-    const std::string&      getCustomProperties(uint32_t timeline) const;
-    void                    setCustomProperties(uint32_t timeline, std::string&& cp);
+    const std::string&      getCustomProperties(GAFCharacterType type, uint32_t timeline) const;
+    void                    setCustomProperties(GAFCharacterType type, uint32_t timeline, std::string&& cp);
 
     void                    setCustomPropertiesIndices(GAFSubobjectStatePtr state, std::vector<size_t>&& cpi);
 };

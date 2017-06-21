@@ -41,12 +41,12 @@ void GAFTimeline::pushTextureAtlas(GAFTextureAtlasConstPtr atlas)
 
 void GAFTimeline::pushAnimationMask(uint32_t objectId, uint32_t elementAtlasIdRef, GAFCharacterType charType)
 {
-    m_animationMasks[objectId] = std::make_tuple(elementAtlasIdRef, charType);
+    m_animationMasks[objectId] = std::make_pair(elementAtlasIdRef, charType);
 }
 
 void GAFTimeline::pushAnimationObject(uint32_t objectId, uint32_t elementAtlasIdRef, GAFCharacterType charType)
 {
-    m_animationObjects[objectId] = std::make_tuple(elementAtlasIdRef, charType);
+    m_animationObjects[objectId] = std::make_pair(elementAtlasIdRef, charType);
 }
 
 void GAFTimeline::pushAnimationFrame(GAFAnimationFrameConstPtr frame)

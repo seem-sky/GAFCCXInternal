@@ -39,7 +39,7 @@ void TagDefineTimeline3::read(GAFStreamPtr in, GAFAssetPtr asset, GAFTimelinePtr
     std::string jsonStr;
     in->readString(&jsonStr);
     if (!jsonStr.empty())
-        ldr->setCustomProperties(id, std::move(jsonStr));
+        ldr->setCustomProperties(GAFCharacterType::Timeline, id, std::move(jsonStr));
 
     ldr->loadTags(in, asset, tl);
 

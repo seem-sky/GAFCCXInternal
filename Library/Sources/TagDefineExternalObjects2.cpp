@@ -31,7 +31,7 @@ void TagDefineExternalObjects2::read(GAFStreamPtr in, GAFAssetPtr, GAFTimelinePt
         std::string jsonStr;
         in->readString(&jsonStr);
         if (!jsonStr.empty())
-            ldr->setCustomProperties(objectIdRef, std::move(jsonStr));
+            ldr->setCustomProperties(GAFCharacterType::External, objectIdRef, std::move(jsonStr));
 
         timeline->pushExternalObject(externalObj);
     }

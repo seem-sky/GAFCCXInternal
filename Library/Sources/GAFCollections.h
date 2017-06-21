@@ -80,7 +80,7 @@ public:
     T data;
 };
 
-using AnimationObjectEx_t = std::tuple<uint32_t, GAFCharacterType>;
+using AnimationObjectEx_t = std::pair<uint32_t, GAFCharacterType>;
 using TextureAtlases_t = std::vector<GAFTextureAtlasConstPtr>;
 using AnimationMasks_t = std::unordered_map<uint32_t, AnimationObjectEx_t>;      // Object id -> Element Atlas Id, Type
 using AnimationObjects_t = std::unordered_map<uint32_t, AnimationObjectEx_t>;    // Object id -> Element Atlas Id, Type
