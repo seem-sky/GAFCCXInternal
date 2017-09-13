@@ -66,6 +66,11 @@ void GAFTextField::setText(const std::string& text)
     m_label->setString(text);
 }
 
+void GAFTextField::setOutline(const cocos2d::Color4B& outlineColor, int outlineSize)
+{
+    m_label->enableOutline(outlineColor, outlineSize);
+}
+
 void GAFTextField::setUseTextBounds(bool value)
 {
     m_useTextBounds = value;

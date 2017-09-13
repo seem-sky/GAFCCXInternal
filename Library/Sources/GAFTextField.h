@@ -20,6 +20,7 @@ public:
     void initWithTextData(const GAFTextDataConstPtr data);
 
     void setText(const std::string& text);
+    void setOutline(const cocos2d::Color4B& outlineColor, int outlineSize);
 
     void setUseTextBounds(bool value);
     bool getUseTextBounds() const;
