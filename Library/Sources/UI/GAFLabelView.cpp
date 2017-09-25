@@ -55,7 +55,7 @@ bool gaf::GAFLabelView::processOwnCustomProperties(gaf::cp::GAFCustomPropertiesC
     CCASSERT(m_textField, "Error. No textfield found in this GAFLabelView");
 
     bool hasUseTextBoundsCP = customProperties->has<cp::CPEnum::useTextBounds>();
-    CCASSERT(!hasUseTextBoundsCP, "Warning. Used old version of GAFUILabel.");
+    CCASSERT(hasUseTextBoundsCP, "Warning. Used old version of GAFUILabel.");
 
     bool useTextBounds = hasUseTextBoundsCP ? customProperties->get<cp::CPEnum::useTextBounds>() : false;
 

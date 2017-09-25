@@ -196,7 +196,7 @@ void GAFLoader::_processLoad(GAFFilePtr file, GAFAssetPtr context)
         timeline = std::make_shared<GAFTimeline>(nullptr, 0, header.frameSize, header.pivot, header.framesCount);  // will be released in assset dtor
 
         context->pushTimeline(0, timeline);
-        context->setRootTimeline((uint32_t)0);
+        context->setRootTimeline(0);
     }
 
     _registerTagLoadersCommon();
@@ -257,12 +257,12 @@ void GAFLoader::_postProcessAsset(GAFAssetPtr asset)
                     assert(prop_value.MemberCount() == 1);
 
                     rapidjson::Value::ConstMemberIterator firstMember = prop_value.MemberBegin();
-                    std::string propName = firstMember->name.GetString();
+                    const std::string propName = firstMember->name.GetString();
                     const rapidjson::Value& values = firstMember->value;
                     assert(values.IsArray());
 
-                    const uint32_t idx = indices[i];
-                    const auto& value = values[idx];
+                    const auto idx = indices[i];
+                    const auto& value = values[static_cast<rapidjson::SizeType>(idx)];
 
                     if (propName == cp::kCPAlignMode)
                         cps->set<cp::CPEnum::alignMode>(cp::toEnum<cp::AlignMode>(value.GetString()));
